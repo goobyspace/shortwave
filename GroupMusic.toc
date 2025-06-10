@@ -1,0 +1,14 @@
+## Interface: 110105
+## Category: Roleplay
+## Title: Group Music
+## Version: 1.0
+## Notes: Lets your party or raid lead play ingame music to the whole group!
+## Author: gooby.space
+## SavedVariables: GroupMusicVariables
+## IconTexture: Interface\Icons\inv_gizmo_goblinboombox_01
+musicdata.lua
+sounddata.lua
+player.lua
+commands.lua
+utils.lua
+init.lua
