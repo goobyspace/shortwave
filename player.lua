@@ -4,62 +4,71 @@
 local _, core = ...
 core.Player = {}
 local Player = core.Player
-local groupMusicConfig
--------------------------------
--- Config
--- in config we 1: Create the actual configuration window
--- 2: Set our global bools depending on the toggles in the menu
--------------------------------
-function Player:Toggle()
-    local menu = groupMusicConfig or Player:CreateMenu()
-    menu:SetShown(not menu:IsShown())
+
+local currentlyPlaying = nil
+local currentId = nil
+local currentName = nil
+
+local cvarInitial
+
+Player.UpdateFrame = CreateFrame("Frame")
+Player.UpdateFrame:SetScript("OnUpdate", function()
+    if currentlyPlaying then
+        local isPlaying = C_Sound.IsPlaying(currentlyPlaying)
+        if not isPlaying then
+            --either we go next in playlist *or*
+            if currentId and currentName then
+                Player:PlaySong(currentId, currentName)
+            end
+        end
+    end
+end)
+
+function Player:PauseSong()
+    if currentlyPlaying then
+        StopSound(currentlyPlaying)
+        currentlyPlaying = nil
+    end
+    core.PlayerWindow.window.playPauseButton:SetChecked(false)
+    SetCVar("Sound_EnableMusic", cvarInitial)
+    cvarInitial = nil
 end
 
-function Player:CreateToggle(point, relativeFrame, relativePoint, text, toggleVar, bgType)
-    local toggle = CreateFrame("CheckButton", nil, groupMusicConfig, "UicheckButtonTemplate")
-    toggle:SetPoint(point, relativeFrame, relativePoint)
-    toggle.text:SetText(text)
-    toggle:SetChecked(toggleVar)
-    toggle:SetScript("OnClick", function() core.Config:VarStates(bgType) end)
-    return toggle;
+function Player:ResumeSong()
+    if currentId and currentName then
+        Player:PlaySong(currentId, currentName)
+    end
 end
 
-Player.SetMovable = function(f)
-    f:SetMovable(true)
-    f:EnableMouse(true)
-    f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", function(self, _)
-        self:StartMoving()
-    end)
-    f:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        local point, _, _, xOfs, yOfs = f:GetPoint();
-        GroupMusicVariables.point = point;
-        GroupMusicVariables.xOfs = xOfs;
-        GroupMusicVariables.yOfs = yOfs;
-    end);
-    f:SetUserPlaced(true);
+function Player:PlaySong(id, name)
+    if currentlyPlaying then
+        StopSound(currentlyPlaying)
+        currentlyPlaying = nil
+        currentId = nil
+        currentName = nil
+        core.PlayerWindow.window.playPauseButton:Disable()
+        core.PlayerWindow:SetText("No track selected")
+    end
+    currentId = id
+    currentName = name
+    core.PlayerWindow.window.playPauseButton:Enable()
+    if cvarInitial == nil then
+        cvarInitial = GetCVar("Sound_EnableMusic")
+    end
+    SetCVar("Sound_EnableMusic", "0")
+    local willPlay, soundHandle = PlaySoundFile(id, "Master")
+    core.PlayerWindow.window.playPauseButton:SetChecked(willPlay)
+    currentlyPlaying = soundHandle
+    core.PlayerWindow:SetText(name)
 end
 
-function Player:CreateMenu()
-    -- creating the main frame + its location
-    groupMusicConfig = CreateFrame("Frame", "arenaSoundUIFrame", UIParent, "BasicFrameTemplateWithInset")
-    groupMusicConfig:SetSize(200, 230)
-    groupMusicConfig:SetPoint("CENTER", UIParent, GroupMusicVariables.point or "CENTER", GroupMusicVariables.xOfs or 0,
-        GroupMusicVariables.yOfs or 120)
-
-    -- title
-    groupMusicConfig.title = groupMusicConfig:CreateFontString(nil, "OVERLAY")
-    groupMusicConfig.title:SetFontObject("GameFontHighlight")
-    groupMusicConfig.title:SetPoint("CENTER", groupMusicConfig.TitleBg, "CENTER")
-    groupMusicConfig.title:SetText("Group Music Player")
-    self.SetMovable(groupMusicConfig)
-
-    -- mainFrame
-    groupMusicConfig.mainArea = CreateFrame("Frame", nil, groupMusicConfig)
-    groupMusicConfig.mainArea:SetSize(20, 190)
-    groupMusicConfig.mainArea:SetPoint("BOTTOM", groupMusicConfig, "BOTTOM", 0, 10)
-
-    groupMusicConfig:Hide()
-    return groupMusicConfig
+function Player:StopCurrentSong()
+    if currentlyPlaying then
+        StopSound(currentlyPlaying)
+    end
+    currentlyPlaying = nil
+    currentId = nil
+    currentName = nil
+    core.PlayerWindow.window.playPauseButton:Disable()
+    core.PlayerWindow:SetText("No track selected")
 end

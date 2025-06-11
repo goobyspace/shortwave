@@ -31,15 +31,20 @@ async function getFiles() {
   console.log("Parsing listfile (This may take a while)");
   const parsedFile = listfile.split("\n").map((line) => {
     const [id, path] = line.split(";");
-    return { id, path };
+    if (!id || !path) {
+      console.log("No path or ID found for line: ", line);
+      return null; // Skip invalid lines
+    }
+    const name = path.split("/").pop();
+    return { id, path, name };
   });
 
   const soundFiles = parsedFile.filter((item) => {
-    if (!item || !item.id || !item.path) {
-      console.log("No path or ID found for iteM: ", item);
+    if (!item || !item.id || !item.path || !item.name) {
+      console.log("No path or ID found for item: ", item);
       return false;
     }
-    return item.path.includes(".ogg") || item.path.includes(".mp3");
+    return item.name.includes(".ogg") || item.name.includes(".mp3");
   });
 
   const music = [];
@@ -69,7 +74,7 @@ core.music = {
           ` { id = "${item.id}", path = "${item.path.replace(
             /(\r\n|\n|\r)/gm,
             ""
-          )}" }`
+          )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
       )
       .join(",\n ")}
 }`);

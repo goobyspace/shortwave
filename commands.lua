@@ -1,15 +1,15 @@
 local _, core = ...
 
 core.commands = {
-    ["player"] = core.Player.Toggle,
+    ["player"] = core.PlayerWindow.Toggle,
     ["vars"] = function()
         print(core.utils.dump(core));
     end,
     ["help"] = function()
         print(" ")
         print("Group Music Help")
-        print("|cff00cc66/qs config|r - shows player menu");
-        print("|cff00cc66/qs help|r - shows help info");
+        print("|cff00cc66/gm player|r - shows player menu");
+        print("|cff00cc66/gm help|r - shows help info");
         print(" ")
     end
 }
