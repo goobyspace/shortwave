@@ -48,27 +48,62 @@ async function getFiles() {
   });
 
   const music = [];
+  const ambience = [];
   const otherSounds = [];
   for (let i = 0; i < soundFiles.length; i++) {
     const item = soundFiles[i];
-    if (item.path.includes("music")) {
+    if (item.path.toLowerCase().includes("sound/music")) {
       music.push(item);
+    } else if (item.path.toLowerCase().includes("sound/ambience")) {
+      ambience.push(item);
     } else {
       otherSounds.push(item);
     }
   }
-  return [music, otherSounds];
+  return [music, ambience, otherSounds];
 }
 
 // we currently don't use otherSounds, since it's really fucking big, but we might in the future
-const [music, otherSounds] = await getFiles();
+const [music, ambience, otherSounds] = await getFiles();
 
 console.log("Writing listfile to musicdata.lua");
-const musicFile = createWriteStream("musicdata.lua");
+const musicFile = createWriteStream("assets/musicdata.lua");
 musicFile.write(`
 local _, core = ...;
 core.music = {
     ${music
+      .map(
+        (item) =>
+          ` { id = "${item.id}", path = "${item.path.replace(
+            /(\r\n|\n|\r)/gm,
+            ""
+          )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
+      )
+      .join(",\n ")}
+}`);
+
+console.log("Writing listfile to ambiencedata.lua");
+const ambienceFile = createWriteStream("assets/ambiencedata.lua");
+ambienceFile.write(`
+local _, core = ...;
+core.ambience = {
+    ${ambience
+      .map(
+        (item) =>
+          ` { id = "${item.id}", path = "${item.path.replace(
+            /(\r\n|\n|\r)/gm,
+            ""
+          )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
+      )
+      .join(",\n ")}
+}`);
+
+console.log("Writing listfile to sfxdata.lua");
+const othersoundsFile = createWriteStream("assets/sfxdata.lua");
+othersoundsFile.write(`
+local _, core = ...;
+core.sfx = {
+    ${otherSounds
       .map(
         (item) =>
           ` { id = "${item.id}", path = "${item.path.replace(

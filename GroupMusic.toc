@@ -6,15 +6,17 @@
 ## Author: gooby.space
 ## SavedVariables: GroupMusicVariables
 ## IconTexture: Interface\Icons\inv_gizmo_goblinboombox_01
-songframe.xml
-playlist.xml
-playlistsong.xml
-musicdata.lua
-sounddata.lua
-playlist.lua
-search.lua
-player.lua
-playerwindow.lua
-commands.lua
-utils.lua
+xml/songframe.xml
+xml/playlist.xml
+xml/tooltipplaylist.xml
+assets/musicdata.lua
+assets/ambiencedata.lua
+assets/sfxdata.lua
+lua/playlist.lua
+lua/channel.lua
+lua/search.lua
+lua/player.lua
+lua/playerwindow.lua
+lua/commands.lua
+lua/utils.lua
 init.lua
