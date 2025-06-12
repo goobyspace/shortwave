@@ -11,7 +11,11 @@ xml/playlist.xml
 xml/tooltipplaylist.xml
 assets/musicdata.lua
 assets/ambiencedata.lua
-assets/sfxdata.lua
+assets/creaturedata.lua
+assets/characterdata.lua
+assets/itemsdata.lua
+assets/spellsdata.lua
+assets/otherSoundsdata.lua
 lua/playlist.lua
 lua/channel.lua
 lua/search.lua

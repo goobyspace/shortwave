@@ -1,7 +1,7 @@
 
-local _, core = ...;
-core.music = {
-     { id = "53183", path = "Sound/music/CityMusic/Darnassus/Darnassus Intro.mp3", name = "Darnassus Intro.mp3" },
+    local _, core = ...;
+    core.music = {
+         { id = "53183", path = "Sound/music/CityMusic/Darnassus/Darnassus Intro.mp3", name = "Darnassus Intro.mp3" },
   { id = "53184", path = "Sound/music/CityMusic/Darnassus/Darnassus Walking 1.mp3", name = "Darnassus Walking 1.mp3" },
   { id = "53185", path = "Sound/music/CityMusic/Darnassus/Darnassus Walking 2.mp3", name = "Darnassus Walking 2.mp3" },
   { id = "53186", path = "Sound/music/CityMusic/Darnassus/Darnassus Walking 3.mp3", name = "Darnassus Walking 3.mp3" },
@@ -5955,4 +5955,4 @@ core.music = {
   { id = "7115745", path = "sound/music/warwithin/mus_1117_scene_fwo.mp3", name = "mus_1117_scene_fwo.mp3" },
   { id = "7115747", path = "sound/music/warwithin/mus_1117_scene_mcs.mp3", name = "mus_1117_scene_mcs.mp3" },
   { id = "7115749", path = "sound/music/warwithin/mus_1117_scene_xat.mp3", name = "mus_1117_scene_xat.mp3" }
-}
+    }

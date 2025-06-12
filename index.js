@@ -49,67 +49,59 @@ async function getFiles() {
 
   const music = [];
   const ambience = [];
+  const creature = [];
+  const spells = [];
+  const items = [];
+  const character = [];
   const otherSounds = [];
   for (let i = 0; i < soundFiles.length; i++) {
     const item = soundFiles[i];
-    if (item.path.toLowerCase().includes("sound/music")) {
+    const path = item.path.toLowerCase();
+    if (path.includes("sound/music")) {
       music.push(item);
-    } else if (item.path.toLowerCase().includes("sound/ambience")) {
+    } else if (path.includes("sound/ambience")) {
       ambience.push(item);
+    } else if (path.includes("sound/creature")) {
+      creature.push(item);
+    } else if (path.includes("sound/spell")) {
+      spells.push(item);
+    } else if (path.includes("sound/character")) {
+      character.push(item);
+    } else if (path.includes("sound/item")) {
+      items.push(item);
     } else {
       otherSounds.push(item);
     }
   }
-  return [music, ambience, otherSounds];
+  return [music, ambience, creature, spells, character, items, otherSounds];
 }
 
+const fileNames = [
+  "music",
+  "ambience",
+  "creature",
+  "spells",
+  "character",
+  "items",
+  "otherSounds",
+];
+
 // we currently don't use otherSounds, since it's really fucking big, but we might in the future
-const [music, ambience, otherSounds] = await getFiles();
+const soundFiles = await getFiles();
 
-console.log("Writing listfile to musicdata.lua");
-const musicFile = createWriteStream("assets/musicdata.lua");
-musicFile.write(`
-local _, core = ...;
-core.music = {
-    ${music
-      .map(
-        (item) =>
-          ` { id = "${item.id}", path = "${item.path.replace(
-            /(\r\n|\n|\r)/gm,
-            ""
-          )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
-      )
-      .join(",\n ")}
-}`);
-
-console.log("Writing listfile to ambiencedata.lua");
-const ambienceFile = createWriteStream("assets/ambiencedata.lua");
-ambienceFile.write(`
-local _, core = ...;
-core.ambience = {
-    ${ambience
-      .map(
-        (item) =>
-          ` { id = "${item.id}", path = "${item.path.replace(
-            /(\r\n|\n|\r)/gm,
-            ""
-          )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
-      )
-      .join(",\n ")}
-}`);
-
-console.log("Writing listfile to sfxdata.lua");
-const othersoundsFile = createWriteStream("assets/sfxdata.lua");
-othersoundsFile.write(`
-local _, core = ...;
-core.sfx = {
-    ${otherSounds
-      .map(
-        (item) =>
-          ` { id = "${item.id}", path = "${item.path.replace(
-            /(\r\n|\n|\r)/gm,
-            ""
-          )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
-      )
-      .join(",\n ")}
-}`);
+for (let i = 0; i < soundFiles.length; i++) {
+  const fileStream = createWriteStream(`assets/${fileNames[i]}data.lua`);
+  fileStream.write(`
+    local _, core = ...;
+    core.${fileNames[i]} = {
+        ${soundFiles[i]
+          .map(
+            (item) =>
+              ` { id = "${item.id}", path = "${item.path.replace(
+                /(\r\n|\n|\r)/gm,
+                ""
+              )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
+          )
+          .join(",\n ")}
+    }`);
+}
