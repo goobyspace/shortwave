@@ -51,7 +51,6 @@ async function getFiles() {
   const ambience = [];
   const creature = [];
   const spells = [];
-  const items = [];
   const character = [];
   const otherSounds = [];
   for (let i = 0; i < soundFiles.length; i++) {
@@ -67,13 +66,12 @@ async function getFiles() {
       spells.push(item);
     } else if (path.includes("sound/character")) {
       character.push(item);
-    } else if (path.includes("sound/item")) {
-      items.push(item);
     } else {
       otherSounds.push(item);
     }
   }
-  return [music, ambience, creature, spells, character, items, otherSounds];
+
+  return [music, ambience, creature, spells, character, otherSounds];
 }
 
 const fileNames = [
@@ -82,7 +80,6 @@ const fileNames = [
   "creature",
   "spells",
   "character",
-  "items",
   "otherSounds",
 ];
 
@@ -90,8 +87,48 @@ const fileNames = [
 const soundFiles = await getFiles();
 
 for (let i = 0; i < soundFiles.length; i++) {
-  const fileStream = createWriteStream(`assets/${fileNames[i]}data.lua`);
-  fileStream.write(`
+  if (fileNames[i] === "creature") {
+    const arrayBase = [...soundFiles[i]];
+    const arrayOfCreatures = [];
+    const chunk = 25000;
+    while (arrayBase.length > 0) {
+      arrayOfCreatures.push(arrayBase.splice(0, chunk));
+    }
+    const newBaseArray = [];
+    for (let j = 0; j < arrayOfCreatures.length; j++) {
+      for (let k = 0; k < arrayOfCreatures[j].length; k++) {
+        newBaseArray.push([j, k]);
+      }
+    }
+    const fileStream = createWriteStream(`assets/${fileNames[i]}data.lua`);
+    fileStream.write(`
+    local _, core = ...;
+    core.${fileNames[i]}Indexes = {
+      ${newBaseArray.map((item) => `{${item[0]}, ${item[1]}}`).join(",\n ")}
+    }
+    `);
+
+    for (let j = 0; j < arrayOfCreatures.length; j++) {
+      const creatureFileStream = createWriteStream(
+        `assets/creatures/${j}data.lua`
+      );
+      creatureFileStream.write(`
+        local _, core = ...;
+        core.creatureData${j} = {
+          ${arrayOfCreatures[j]
+            .map(
+              (item) =>
+                ` { id = "${item.id}", path = "${item.path.replace(
+                  /(\r\n|\n|\r)/gm,
+                  ""
+                )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
+            )
+            .join(",\n ")}
+        }`);
+    }
+  } else {
+    const fileStream = createWriteStream(`assets/${fileNames[i]}data.lua`);
+    fileStream.write(`
     local _, core = ...;
     core.${fileNames[i]} = {
         ${soundFiles[i]
@@ -104,4 +141,5 @@ for (let i = 0; i < soundFiles.length; i++) {
           )
           .join(",\n ")}
     }`);
+  }
 }

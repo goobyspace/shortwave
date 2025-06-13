@@ -1,7 +1,7 @@
 
-    local _, core = ...;
-    core.items = {
-         { id = "567578", path = "Sound/Item/FoleySounds/PlateFoley04.ogg", name = "PlateFoley04.ogg" },
+      local _, core = ...;
+      core.items = {
+           { id = "567578", path = "Sound/Item/FoleySounds/PlateFoley04.ogg", name = "PlateFoley04.ogg" },
   { id = "567579", path = "Sound/Item/FoleySounds/PlateFoley03.ogg", name = "PlateFoley03.ogg" },
   { id = "567580", path = "Sound/Item/FoleySounds/LeatherFoley04.ogg", name = "LeatherFoley04.ogg" },
   { id = "567581", path = "Sound/Item/FoleySounds/PlateFoley06.ogg", name = "PlateFoley06.ogg" },
@@ -3132,4 +3132,4 @@
   { id = "2309615", path = "SOUND/ITEM/WEAPONS/AXE2H/m2hAxeHitPlate1a.ogg.meta", name = "m2hAxeHitPlate1a.ogg.meta" },
   { id = "2309618", path = "SOUND/ITEM/WEAPONS/AXE2H/m2hAxeHitPlate1b.ogg.meta", name = "m2hAxeHitPlate1b.ogg.meta" },
   { id = "2309621", path = "SOUND/ITEM/WEAPONS/AXE2H/m2hAxeHitPlate1c.ogg.meta", name = "m2hAxeHitPlate1c.ogg.meta" }
-    }
+      }

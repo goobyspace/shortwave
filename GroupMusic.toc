@@ -9,6 +9,13 @@
 xml/songframe.xml
 xml/playlist.xml
 xml/tooltipplaylist.xml
+assets/creatures/0data.lua
+assets/creatures/1data.lua
+assets/creatures/2data.lua
+assets/creatures/3data.lua
+assets/creatures/4data.lua
+assets/creatures/5data.lua
+assets/creatures/6data.lua
 assets/musicdata.lua
 assets/ambiencedata.lua
 assets/creaturedata.lua
