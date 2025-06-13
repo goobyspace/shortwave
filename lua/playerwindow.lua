@@ -36,7 +36,7 @@ function PlayerWindow:CreateWindow()
     core.PlayerWindow.window = CreateFrame("Frame", "groupMusicUIFrame", UIParent, "PortraitFrameBaseTemplate")
     groupMusicConfig = core.PlayerWindow.window
     groupMusicConfig:SetSize(startingWidth, startingHeight)
-    groupMusicConfig:SetPoint("TOPLEFT", UIParent, GroupMusicVariables.xOfs or 50,
+    groupMusicConfig:SetPoint("TOP", UIParent, GroupMusicVariables.xOfs or 50,
         GroupMusicVariables.yOfs or 120)
     SetMovable(groupMusicConfig)
 
@@ -156,7 +156,6 @@ function PlayerWindow:CreateWindow()
         groupMusicConfig.blueTexture = groupMusicConfig.topBar:CreateTexture("BlueTexture")
         groupMusicConfig.blueTexture:SetSize(startingWidth - 176, 30)
         groupMusicConfig.blueTexture:SetPoint("TOPLEFT", groupMusicConfig.nextButton, 30, 0)
-        groupMusicConfig.blueTexture:SetTexture("interface/addons/GroupMusic/assets/blue.png")
 
         function PlayerWindow:SetColor(color)
             if color == "red" then
@@ -167,6 +166,14 @@ function PlayerWindow:CreateWindow()
                 groupMusicConfig.blueTexture:SetTexture("interface/addons/GroupMusic/assets/blue.png")
             end
         end
+
+        PlayerWindow:SetColor(core.Channel.colorMatch[core.Channel.channelIndex[core.Channel.currentChannel]] or "blue")
+
+        groupMusicConfig.currentlyPlaying = groupMusicConfig.topBar:CreateFontString("CurrentlyPlayingText")
+        groupMusicConfig.currentlyPlaying:SetFontObject("GameFontHighlight")
+        groupMusicConfig.currentlyPlaying:SetPoint("LEFT", groupMusicConfig.blueTexture, "LEFT", 4, 0)
+        groupMusicConfig.currentlyPlaying:SetPoint("RIGHT", groupMusicConfig.blueTexture, "RIGHT", -4, 0)
+        groupMusicConfig.currentlyPlaying:SetText("No music playing")
 
         function PlayerWindow:SetDefaultText(text)
             local texts = core.Channel.defaultText;
@@ -186,11 +193,9 @@ function PlayerWindow:CreateWindow()
             groupMusicConfig.currentlyPlaying:SetText(text)
         end
 
-        groupMusicConfig.currentlyPlaying = groupMusicConfig.topBar:CreateFontString("CurrentlyPlayingText")
-        groupMusicConfig.currentlyPlaying:SetFontObject("GameFontHighlight")
-        groupMusicConfig.currentlyPlaying:SetPoint("LEFT", groupMusicConfig.blueTexture, "LEFT", 4, 0)
-        groupMusicConfig.currentlyPlaying:SetPoint("RIGHT", groupMusicConfig.blueTexture, "RIGHT", -4, 0)
-        groupMusicConfig.currentlyPlaying:SetText("No music playing")
+        core.PlayerWindow:SetDefaultText(core.Channel.defaultText
+            [core.Channel.channelIndex[core.Channel.currentChannel]] or
+            "No sound playing")
 
         groupMusicConfig.blueTexture:SetScript("OnEnter", function()
             if groupMusicConfig.currentlyPlaying:GetUnboundedStringWidth() > groupMusicConfig.currentlyPlaying:GetWidth() then

@@ -6,7 +6,10 @@ local ScrollView = nil
 
 local function FlattenPlaylists()
     local flattenedArray = {}
-    for _, playlist in ipairs(GroupMusicVariables.Playlists) do
+    if not GroupMusicVariables.Playlists[core.Channel.currentChannel] then
+        return flattenedArray
+    end
+    for _, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         local playlistData = {
             name = playlist.name,
             type = "playlist",
@@ -40,12 +43,20 @@ local function setDataProvider()
     ScrollView:SetDataProvider(DataProvider)
 end
 
+function Playlist:RefreshPlaylists()
+    if not ScrollView then
+        return;
+    end
+    Playlist:WipePlaylistName()
+    setDataProvider()
+end
+
 local function deleteSongFromPlaylist(playlistName, index)
-    for i, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for i, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
             for j, _ in ipairs(playlist.songs) do
                 if j == index then
-                    table.remove(GroupMusicVariables.Playlists[i].songs, j)
+                    table.remove(GroupMusicVariables.Playlists[core.Channel.currentChannel][i].songs, j)
                     setDataProvider()
                     return
                 end
@@ -55,9 +66,9 @@ local function deleteSongFromPlaylist(playlistName, index)
 end
 
 local function deletePlaylist(playlistName)
-    for i, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for i, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
-            table.remove(GroupMusicVariables.Playlists, i)
+            table.remove(GroupMusicVariables.Playlists[core.Channel.currentChannel], i)
             setDataProvider()
             return
         end
@@ -65,7 +76,7 @@ local function deletePlaylist(playlistName)
 end
 
 local function collapsePlaylist(collapsed, playlistName)
-    for _, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for _, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
             playlist.collapsed = collapsed
             setDataProvider()
@@ -75,7 +86,7 @@ local function collapsePlaylist(collapsed, playlistName)
 end
 
 local function ChangeDirection(direction, data)
-    for _, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for _, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == data.playlistName then
             local songIndex = nil
             for j, song in ipairs(playlist.songs) do
@@ -116,18 +127,18 @@ local function CreateScrollView(body, width, height)
         local playlistIndex = 0
         local firstSong = false
         local lastSong = false
-        for i = 1, #GroupMusicVariables.Playlists do
-            if data.type == "playlist" and data.name == GroupMusicVariables.Playlists[i].name then
+        for i = 1, #GroupMusicVariables.Playlists[core.Channel.currentChannel] do
+            if data.type == "playlist" and data.name == GroupMusicVariables.Playlists[core.Channel.currentChannel][i].name then
                 playlistIndex = i
                 break
-            elseif data.type == "song" and data.playlistName == GroupMusicVariables.Playlists[i].name then
+            elseif data.type == "song" and data.playlistName == GroupMusicVariables.Playlists[core.Channel.currentChannel][i].name then
                 playlistIndex = i
-                for j = 1, #GroupMusicVariables.Playlists[i].songs do
-                    if GroupMusicVariables.Playlists[i].songs[j].id == data.id then
+                for j = 1, #GroupMusicVariables.Playlists[core.Channel.currentChannel][i].songs do
+                    if GroupMusicVariables.Playlists[core.Channel.currentChannel][i].songs[j].id == data.id then
                         if j == 1 then
                             firstSong = true
                         end
-                        if j == #GroupMusicVariables.Playlists[i].songs then
+                        if j == #GroupMusicVariables.Playlists[core.Channel.currentChannel][i].songs then
                             lastSong = true
                         end
                         break
@@ -137,27 +148,45 @@ local function CreateScrollView(body, width, height)
             end
         end
 
+        frame.ColorBackground:SetColorTexture(
+            core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].r or 0.1,
+            core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].g or 0.1,
+            core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].b or 0.1, 0.050)
+        frame.ColorHeaderBackground:SetColorTexture(
+            core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].r or 0.1,
+            core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].g or 0.1,
+            core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].b or 0.1, 0.10)
+
         if playlistIndex % 2 == 0 then
-            frame.BlueBackground:Hide()
-            frame.BlueHeaderBackground:Hide()
+            frame.ColorBackground:Hide()
+            frame.ColorHeaderBackground:Hide()
             frame.BlackBackground:Show()
             frame.BlackHeaderBackground:Show()
         else
             frame.BlackBackground:Hide()
             frame.BlackHeaderBackground:Hide()
-            frame.BlueBackground:Show()
-            frame.BlueHeaderBackground:Show()
+            frame.ColorBackground:Show()
+            frame.ColorHeaderBackground:Show()
         end
 
         if data.type == "song" then
             if playlistIndex % 2 == 0 then
                 frame.BlackBackground:Show()
             else
-                frame.BlueBackground:Show()
+                frame.ColorBackground:Show()
             end
-            frame.BlueHeaderBackground:Hide()
+            frame.ColorHeaderBackground:Hide()
             frame.BlackHeaderBackground:Hide()
-            frame.LoopButton:Show()
+            frame.SoloPlayButton:Show()
+
+            if core.Channel.LoopType[core.Channel.channelIndex[core.Channel.currentChannel]] then
+                frame.SoloPlayButton.LoopIcon:Show()
+                frame.SoloPlayButton.SoundIcon:Hide()
+            else
+                frame.SoloPlayButton.LoopIcon:Hide()
+                frame.SoloPlayButton.SoundIcon:Show()
+            end
+
             frame.MoveUpButton:Show()
             frame.MoveDownButton:Show()
             frame.MinMaxButton:Hide()
@@ -181,11 +210,11 @@ local function CreateScrollView(body, width, height)
                 deleteSongFromPlaylist(data.playlistName, data.index)
             end)
             frame.PlayButton:SetScript("OnClick", function()
-                local playlist = GroupMusicVariables.Playlists[playlistIndex]
+                local playlist = GroupMusicVariables.Playlists[core.Channel.currentChannel][playlistIndex]
                 core.Player:SetPlaylist(playlist)
                 core.Player:SetPlaylistIndex(data.index)
             end)
-            frame.LoopButton:SetScript("OnClick", function()
+            frame.SoloPlayButton:SetScript("OnClick", function()
                 core.Player:PlaySongSingle(data.id, data.name)
             end)
             frame.MoveUpButton:SetScript("OnClick", function()
@@ -198,11 +227,11 @@ local function CreateScrollView(body, width, height)
             if playlistIndex % 2 == 0 then
                 frame.BlackHeaderBackground:Show()
             else
-                frame.BlueHeaderBackground:Show()
+                frame.ColorHeaderBackground:Show()
             end
-            frame.BlueBackground:Hide()
+            frame.ColorBackground:Hide()
             frame.BlackBackground:Hide()
-            frame.LoopButton:Hide()
+            frame.SoloPlayButton:Hide()
             frame.MoveUpButton:Hide()
             frame.MoveDownButton:Hide()
             frame.MinMaxButton:Show()
@@ -244,11 +273,11 @@ local function CreateScrollView(body, width, height)
 end
 
 function Playlist:NewPlaylist(name)
-    if not GroupMusicVariables.Playlists then
-        GroupMusicVariables.Playlists = {}
+    if not GroupMusicVariables.Playlists[core.Channel.currentChannel] then
+        GroupMusicVariables.Playlists[core.Channel.currentChannel] = {}
     end
 
-    for _, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for _, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == name then
             print("Playlist with this name already exists")
             return
@@ -260,16 +289,16 @@ function Playlist:NewPlaylist(name)
         collapsed = false,
         songs = {}
     }
-    table.insert(GroupMusicVariables.Playlists, newPlaylist)
+    table.insert(GroupMusicVariables.Playlists[core.Channel.currentChannel], newPlaylist)
     setDataProvider()
 end
 
 function Playlist:AddSong(playlistName, data)
-    if not GroupMusicVariables.Playlists then
-        GroupMusicVariables.Playlists = {}
+    if not GroupMusicVariables.Playlists[core.Channel.currentChannel] then
+        GroupMusicVariables.Playlists[core.Channel.currentChannel] = {}
     end
 
-    for _, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for _, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
             table.insert(playlist.songs, {
                 name = data.name,
@@ -284,7 +313,7 @@ end
 
 local function minMaxAll(self)
     local isChecked = self:GetChecked()
-    for _, playlist in ipairs(GroupMusicVariables.Playlists) do
+    for _, playlist in ipairs(GroupMusicVariables.Playlists[core.Channel.currentChannel]) do
         playlist.collapsed = not isChecked
     end
     setDataProvider()
@@ -293,7 +322,11 @@ end
 function Playlist:CreateBody(width, height)
     if not GroupMusicVariables.Playlists then
         GroupMusicVariables.Playlists = {}
+        for _, channel in ipairs(core.Channel.channels) do
+            GroupMusicVariables.Playlists[channel] = {}
+        end
     end
+
 
     local body = CreateFrame("Frame", "PlaylistBody", nil, "InsetFrameTemplate");
     body:SetSize(width, height);
@@ -328,10 +361,15 @@ function Playlist:CreateBody(width, height)
     body.PlaylistName.searchIcon:SetDesaturated(true)
     body.PlaylistName.searchIcon:SetVertexColor(1, 1, 1, 1)
 
+    function Playlist:WipePlaylistName()
+        body.PlaylistName:ClearFocus();
+        body.PlaylistName:SetText("");
+    end
+
     body.PlaylistAddButton = CreateFrame("Button", "PlaylistAddButton", body.PlaylistName,
         "SharedButtonTemplate");
-    body.PlaylistAddButton:SetSize(60, 24);
-    body.PlaylistAddButton:SetPoint("LEFT", body.PlaylistName, "RIGHT", 0, 0);
+    body.PlaylistAddButton:SetSize(58, 24);
+    body.PlaylistAddButton:SetPoint("LEFT", body.PlaylistName, "RIGHT", 1, 0);
     body.PlaylistAddButton:SetText("Create");
 
     body.PlaylistAddButton:SetScript("OnClick", function()

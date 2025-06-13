@@ -6,9 +6,8 @@ function core:OnLoadHandler(event, name)
     if GroupMusicVariables == nil then GroupMusicVariables = {} end
     SLASH_RELOADUI1 = "/rl" -- For quicker reloading whilst debugging
     SlashCmdList.RELOADUI = ReloadUI
-
+    core.Channel:OnLoad()
     core.PlayerWindow:Toggle()
-
     SLASH_GMusicShort1 = "/GM"
     SlashCmdList.GMusicShort = core.SlashCommandHandler
     SLASH_GMusic1 = "/GroupMusic"

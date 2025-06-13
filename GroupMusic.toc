@@ -12,12 +12,12 @@ xml/tooltipplaylist.xml
 assets/creatureindex.lua
 assets/creaturename.lua
 assets/creaturepath.lua
-assets/musicdata.lua
 assets/ambiencedata.lua
+assets/musicdata.lua
 assets/characterdata.lua
 assets/itemsdata.lua
 assets/spellsdata.lua
-assets/otherSoundsdata.lua
+assets/otherdata.lua
 lua/playlist.lua
 lua/channel.lua
 lua/search.lua
