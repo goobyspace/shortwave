@@ -1,6 +1,6 @@
 
     local _, core = ...;
-    core.creature = {
+    core.creatureIndex = {
          { id = "543344", },
   { id = "543345", },
   { id = "543346", },

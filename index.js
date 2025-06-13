@@ -91,13 +91,13 @@ for (let i = 0; i < soundFiles.length; i++) {
     const idFilestream = createWriteStream(`assets/${fileNames[i]}index.lua`);
     idFilestream.write(`
     local _, core = ...;
-    core.${fileNames[i]} = {
+    core.${fileNames[i]}Index = {
         ${soundFiles[i].map((item) => ` { id = "${item.id}", }`).join(",\n ")}
     }`);
     const pathFilestream = createWriteStream(`assets/${fileNames[i]}path.lua`);
     pathFilestream.write(`
     local _, core = ...;
-    core.${fileNames[i]} = {
+    core.${fileNames[i]}Path = {
         ${soundFiles[i]
           .map(
             (item) =>
@@ -108,7 +108,7 @@ for (let i = 0; i < soundFiles.length; i++) {
     const nameFilestream = createWriteStream(`assets/${fileNames[i]}name.lua`);
     nameFilestream.write(`
     local _, core = ...;
-    core.${fileNames[i]} = {
+    core.${fileNames[i]}Name = {
         ${soundFiles[i]
           .map(
             (item) =>
