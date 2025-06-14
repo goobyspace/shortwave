@@ -14,7 +14,7 @@
 
 # Libraries
 libs/LibDataBroker-1.1/LibDataBroker-1.1.lua
-libs/LibDBIcon-1.0/embeds.xml
+libs/LibDBIcon-1.0/lib.xml
 
 # XML
 xml/songframe.xml
