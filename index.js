@@ -7,7 +7,7 @@ async function getFiles() {
 
   const headers = {
     headers: {
-      "User-Agent": "WoW Group Music Addon",
+      "User-Agent": "WoW Shortwave Addon",
     },
   };
   console.log("Finding latest listfile from GitHub");
@@ -85,12 +85,12 @@ const fileNames = [
 ];
 
 const folder = [
-  "GroupMusic_MusicData",
-  "GroupMusic_AmbienceData",
-  "GroupMusic_SFXData",
-  "GroupMusic_SFXData",
-  "GroupMusic_SFXData",
-  "GroupMusic_SFXData",
+  "ShortWave_MusicData",
+  "ShortWave_AmbienceData",
+  "ShortWave_SFXData",
+  "ShortWave_SFXData",
+  "ShortWave_SFXData",
+  "ShortWave_SFXData",
 ];
 
 const soundFiles = await getFiles();
@@ -103,16 +103,14 @@ for (let i = 0; i < soundFiles.length; i++) {
       `${folder[i]}/${fileNames[i]}index.lua`
     );
     idFilestream.write(`
-    GroupMusicGlobalData = {}
-GroupMusicGlobalData.${fileNames[i]}Index = {
+ShortWaveGlobalData.${fileNames[i]}Index = {
         ${soundFiles[i].map((item) => ` "${item.id}"`).join(",\n ")}
     }`);
     const pathFilestream = createWriteStream(
       `${folder[i]}/${fileNames[i]}path.lua`
     );
     pathFilestream.write(`
-    GroupMusicGlobalData = {}
-GroupMusicGlobalData.${fileNames[i]}Path = {
+ShortWaveGlobalData.${fileNames[i]}Path = {
         ${soundFiles[i]
           .map((item) => `"${item.path.replace(/(\r\n|\n|\r)/gm, "")}"`)
           .join(",\n ")}
@@ -121,8 +119,7 @@ GroupMusicGlobalData.${fileNames[i]}Path = {
       `${folder[i]}/${fileNames[i]}name.lua`
     );
     nameFilestream.write(`
-    GroupMusicGlobalData = {}
-GroupMusicGlobalData.${fileNames[i]}Name = {
+ShortWaveGlobalData.${fileNames[i]}Name = {
         ${soundFiles[i]
           .map((item) => `"${item.name.replace(/(\r\n|\n|\r)/gm, "")}"`)
           .join(",\n ")}
@@ -132,8 +129,7 @@ GroupMusicGlobalData.${fileNames[i]}Name = {
       `${folder[i]}/${fileNames[i]}data.lua`
     );
     fileStream.write(`
-    GroupMusicGlobalData = {}
-GroupMusicGlobalData.${fileNames[i]} = {
+ShortWaveGlobalData.${fileNames[i]} = {
         ${soundFiles[i]
           .map(
             (item) =>

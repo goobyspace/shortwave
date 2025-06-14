@@ -1,0 +1,11 @@
+## Interface: 110105
+## Category: Roleplay
+## Title: Shortwave Ambience Data
+## Group: ShortWave
+## Version: 1.0
+## Notes: Ambience Data for the Shortwave addon
+## Author: gooby.space
+## IconTexture: Interface\Icons\INV_Misc_PunchCards_Prismatic
+## LoadOnDemand: 1
+## Dependencies: ShortWave
+ambiencedata.lua

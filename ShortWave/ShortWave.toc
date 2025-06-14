@@ -1,0 +1,22 @@
+## Interface: 110105
+## Category: Roleplay
+## Title: Shortwave Music Player
+## Version: 1.0
+## Notes: Create playlists & play music, ambience & sound effects to your whole group!
+## Author: gooby.space
+## SavedVariables: ShortWaveVariables
+## IconTexture: Interface\Icons\inv_gizmo_goblinboombox_01
+## Group: ShortWave
+xml/songframe.xml
+xml/playlist.xml
+xml/tooltipplaylist.xml
+lua/broadcast.lua
+lua/dataloader.lua
+lua/playlist.lua
+lua/channel.lua
+lua/search.lua
+lua/player.lua
+lua/playerwindow.lua
+lua/commands.lua
+lua/utils.lua
+init.lua
