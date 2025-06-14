@@ -55,7 +55,11 @@ async function getFiles() {
   const character = [];
   const other = [];
   for (let i = 0; i < soundFiles.length; i++) {
-    const item = soundFiles[i];
+    const item = {
+      id: soundFiles[i].id,
+      name: soundFiles[i].name.replace(/(\r\n|\n|\r|.mp3|.ogg)/gm, ""),
+      path: soundFiles[i].path.replace(/(\r\n|\n|\r|.mp3|.ogg)/gm, ""),
+    };
     const path = item.path.toLowerCase();
     if (path.includes("sound/music")) {
       music.push(item);
@@ -97,32 +101,38 @@ const soundFiles = await getFiles();
 
 console.log("Writing files to assets folder");
 for (let i = 0; i < soundFiles.length; i++) {
-  //creature is specia, it has 3 files because 1 file is too large for wow, and wow starts hitting us with a stick if we include it
+  //creature is special, it has 4 files because 1 file is too large for wow, and wow starts hitting us with a stick if we include it
   if (fileNames[i] === "creature") {
-    const idFilestream = createWriteStream(
+    const indexFilestream = createWriteStream(
       `${folder[i]}/${fileNames[i]}index.lua`
     );
+    indexFilestream.write(`
+ShortWaveGlobalData.${fileNames[i]} = {
+        ${soundFiles[i].map((_, index) => ` ${index + 1}`).join(",\n ")}
+    }`);
+
+    const idFilestream = createWriteStream(
+      `${folder[i]}/${fileNames[i]}id.lua`
+    );
     idFilestream.write(`
-ShortWaveGlobalData.${fileNames[i]}Index = {
+ShortWaveGlobalData.${fileNames[i]}Id = {
         ${soundFiles[i].map((item) => ` "${item.id}"`).join(",\n ")}
     }`);
+
     const pathFilestream = createWriteStream(
       `${folder[i]}/${fileNames[i]}path.lua`
     );
     pathFilestream.write(`
 ShortWaveGlobalData.${fileNames[i]}Path = {
-        ${soundFiles[i]
-          .map((item) => `"${item.path.replace(/(\r\n|\n|\r)/gm, "")}"`)
-          .join(",\n ")}
+        ${soundFiles[i].map((item) => `"${item.path}"`).join(",\n ")}
     }`);
+
     const nameFilestream = createWriteStream(
       `${folder[i]}/${fileNames[i]}name.lua`
     );
     nameFilestream.write(`
 ShortWaveGlobalData.${fileNames[i]}Name = {
-        ${soundFiles[i]
-          .map((item) => `"${item.name.replace(/(\r\n|\n|\r)/gm, "")}"`)
-          .join(",\n ")}
+        ${soundFiles[i].map((item) => `"${item.name}"`).join(",\n ")}
     }`);
   } else {
     const fileStream = createWriteStream(
@@ -133,10 +143,7 @@ ShortWaveGlobalData.${fileNames[i]} = {
         ${soundFiles[i]
           .map(
             (item) =>
-              ` { id = "${item.id}", path = "${item.path.replace(
-                /(\r\n|\n|\r)/gm,
-                ""
-              )}", name = "${item.name.replace(/(\r\n|\n|\r)/gm, "")}" }`
+              ` { id = "${item.id}", path = "${item.path}", name = "${item.name}" }`
           )
           .join(",\n ")}
     }`);

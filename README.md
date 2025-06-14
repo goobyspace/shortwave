@@ -1,6 +1,6 @@
 # Shortwave
 
-WoW Addon that lets you create playlists of music, ambience & sounds as well as play these playlists for your whole group!
+WoW Addon that lets you create playlists of music, ambience & sounds as well as play these playlists for your whole group.
 
 # Developing
 

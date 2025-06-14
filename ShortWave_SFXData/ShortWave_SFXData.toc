@@ -9,6 +9,7 @@
 ## LoadOnDemand: 1
 ## Dependencies: ShortWave
 creatureindex.lua
+creatureid.lua
 creaturename.lua
 creaturepath.lua
 characterdata.lua

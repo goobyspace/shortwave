@@ -132,12 +132,23 @@ function Player:SetPlaylistIndex(index)
     Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
 end
 
+function Player:StopMusicOnChannel(localChannel)
+    if currentlyPlaying[localChannel] then
+        StopSound(currentlyPlaying[localChannel])
+        currentlyPlaying[localChannel] = nil
+
+        if localChannel == core.Channel.currentChannel then
+            core.PlayerWindow.window.playPauseButton:SetChecked(false)
+        end
+    end
+end
+
 function Player:PauseSong()
     if currentlyPlaying[core.Channel.currentChannel] then
-        StopSound(currentlyPlaying[core.Channel.currentChannel])
-        currentlyPlaying[core.Channel.currentChannel] = nil
+        core.Broadcast:BroadcastAudio("pause", currentlyPlaying[core.Channel.currentChannel],
+            currentName[core.Channel.currentChannel], core.Channel.currentChannel)
+        Player:StopMusicOnChannel(core.Channel.currentChannel)
     end
-    core.PlayerWindow.window.playPauseButton:SetChecked(false)
     SetCVar("Sound_EnableMusic", cvarInitial)
     cvarInitial = nil
 end
@@ -169,7 +180,7 @@ function Player:PlaySong(id, name, localChannel)
     currentlyPlaying[localChannel] = soundHandle
     currentText[localChannel] = name
 
-    core.Broadcast:BroadcastAudio(id, name, localChannel)
+    core.Broadcast:BroadcastAudio("play", id, name, localChannel)
 
     if localChannel == core.Channel.currentChannel then
         core.PlayerWindow.window.playPauseButton:Enable()

@@ -22,13 +22,8 @@ function DataLoader:GetData(dataToGet)
     end
 
     core.Search:SetErrorText()
-    if dataToGet == "creature" then
-        --creature is a special case, it is split into three files due to the sheer size of the data
-        --wow starts hitting our addon with a stick if we put it all in one file
-        --because of this filtering also takes forever and any extra loading is just felt immediately
-        --for this reason most of the data is actually called directly in search.lua
-        return ShortWaveGlobalData["creatureIndex"]
-    elseif ShortWaveGlobalData then
+
+    if ShortWaveGlobalData then
         return ShortWaveGlobalData[dataToGet] or {}
     else
         return {}

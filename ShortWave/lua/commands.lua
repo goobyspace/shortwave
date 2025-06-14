@@ -2,6 +2,19 @@ local _, core = ...
 
 core.commands = {
     ["player"] = core.PlayerWindow.Toggle,
+    ["reset"] = function()
+        core.PlayerWindow.window:ClearAllPoints()
+        core.PlayerWindow.window:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    end,
+    ["minimap"] = function()
+        if ShortWaveVariables.minimap.hide == false then
+            ShortWaveVariables.minimap.hide = true
+            core.Icon:Hide("Shortwave")
+        else
+            ShortWaveVariables.minimap.hide = false
+            core.Icon:Show("Shortwave")
+        end
+    end,
     ["vars"] = function()
         print("Current variables:")
         DevTools_Dump(ShortWaveVariables)
@@ -15,8 +28,10 @@ core.commands = {
     ["help"] = function()
         print(" ")
         print("Shortwave Help")
-        print("|cff00cc66/gm player|r - shows player menu");
-        print("|cff00cc66/gm help|r - shows help info");
+        print("|cff00cc66/shortwave player|r - toggle the player");
+        print("|cff00cc66/shortwave help|r - shows help info");
+        print("|cff00cc66/shortwave reset|r - resets the player window position back to the center");
+        print("|cff00cc66/shortwave minimap|r - toggle the minimap icon");
         print(" ")
     end
 }

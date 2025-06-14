@@ -143,17 +143,12 @@ local function CreateScrollView(width, height)
     local function Initializer(frame, data)
         local index = frame:GetOrderIndex()
         if ShortWaveVariables.selectedCore[core.Channel.currentChannel] == "creature" then
-            local creatureIndex = 0
-            for i, value in ipairs(ShortWaveGlobalData.creatureIndex) do
-                if value == data then
-                    creatureIndex = i
-                    break
-                end
-            end
-            data = {}
-            data.name = ShortWaveGlobalData.creatureName[creatureIndex] or ""
-            data.id = ShortWaveGlobalData.creatureIndex[creatureIndex] or "0"
-            data.path = ShortWaveGlobalData.creaturePath[creatureIndex] or ""
+            local creatureData = {
+                name = ShortWaveGlobalData.creatureName[data] or "",
+                id = ShortWaveGlobalData.creatureId[data] or "0",
+                path = ShortWaveGlobalData.creaturePath[data] or ""
+            }
+            data = creatureData
         end
         frame.ColorBackground:SetColorTexture(
             core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].r or 0.1,
@@ -218,10 +213,10 @@ function Search:CreateBody(width, height)
             local filteredData
             if ShortWaveVariables.selectedCore[core.Channel.currentChannel] == "creature" then
                 filteredData = core.utils.filter(GetSearchList(),
-                    function(file, index)
+                    function(_, index)
                         return string.find(string.lower(ShortWaveGlobalData.creaturePath[index]),
                             string.lower(searchText), 1,
-                            true) ~= nil or file.id == searchText;
+                            true) ~= nil or ShortWaveGlobalData.creatureId[index] == searchText;
                     end);
             else
                 filteredData = core.utils.filter(GetSearchList(),

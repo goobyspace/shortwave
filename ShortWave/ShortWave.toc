@@ -1,15 +1,23 @@
-## Interface: 110105
+## X-Curse-Project-ID: 1286759
+## Interface: 110107, 110105
 ## Category: Roleplay
 ## Title: Shortwave
-## Version: 1.0
-## Notes: Create playlists & play music, ambience & sound effects to your whole group!
+## Version: 1.0.0
+## Notes: Create playlists and play music, ambience and sound effects to your whole group! Type /shortwave for commands.
 ## Author: gooby.space
 ## SavedVariables: ShortWaveVariables
 ## IconTexture: Interface\Icons\INV_111_StatSoundWaveEmitter_Gallywix
 ## Group: ShortWave
+# Libraries
+lib/LibDataBroker-1.1/LibDataBroker-1.1.lua
+lib/LibDBIcon-1.0/embeds.xml
+
+# XML
 xml/songframe.xml
 xml/playlist.xml
 xml/tooltipplaylist.xml
+
+# Main lua
 lua/broadcast.lua
 lua/dataloader.lua
 lua/playlist.lua
@@ -19,4 +27,6 @@ lua/player.lua
 lua/playerwindow.lua
 lua/commands.lua
 lua/utils.lua
+
+# Init
 init.lua
