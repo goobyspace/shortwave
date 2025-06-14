@@ -1,11 +1,11 @@
 ## Interface: 110105
 ## Category: Roleplay
-## Title: Shortwave Music Player
+## Title: Shortwave
 ## Version: 1.0
 ## Notes: Create playlists & play music, ambience & sound effects to your whole group!
 ## Author: gooby.space
 ## SavedVariables: ShortWaveVariables
-## IconTexture: Interface\Icons\inv_gizmo_goblinboombox_01
+## IconTexture: Interface\Icons\INV_111_StatSoundWaveEmitter_Gallywix
 ## Group: ShortWave
 xml/songframe.xml
 xml/playlist.xml

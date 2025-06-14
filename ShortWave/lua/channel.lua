@@ -59,6 +59,7 @@ function Channel:ChangeChannel(channel)
     Channel.currentChannel = channel
     core.PlayerWindow:SetColor(core.Channel.colorMatch[core.Channel.channelIndex[channel]] or "blue")
     core.PlayerWindow:SetDefaultText(core.Channel.defaultText[core.Channel.channelIndex[channel]] or "No sound playing")
+    core.PlayerWindow:SetIcon()
     core.Playlist:RefreshPlaylists()
     core.Search:RefreshSearchBody()
     core.Player:UpdatePlayer()

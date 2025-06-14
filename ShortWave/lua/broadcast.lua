@@ -10,11 +10,18 @@ function Broadcast:IsLeader(unit)
     return isLeader
 end
 
-function Broadcast:BroadcastAudio(message)
-    if not message or message == "" then
+function Broadcast:BroadcastAudio(id, name, channel)
+    if not Broadcast:IsLeader("player") or not id or not name or not channel or id == "" or name == "" or channel == "" then
         return
     end
 
-    local partyResult = C_ChatInfo.SendAddonMessage("ShortWave", message, "PARTY")
+    local message = id .. ":" .. name .. ":" .. channel
+
     local raidResult = C_ChatInfo.SendAddonMessage("ShortWave", message, "RAID")
+    if core.Debug then
+        print("Broadcasting audio:")
+        print("Message: " .. message)
+        print("Channel: " .. channel)
+        print("Raid result: " .. tostring(raidResult))
+    end
 end

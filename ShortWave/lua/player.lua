@@ -47,38 +47,38 @@ function Player:UpdatePlayer()
 end
 
 local function LoopCurrentlyPlaying(self)
-    local loopingCore
+    local localChannel
     for playerCore, frame in pairs(Player.UpdateFrame) do
         if frame == self then
-            loopingCore = playerCore
+            localChannel = playerCore
         end
     end
-    if currentlyPlaying[loopingCore] and currentPlaylist[loopingCore] then
-        local isPlaying = C_Sound.IsPlaying(currentlyPlaying[loopingCore])
+    if currentlyPlaying[localChannel] and currentPlaylist[localChannel] then
+        local isPlaying = C_Sound.IsPlaying(currentlyPlaying[localChannel])
         if not isPlaying then
-            currentPlaylistIndex[loopingCore] = currentPlaylistIndex[loopingCore] + 1
-            if currentPlaylistIndex[loopingCore] > #currentPlaylist[loopingCore].songs then
-                currentPlaylistIndex[loopingCore] = 1
+            currentPlaylistIndex[localChannel] = currentPlaylistIndex[localChannel] + 1
+            if currentPlaylistIndex[localChannel] > #currentPlaylist[localChannel].songs then
+                currentPlaylistIndex[localChannel] = 1
             end
-            Player:PlayNextSongInPlaylist()
+            Player:PlayNextSongInPlaylist(localChannel)
         end
-    elseif currentlyPlaying[loopingCore] and core.Channel.LoopType[core.Channel.channelIndex[loopingCore]] then
-        local isPlaying = C_Sound.IsPlaying(currentlyPlaying[loopingCore])
+    elseif currentlyPlaying[localChannel] and core.Channel.LoopType[core.Channel.channelIndex[localChannel]] then
+        local isPlaying = C_Sound.IsPlaying(currentlyPlaying[localChannel])
         if not isPlaying then
-            if currentId[loopingCore] and currentName[loopingCore] then
-                Player:PlaySongSingle(currentId[loopingCore], currentName[loopingCore])
+            if currentId[localChannel] and currentName[localChannel] then
+                Player:PlaySongSingle(currentId[localChannel], currentName[localChannel], localChannel)
             end
         end
-    elseif currentlyPlaying[loopingCore] and not core.Channel.LoopType[core.Channel.channelIndex[loopingCore]] then
-        local isPlaying = C_Sound.IsPlaying(currentlyPlaying[loopingCore])
+    elseif currentlyPlaying[localChannel] and not core.Channel.LoopType[core.Channel.channelIndex[localChannel]] then
+        local isPlaying = C_Sound.IsPlaying(currentlyPlaying[localChannel])
         if not isPlaying then
             core.PlayerWindow.window.playPauseButton:SetChecked(false)
             core.PlayerWindow.window.playPauseButton:Disable()
-            currentlyPlaying[loopingCore] = nil
-            currentId[loopingCore] = nil
-            currentName[loopingCore] = nil
-            currentText[loopingCore] = core.Channel.defaultText
-                [core.Channel.channelIndex[loopingCore]] or "No sound playing"
+            currentlyPlaying[localChannel] = nil
+            currentId[localChannel] = nil
+            currentName[localChannel] = nil
+            currentText[localChannel] = core.Channel.defaultText
+                [core.Channel.channelIndex[localChannel]] or "No sound playing"
             UpdateText()
             self:SetScript("OnUpdate", nil)
         end
@@ -103,7 +103,7 @@ function Player:NextSongInPlaylist()
     if currentPlaylistIndex[core.Channel.currentChannel] > #currentPlaylist[core.Channel.currentChannel].songs then
         currentPlaylistIndex[core.Channel.currentChannel] = 1
     end
-    Player:PlayNextSongInPlaylist()
+    Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
 end
 
 function Player:PreviousSongInPlaylist()
@@ -115,7 +115,7 @@ function Player:PreviousSongInPlaylist()
     if currentPlaylistIndex[core.Channel.currentChannel] < 1 then
         currentPlaylistIndex[core.Channel.currentChannel] = #currentPlaylist[core.Channel.currentChannel].songs
     end
-    Player:PlayNextSongInPlaylist()
+    Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
 end
 
 function Player:SetPlaylistIndex(index)
@@ -129,7 +129,7 @@ function Player:SetPlaylistIndex(index)
         return
     end
     currentPlaylistIndex[core.Channel.currentChannel] = index
-    Player:PlayNextSongInPlaylist()
+    Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
 end
 
 function Player:PauseSong()
@@ -144,58 +144,63 @@ end
 
 function Player:ResumeSong()
     if currentPlaylist[core.Channel.currentChannel] then
-        Player:PlayNextSongInPlaylist()
+        Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
     elseif currentId[core.Channel.currentChannel] and currentName[core.Channel.currentChannel] then
-        Player:PlaySongSingle(currentId[core.Channel.currentChannel], currentName[core.Channel.currentChannel])
+        Player:PlaySongSingle(currentId[core.Channel.currentChannel], currentName[core.Channel.currentChannel],
+            core.Channel.currentChannel)
     end
 end
 
-function Player:PlaySong(id, name)
-    if currentlyPlaying[core.Channel.currentChannel] then
-        StopSound(currentlyPlaying[core.Channel.currentChannel])
-        currentlyPlaying[core.Channel.currentChannel] = nil
-        currentId[core.Channel.currentChannel] = nil
-        currentName[core.Channel.currentChannel] = nil
-        core.PlayerWindow.window.playPauseButton:Disable()
-        currentText[core.Channel.currentChannel] = "No track selected"
-        UpdateText()
+function Player:PlaySong(id, name, localChannel)
+    if currentlyPlaying[localChannel] then
+        StopSound(currentlyPlaying[localChannel])
     end
 
-    currentId[core.Channel.currentChannel] = id
-    currentName[core.Channel.currentChannel] = name
-    core.PlayerWindow.window.playPauseButton:Enable()
+    currentId[localChannel] = id
+    currentName[localChannel] = name
+
     if cvarInitial == nil then
         cvarInitial = GetCVar("Sound_EnableMusic")
     end
     SetCVar("Sound_EnableMusic", "0")
-    Player.UpdateFrame[core.Channel.currentChannel]:SetScript("OnUpdate", LoopCurrentlyPlaying)
+
+    Player.UpdateFrame[localChannel]:SetScript("OnUpdate", LoopCurrentlyPlaying)
     local willPlay, soundHandle = PlaySoundFile(id, "Master")
-    core.PlayerWindow.window.playPauseButton:SetChecked(willPlay)
-    currentlyPlaying[core.Channel.currentChannel] = soundHandle
-    currentText[core.Channel.currentChannel] = name
-    UpdateText()
+    currentlyPlaying[localChannel] = soundHandle
+    currentText[localChannel] = name
+
+    core.Broadcast:BroadcastAudio(id, name, localChannel)
+
+    if localChannel == core.Channel.currentChannel then
+        core.PlayerWindow.window.playPauseButton:Enable()
+        core.PlayerWindow.window.playPauseButton:SetChecked(willPlay)
+        UpdateText()
+    end
 end
 
-function Player:PlaySongSingle(id, name)
+function Player:PlaySongSingle(id, name, localChannel)
+    if not localChannel then
+        localChannel = core.Channel.currentChannel
+    end
     core.PlayerWindow.window.previousButton:Disable()
     core.PlayerWindow.window.nextButton:Disable()
-    currentPlaylist[core.Channel.currentChannel] = nil
-    currentPlaylistIndex[core.Channel.currentChannel] = 1
+    currentPlaylist[localChannel] = nil
+    currentPlaylistIndex[localChannel] = 1
 
-    Player:PlaySong(id, name)
+    Player:PlaySong(id, name, localChannel)
 end
 
-function Player:PlayNextSongInPlaylist()
-    if not currentPlaylist[core.Channel.currentChannel] or #currentPlaylist[core.Channel.currentChannel].songs == 0 then
+function Player:PlayNextSongInPlaylist(localChannel)
+    if not currentPlaylist[localChannel] or #currentPlaylist[localChannel].songs == 0 then
         EmptyPlaylist()
         return
     end
     core.PlayerWindow.window.previousButton:Enable()
     core.PlayerWindow.window.nextButton:Enable()
-    local currentSong = currentPlaylist[core.Channel.currentChannel].songs
-        [currentPlaylistIndex[core.Channel.currentChannel]]
+    local currentSong = currentPlaylist[localChannel].songs
+        [currentPlaylistIndex[localChannel]]
 
-    Player:PlaySong(currentSong.id, currentSong.name)
+    Player:PlaySong(currentSong.id, currentSong.name, localChannel)
 end
 
 function Player:StopCurrentSong()
@@ -213,5 +218,5 @@ end
 function Player:SetPlaylist(playlist)
     currentPlaylist[core.Channel.currentChannel] = playlist
     currentPlaylistIndex[core.Channel.currentChannel] = 1
-    Player:PlayNextSongInPlaylist()
+    Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
 end

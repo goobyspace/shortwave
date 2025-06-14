@@ -10,4 +10,4 @@ To update the data to more recent versions of WoW, run the following command:
 npm start
 ```
 
-This will fill the ShortWave_{X}Data folders, with the most recent sound files, taken from the latest listfile in the [wowdev listfile repo](https://github.com/wowdev/wow-listfile).
+This will fill the ShortWave_Data folders, with the most recent sound files, taken from the latest listfile in the [wowdev listfile repo](https://github.com/wowdev/wow-listfile).

@@ -85,7 +85,17 @@ function PlayerWindow:CreateWindow()
     ShortWavePlayer.circularIcon = ShortWavePlayer.PortraitContainer:CreateTexture("PortraitTexture")
     ShortWavePlayer.circularIcon:SetSize(60, 60)
     ShortWavePlayer.circularIcon:SetPoint("CENTER", 24, -22)
-    ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/inv_gizmo_goblinboombox_01")
+    ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_VentureCo")
+
+    function core.PlayerWindow:SetIcon()
+        if core.Channel.channels[3] == core.Channel.currentChannel then
+            ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_VentureCo")
+        elseif core.Channel.channels[2] == core.Channel.currentChannel then
+            ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_Bilgewater")
+        else
+            ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_Blackwater")
+        end
+    end
 
     ShortWavePlayer.circularIcon.mask = ShortWavePlayer:CreateMaskTexture()
     ShortWavePlayer.circularIcon.mask:SetAllPoints(ShortWavePlayer.circularIcon)
