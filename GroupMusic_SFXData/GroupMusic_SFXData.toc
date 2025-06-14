@@ -1,0 +1,11 @@
+## Interface: 110105
+## Category: Roleplay
+## Title: Group Music SFX Data
+## Group: GroupMusic
+## Version: 1.0
+## Notes: SFX Data for the group music addon
+## Author: gooby.space
+## IconTexture: Interface\Icons\INV_Misc_PunchCards_Red
+## LoadOnDemand: 1
+## Dependencies: GroupMusic
+ambiencedata.lua

@@ -1,0 +1,11 @@
+## Interface: 110105
+## Category: Roleplay
+## Title: Group Music Ambience Data
+## Group: GroupMusic
+## Version: 1.0
+## Notes: Ambience Data for the group music addon
+## Author: gooby.space
+## IconTexture: Interface\Icons\INV_Misc_PunchCards_Prismatic
+## LoadOnDemand: 1
+## Dependencies: GroupMusic
+ambiencedata.lua

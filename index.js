@@ -84,39 +84,56 @@ const fileNames = [
   "other",
 ];
 
+const folder = [
+  "GroupMusic_MusicData",
+  "GroupMusic_AmbienceData",
+  "GroupMusic_SFXData",
+  "GroupMusic_SFXData",
+  "GroupMusic_SFXData",
+  "GroupMusic_SFXData",
+];
+
 const soundFiles = await getFiles();
 
 console.log("Writing files to assets folder");
 for (let i = 0; i < soundFiles.length; i++) {
   //creature is specia, it has 3 files because 1 file is too large for wow, and wow starts hitting us with a stick if we include it
   if (fileNames[i] === "creature") {
-    const idFilestream = createWriteStream(`assets/${fileNames[i]}index.lua`);
+    const idFilestream = createWriteStream(
+      `${folder[i]}/${fileNames[i]}index.lua`
+    );
     idFilestream.write(`
-    local _, core = ...;
-    core.${fileNames[i]}Index = {
+    GroupMusicGlobalData = {}
+GroupMusicGlobalData.${fileNames[i]}Index = {
         ${soundFiles[i].map((item) => ` "${item.id}"`).join(",\n ")}
     }`);
-    const pathFilestream = createWriteStream(`assets/${fileNames[i]}path.lua`);
+    const pathFilestream = createWriteStream(
+      `${folder[i]}/${fileNames[i]}path.lua`
+    );
     pathFilestream.write(`
-    local _, core = ...;
-    core.${fileNames[i]}Path = {
+    GroupMusicGlobalData = {}
+GroupMusicGlobalData.${fileNames[i]}Path = {
         ${soundFiles[i]
           .map((item) => `"${item.path.replace(/(\r\n|\n|\r)/gm, "")}"`)
           .join(",\n ")}
     }`);
-    const nameFilestream = createWriteStream(`assets/${fileNames[i]}name.lua`);
+    const nameFilestream = createWriteStream(
+      `${folder[i]}/${fileNames[i]}name.lua`
+    );
     nameFilestream.write(`
-    local _, core = ...;
-    core.${fileNames[i]}Name = {
+    GroupMusicGlobalData = {}
+GroupMusicGlobalData.${fileNames[i]}Name = {
         ${soundFiles[i]
           .map((item) => `"${item.name.replace(/(\r\n|\n|\r)/gm, "")}"`)
           .join(",\n ")}
     }`);
   } else {
-    const fileStream = createWriteStream(`assets/${fileNames[i]}data.lua`);
+    const fileStream = createWriteStream(
+      `${folder[i]}/${fileNames[i]}data.lua`
+    );
     fileStream.write(`
-    local _, core = ...;
-    core.${fileNames[i]} = {
+    GroupMusicGlobalData = {}
+GroupMusicGlobalData.${fileNames[i]} = {
         ${soundFiles[i]
           .map(
             (item) =>
