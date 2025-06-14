@@ -2,9 +2,9 @@ package-as: ShortWave
 enable-nolib-creation: no
 
 ignore:
-    index.js
-    package.json
-    README.md
+  - README.md
+  - index.js
+  - package.json
 
 externals:
     ShortWave/libs/LibDataBroker-1.1: https://github.com/tekkub/libdatabroker-1-1

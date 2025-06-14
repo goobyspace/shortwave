@@ -113,9 +113,9 @@
                         </Texture>
                         <Texture parentKey="SoundIcon" file="Interface\Common\VOICECHAT-SPEAKER">
                             <Anchors>
-                                <Anchor point="CENTER"/>
+                                <Anchor point="CENTER" x="2"/>
                             </Anchors>
-                            <Size x="24" y="24"/>
+                            <Size x="16" y="16"/>
                         </Texture>
                     </Layer>
                 </Layers>
