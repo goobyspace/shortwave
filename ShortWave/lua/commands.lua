@@ -3,7 +3,14 @@ local _, core = ...
 core.commands = {
     ["player"] = core.PlayerWindow.Toggle,
     ["vars"] = function()
-        print(core.utils.dump(core));
+        print("Current variables:")
+        DevTools_Dump(ShortWaveVariables)
+        print("--------------------------")
+    end,
+    ["dumpcore"] = function()
+        print("Current core:")
+        DevTools_Dump(core)
+        print("--------------------------")
     end,
     ["help"] = function()
         print(" ")

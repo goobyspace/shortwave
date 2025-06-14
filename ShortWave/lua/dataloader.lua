@@ -16,9 +16,12 @@ function DataLoader:GetData(dataToGet)
 
     local loaded, error = C_AddOns.LoadAddOn(AddonToLoad)
     if not loaded or error then
+        core.Search:SetErrorText(AddonToLoad ..
+            " is disabled or missing, please ensure it is installed and enabled in the AddOns menu.")
         return {}
     end
 
+    core.Search:SetErrorText()
     if dataToGet == "creature" then
         --creature is a special case, it is split into three files due to the sheer size of the data
         --wow starts hitting our addon with a stick if we put it all in one file

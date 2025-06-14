@@ -116,6 +116,18 @@ function Search:RefreshSearchBody()
     ScrollView:SetDataProvider(DataProvider)
 end
 
+function Search:SetErrorText(text)
+    if not body or not body.ErrorText then
+        return
+    end
+    if text and text ~= "" then
+        body.ErrorText:SetText(text)
+        body.ErrorText:Show()
+    else
+        body.ErrorText:Hide()
+    end
+end
+
 local function CreateScrollView(width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
@@ -186,6 +198,13 @@ end
 function Search:CreateBody(width, height)
     body = CreateFrame("Frame", "SearchBody", nil, "InsetFrameTemplate");
     body:SetSize(width, height);
+
+    body.ErrorText = body:CreateFontString("ErrorText", "OVERLAY", "GameFontNormal")
+    body.ErrorText:SetPoint("LEFT", 4, 0)
+    body.ErrorText:SetPoint("RIGHT", -16, 0)
+    body.ErrorText:SetJustifyV("MIDDLE")
+    body.ErrorText:SetTextColor(1, 1, 0, 1)
+    body.ErrorText:SetJustifyH("CENTER")
 
     body.SearchBar = CreateFrame("EditBox", "SearchBar", body, "SearchBoxTemplate")
     body.SearchBar:SetSize(width - 20, 30);
@@ -292,6 +311,8 @@ function Search:CreateBody(width, height)
     end
 
     CreateScrollView(width, height);
+
+    SelectCore()
 
     selectTab(ShortWaveVariables.selectedCore[core.Channel.channels[3]] or
         core.Channel.searchData[core.Channel.channels[3]][1])

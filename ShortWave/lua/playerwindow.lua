@@ -4,11 +4,11 @@
 local _, core = ...
 core.PlayerWindow = {}
 local PlayerWindow = core.PlayerWindow
-local ShortWaveConfig
+local ShortWavePlayer
 -------------------------------
 
 function PlayerWindow:Toggle()
-    local menu = ShortWaveConfig or PlayerWindow:CreateWindow()
+    local menu = ShortWavePlayer or PlayerWindow:CreateWindow()
     menu:SetShown(not menu:IsShown())
 end
 
@@ -30,7 +30,6 @@ local SetMovable = function(f)
 end
 
 local PlayerLeaderCheck = function()
-    print("We've been called")
     local isLeader = core.Broadcast:IsLeader("player")
     if core.isLeader ~= isLeader then
         core.isLeader = isLeader
@@ -62,37 +61,37 @@ function PlayerWindow:CreateWindow()
     local maxHeight = 380
     -- creating the main frame + its location
     core.PlayerWindow.window = CreateFrame("Frame", "ShortWaveUIFrame", UIParent, "PortraitFrameBaseTemplate")
-    ShortWaveConfig = core.PlayerWindow.window
-    ShortWaveConfig:SetSize(startingWidth, startingHeight)
-    ShortWaveConfig:SetPoint("TOP", UIParent, ShortWaveVariables.xOfs or 50,
+    ShortWavePlayer = core.PlayerWindow.window
+    ShortWavePlayer:SetSize(startingWidth, startingHeight)
+    ShortWavePlayer:SetPoint("TOP", UIParent, ShortWaveVariables.xOfs or 50,
         ShortWaveVariables.yOfs or 120)
-    SetMovable(ShortWaveConfig)
+    SetMovable(ShortWavePlayer)
 
     -- title
-    ShortWaveConfig.title = ShortWaveConfig.TitleContainer:CreateFontString("TitleText")
-    ShortWaveConfig.title:SetFontObject("GameFontNormal")
-    ShortWaveConfig.title:SetPoint("CENTER")
-    ShortWaveConfig.title:SetText("Shortwave Player")
+    ShortWavePlayer.title = ShortWavePlayer.TitleContainer:CreateFontString("TitleText")
+    ShortWavePlayer.title:SetFontObject("GameFontNormal")
+    ShortWavePlayer.title:SetPoint("CENTER")
+    ShortWavePlayer.title:SetText("Shortwave Player")
 
-    ShortWaveConfig.closeButton = CreateFrame("Button", nil,
-        ShortWaveConfig, "UIPanelCloseButton")
-    ShortWaveConfig.closeButton:SetPoint("TOPRIGHT", ShortWaveConfig, "TOPRIGHT", -1, -2)
-    ShortWaveConfig.closeButton:SetSize(20, 20)
-    ShortWaveConfig.closeButton:SetScript("OnClick", function()
-        ShortWaveConfig:Hide()
+    ShortWavePlayer.closeButton = CreateFrame("Button", nil,
+        ShortWavePlayer, "UIPanelCloseButton")
+    ShortWavePlayer.closeButton:SetPoint("TOPRIGHT", ShortWavePlayer, "TOPRIGHT", -1, -2)
+    ShortWavePlayer.closeButton:SetSize(20, 20)
+    ShortWavePlayer.closeButton:SetScript("OnClick", function()
+        ShortWavePlayer:Hide()
     end)
 
     -- portrait icon
-    ShortWaveConfig.circularIcon = ShortWaveConfig.PortraitContainer:CreateTexture("PortraitTexture")
-    ShortWaveConfig.circularIcon:SetSize(60, 60)
-    ShortWaveConfig.circularIcon:SetPoint("CENTER", 24, -22)
-    ShortWaveConfig.circularIcon:SetTexture("Interface/Icons/inv_gizmo_goblinboombox_01")
+    ShortWavePlayer.circularIcon = ShortWavePlayer.PortraitContainer:CreateTexture("PortraitTexture")
+    ShortWavePlayer.circularIcon:SetSize(60, 60)
+    ShortWavePlayer.circularIcon:SetPoint("CENTER", 24, -22)
+    ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/inv_gizmo_goblinboombox_01")
 
-    ShortWaveConfig.circularIcon.mask = ShortWaveConfig:CreateMaskTexture()
-    ShortWaveConfig.circularIcon.mask:SetAllPoints(ShortWaveConfig.circularIcon)
-    ShortWaveConfig.circularIcon.mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask",
+    ShortWavePlayer.circularIcon.mask = ShortWavePlayer:CreateMaskTexture()
+    ShortWavePlayer.circularIcon.mask:SetAllPoints(ShortWavePlayer.circularIcon)
+    ShortWavePlayer.circularIcon.mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask",
         "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    ShortWaveConfig.circularIcon:AddMaskTexture(ShortWaveConfig.circularIcon.mask)
+    ShortWavePlayer.circularIcon:AddMaskTexture(ShortWavePlayer.circularIcon.mask)
 
     local function createTopBar()
         local function playButton(self)
@@ -104,7 +103,7 @@ function PlayerWindow:CreateWindow()
         end
 
         function PlayerWindow:SetText(text)
-            ShortWaveConfig.currentlyPlaying:SetText(text)
+            ShortWavePlayer.currentlyPlaying:SetText(text)
         end
 
         local function onPreviousClick(self)
@@ -120,18 +119,18 @@ function PlayerWindow:CreateWindow()
 
         function PlayerWindow:ToggleExpand(expanded)
             if expanded then
-                ShortWaveConfig:SetSize(startingWidth, maxHeight)
-                ShortWaveConfig.topBar:SetSize(startingWidth, topBarExpandedHeight)
-                ShortWaveConfig:AdjustPointsOffset(0, -((maxHeight - topBarExpandedHeight) / 2))
-                ShortWaveConfig.tabBars:Show()
-                ShortWaveConfig.body:Show()
+                ShortWavePlayer:SetSize(startingWidth, maxHeight)
+                ShortWavePlayer.topBar:SetSize(startingWidth, topBarExpandedHeight)
+                ShortWavePlayer:AdjustPointsOffset(0, -((maxHeight - topBarExpandedHeight) / 2))
+                ShortWavePlayer.tabBars:Show()
+                ShortWavePlayer.body:Show()
                 ShortWaveVariables.IsShown = true
             else
-                ShortWaveConfig:SetSize(startingWidth, startingHeight)
-                ShortWaveConfig.topBar:SetSize(startingWidth, topBarHeight)
-                ShortWaveConfig:AdjustPointsOffset(0, (maxHeight - topBarExpandedHeight) / 2)
-                ShortWaveConfig.tabBars:Hide()
-                ShortWaveConfig.body:Hide()
+                ShortWavePlayer:SetSize(startingWidth, startingHeight)
+                ShortWavePlayer.topBar:SetSize(startingWidth, topBarHeight)
+                ShortWavePlayer:AdjustPointsOffset(0, (maxHeight - topBarExpandedHeight) / 2)
+                ShortWavePlayer.tabBars:Hide()
+                ShortWavePlayer.body:Hide()
                 ShortWaveVariables.IsShown = false
             end
         end
@@ -140,76 +139,76 @@ function PlayerWindow:CreateWindow()
             PlayerWindow:ToggleExpand(self:GetChecked())
         end
 
-        ShortWaveConfig.topBar = CreateFrame("Frame", nil, ShortWaveConfig)
-        ShortWaveConfig.topBar:SetSize(startingWidth, topBarHeight)
-        ShortWaveConfig.topBar:SetPoint("TOP", ShortWaveConfig, "TOP", 0, -22)
-        ShortWaveConfig.topBar.texture = ShortWaveConfig.topBar:CreateTexture("TopBarTexture", "BACKGROUND")
-        ShortWaveConfig.topBar.texture:SetAllPoints(ShortWaveConfig.topBar)
-        ShortWaveConfig.topBar.texture:SetTexture("Interface/FrameGeneral/UI-Background-Rock")
-        ShortWaveConfig.topBar.texture:SetHorizTile(true)
-        ShortWaveConfig.topBar.texture:SetVertTile(true)
+        ShortWavePlayer.topBar = CreateFrame("Frame", nil, ShortWavePlayer)
+        ShortWavePlayer.topBar:SetSize(startingWidth, topBarHeight)
+        ShortWavePlayer.topBar:SetPoint("TOP", ShortWavePlayer, "TOP", 0, -22)
+        ShortWavePlayer.topBar.texture = ShortWavePlayer.topBar:CreateTexture("TopBarTexture", "BACKGROUND")
+        ShortWavePlayer.topBar.texture:SetAllPoints(ShortWavePlayer.topBar)
+        ShortWavePlayer.topBar.texture:SetTexture("Interface/FrameGeneral/UI-Background-Rock")
+        ShortWavePlayer.topBar.texture:SetHorizTile(true)
+        ShortWavePlayer.topBar.texture:SetVertTile(true)
 
-        ShortWaveConfig.previousButton = CreateFrame("Button", nil, ShortWaveConfig.topBar)
-        ShortWaveConfig.previousButton:SetSize(30, 30)
-        ShortWaveConfig.previousButton:SetPoint("TOPLEFT", ShortWaveConfig.topBar, 58, 2)
-        ShortWaveConfig.previousButton:SetNormalTexture("Interface/Timemanager/RWButton")
-        ShortWaveConfig.previousButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
-        ShortWaveConfig.previousButton:SetScript("OnClick", onPreviousClick)
-        ShortWaveConfig.previousButton.disabledTexture = ShortWaveConfig.previousButton:CreateTexture(
+        ShortWavePlayer.previousButton = CreateFrame("Button", nil, ShortWavePlayer.topBar)
+        ShortWavePlayer.previousButton:SetSize(30, 30)
+        ShortWavePlayer.previousButton:SetPoint("TOPLEFT", ShortWavePlayer.topBar, 58, 2)
+        ShortWavePlayer.previousButton:SetNormalTexture("Interface/Timemanager/RWButton")
+        ShortWavePlayer.previousButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
+        ShortWavePlayer.previousButton:SetScript("OnClick", onPreviousClick)
+        ShortWavePlayer.previousButton.disabledTexture = ShortWavePlayer.previousButton:CreateTexture(
             "DisabledTexture")
-        ShortWaveConfig.previousButton.disabledTexture:SetAllPoints(ShortWaveConfig.previousButton)
-        ShortWaveConfig.previousButton.disabledTexture:SetTexture("Interface/Timemanager/RWButton")
-        ShortWaveConfig.previousButton.disabledTexture:SetDesaturated(true)
-        ShortWaveConfig.previousButton.disabledTexture:SetVertexColor(0.6, 0.6, 0.6, 1)
-        ShortWaveConfig.previousButton:SetDisabledTexture(ShortWaveConfig.previousButton.disabledTexture)
-        ShortWaveConfig.previousButton:Disable()
+        ShortWavePlayer.previousButton.disabledTexture:SetAllPoints(ShortWavePlayer.previousButton)
+        ShortWavePlayer.previousButton.disabledTexture:SetTexture("Interface/Timemanager/RWButton")
+        ShortWavePlayer.previousButton.disabledTexture:SetDesaturated(true)
+        ShortWavePlayer.previousButton.disabledTexture:SetVertexColor(0.6, 0.6, 0.6, 1)
+        ShortWavePlayer.previousButton:SetDisabledTexture(ShortWavePlayer.previousButton.disabledTexture)
+        ShortWavePlayer.previousButton:Disable()
 
-        ShortWaveConfig.playPauseButton = CreateFrame("CheckButton", nil, ShortWaveConfig.topBar)
-        ShortWaveConfig.playPauseButton:SetSize(30, 30)
-        ShortWaveConfig.playPauseButton:SetPoint("RIGHT", ShortWaveConfig.previousButton, 30, 0)
-        ShortWaveConfig.playPauseButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
-        ShortWaveConfig.playPauseButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
-        ShortWaveConfig.playPauseButton:SetCheckedTexture("Interface/Timemanager/PauseButton")
-        ShortWaveConfig.playPauseButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
-        ShortWaveConfig.playPauseButton:Disable()
-        ShortWaveConfig.playPauseButton:SetScript("OnClick", playButton)
+        ShortWavePlayer.playPauseButton = CreateFrame("CheckButton", nil, ShortWavePlayer.topBar)
+        ShortWavePlayer.playPauseButton:SetSize(30, 30)
+        ShortWavePlayer.playPauseButton:SetPoint("RIGHT", ShortWavePlayer.previousButton, 30, 0)
+        ShortWavePlayer.playPauseButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
+        ShortWavePlayer.playPauseButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
+        ShortWavePlayer.playPauseButton:SetCheckedTexture("Interface/Timemanager/PauseButton")
+        ShortWavePlayer.playPauseButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
+        ShortWavePlayer.playPauseButton:Disable()
+        ShortWavePlayer.playPauseButton:SetScript("OnClick", playButton)
 
-        ShortWaveConfig.nextButton = CreateFrame("Button", nil, ShortWaveConfig.topBar)
-        ShortWaveConfig.nextButton:SetSize(30, 30)
-        ShortWaveConfig.nextButton:SetPoint("TOPLEFT", ShortWaveConfig.playPauseButton, 30, 0)
-        ShortWaveConfig.nextButton:SetNormalTexture("Interface/Timemanager/FFButton")
-        ShortWaveConfig.nextButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
-        ShortWaveConfig.nextButton:SetScript("OnClick", onNextClick)
-        ShortWaveConfig.nextButton.disabledTexture = ShortWaveConfig.nextButton:CreateTexture(
+        ShortWavePlayer.nextButton = CreateFrame("Button", nil, ShortWavePlayer.topBar)
+        ShortWavePlayer.nextButton:SetSize(30, 30)
+        ShortWavePlayer.nextButton:SetPoint("TOPLEFT", ShortWavePlayer.playPauseButton, 30, 0)
+        ShortWavePlayer.nextButton:SetNormalTexture("Interface/Timemanager/FFButton")
+        ShortWavePlayer.nextButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
+        ShortWavePlayer.nextButton:SetScript("OnClick", onNextClick)
+        ShortWavePlayer.nextButton.disabledTexture = ShortWavePlayer.nextButton:CreateTexture(
             "DisabledTexture")
-        ShortWaveConfig.nextButton.disabledTexture:SetAllPoints(ShortWaveConfig.nextButton)
-        ShortWaveConfig.nextButton.disabledTexture:SetTexture("Interface/Timemanager/FFButton")
-        ShortWaveConfig.nextButton.disabledTexture:SetDesaturated(true)
-        ShortWaveConfig.nextButton.disabledTexture:SetVertexColor(0.6, 0.6, 0.6, 1)
-        ShortWaveConfig.nextButton:SetDisabledTexture(ShortWaveConfig.nextButton.disabledTexture)
-        ShortWaveConfig.nextButton:Disable()
+        ShortWavePlayer.nextButton.disabledTexture:SetAllPoints(ShortWavePlayer.nextButton)
+        ShortWavePlayer.nextButton.disabledTexture:SetTexture("Interface/Timemanager/FFButton")
+        ShortWavePlayer.nextButton.disabledTexture:SetDesaturated(true)
+        ShortWavePlayer.nextButton.disabledTexture:SetVertexColor(0.6, 0.6, 0.6, 1)
+        ShortWavePlayer.nextButton:SetDisabledTexture(ShortWavePlayer.nextButton.disabledTexture)
+        ShortWavePlayer.nextButton:Disable()
 
-        ShortWaveConfig.blueTexture = ShortWaveConfig.topBar:CreateTexture("BlueTexture")
-        ShortWaveConfig.blueTexture:SetSize(startingWidth - 176, 30)
-        ShortWaveConfig.blueTexture:SetPoint("TOPLEFT", ShortWaveConfig.nextButton, 30, 0)
+        ShortWavePlayer.blueTexture = ShortWavePlayer.topBar:CreateTexture("BlueTexture")
+        ShortWavePlayer.blueTexture:SetSize(startingWidth - 176, 30)
+        ShortWavePlayer.blueTexture:SetPoint("TOPLEFT", ShortWavePlayer.nextButton, 30, 0)
 
         function PlayerWindow:SetColor(color)
             if color == "red" then
-                ShortWaveConfig.blueTexture:SetTexture("interface/addons/ShortWave/assets/red.png")
+                ShortWavePlayer.blueTexture:SetTexture("interface/addons/ShortWave/assets/red.png")
             elseif color == "green" then
-                ShortWaveConfig.blueTexture:SetTexture("interface/addons/ShortWave/assets/green.png")
+                ShortWavePlayer.blueTexture:SetTexture("interface/addons/ShortWave/assets/green.png")
             elseif color == "blue" then
-                ShortWaveConfig.blueTexture:SetTexture("interface/addons/ShortWave/assets/blue.png")
+                ShortWavePlayer.blueTexture:SetTexture("interface/addons/ShortWave/assets/blue.png")
             end
         end
 
         PlayerWindow:SetColor(core.Channel.colorMatch[core.Channel.channelIndex[core.Channel.currentChannel]] or "blue")
 
-        ShortWaveConfig.currentlyPlaying = ShortWaveConfig.topBar:CreateFontString("CurrentlyPlayingText")
-        ShortWaveConfig.currentlyPlaying:SetFontObject("GameFontHighlight")
-        ShortWaveConfig.currentlyPlaying:SetPoint("LEFT", ShortWaveConfig.blueTexture, "LEFT", 4, 0)
-        ShortWaveConfig.currentlyPlaying:SetPoint("RIGHT", ShortWaveConfig.blueTexture, "RIGHT", -4, 0)
-        ShortWaveConfig.currentlyPlaying:SetText("No music playing")
+        ShortWavePlayer.currentlyPlaying = ShortWavePlayer.topBar:CreateFontString("CurrentlyPlayingText")
+        ShortWavePlayer.currentlyPlaying:SetFontObject("GameFontHighlight")
+        ShortWavePlayer.currentlyPlaying:SetPoint("LEFT", ShortWavePlayer.blueTexture, "LEFT", 4, 0)
+        ShortWavePlayer.currentlyPlaying:SetPoint("RIGHT", ShortWavePlayer.blueTexture, "RIGHT", -4, 0)
+        ShortWavePlayer.currentlyPlaying:SetText("No music playing")
 
         function PlayerWindow:SetDefaultText(text)
             local texts = core.Channel.defaultText;
@@ -218,7 +217,7 @@ function PlayerWindow:CreateWindow()
             end
             local textAlreadySet = true
             for _, t in ipairs(texts) do
-                if t == ShortWaveConfig.currentlyPlaying:GetText() then
+                if t == ShortWavePlayer.currentlyPlaying:GetText() then
                     textAlreadySet = false
                     break
                 end
@@ -226,48 +225,48 @@ function PlayerWindow:CreateWindow()
             if textAlreadySet then
                 return
             end
-            ShortWaveConfig.currentlyPlaying:SetText(text)
+            ShortWavePlayer.currentlyPlaying:SetText(text)
         end
 
         core.PlayerWindow:SetDefaultText(core.Channel.defaultText
             [core.Channel.channelIndex[core.Channel.currentChannel]] or
             "No sound playing")
 
-        ShortWaveConfig.blueTexture:SetScript("OnEnter", function()
-            if ShortWaveConfig.currentlyPlaying:GetUnboundedStringWidth() > ShortWaveConfig.currentlyPlaying:GetWidth() then
-                GameTooltip:SetOwner(ShortWaveConfig, "ANCHOR_CURSOR")
-                GameTooltip:SetText(ShortWaveConfig.currentlyPlaying:GetText(), 1, 1, 1, true)
+        ShortWavePlayer.blueTexture:SetScript("OnEnter", function()
+            if ShortWavePlayer.currentlyPlaying:GetUnboundedStringWidth() > ShortWavePlayer.currentlyPlaying:GetWidth() then
+                GameTooltip:SetOwner(ShortWavePlayer, "ANCHOR_CURSOR")
+                GameTooltip:SetText(ShortWavePlayer.currentlyPlaying:GetText(), 1, 1, 1, true)
                 GameTooltip:Show()
             end
         end)
 
-        ShortWaveConfig.blueTexture:SetScript("OnLeave", function()
+        ShortWavePlayer.blueTexture:SetScript("OnLeave", function()
             GameTooltip:Hide()
         end)
 
-        ShortWaveConfig.minMax = CreateFrame("CheckButton", nil, ShortWaveConfig.topBar)
-        ShortWaveConfig.minMax:SetSize(24, 24)
-        ShortWaveConfig.minMax:SetPoint("RIGHT", ShortWaveConfig.blueTexture, 29, 0)
-        ShortWaveConfig.minMax:SetScript("OnClick", onMinMaxClick)
-        ShortWaveConfig.minMax:SetChecked(ShortWaveVariables.IsShown)
+        ShortWavePlayer.minMax = CreateFrame("CheckButton", nil, ShortWavePlayer.topBar)
+        ShortWavePlayer.minMax:SetSize(24, 24)
+        ShortWavePlayer.minMax:SetPoint("RIGHT", ShortWavePlayer.blueTexture, 29, 0)
+        ShortWavePlayer.minMax:SetScript("OnClick", onMinMaxClick)
+        ShortWavePlayer.minMax:SetChecked(ShortWaveVariables.IsShown)
 
-        ShortWaveConfig.minusTexture = ShortWaveConfig.minMax:CreateTexture("MinusTexture")
-        ShortWaveConfig.minusTexture:SetSize(24, 24)
-        ShortWaveConfig.minusTexture:SetPoint("CENTER", ShortWaveConfig.minMax, "CENTER", -2, 0)
-        ShortWaveConfig.minusTexture:SetTexture("Interface/Options/OptionsExpandListButton")
-        ShortWaveConfig.minusTexture:SetTexCoord(0.234375, 0.46875, 0.4296875, 0.6484375)
-        ShortWaveConfig.minusTexture:SetRotation(math.pi)
+        ShortWavePlayer.minusTexture = ShortWavePlayer.minMax:CreateTexture("MinusTexture")
+        ShortWavePlayer.minusTexture:SetSize(24, 24)
+        ShortWavePlayer.minusTexture:SetPoint("CENTER", ShortWavePlayer.minMax, "CENTER", -2, 0)
+        ShortWavePlayer.minusTexture:SetTexture("Interface/Options/OptionsExpandListButton")
+        ShortWavePlayer.minusTexture:SetTexCoord(0.234375, 0.46875, 0.4296875, 0.6484375)
+        ShortWavePlayer.minusTexture:SetRotation(math.pi)
 
-        ShortWaveConfig.plusTexture = ShortWaveConfig.minMax:CreateTexture("PlusTexture")
-        ShortWaveConfig.plusTexture:SetSize(24, 24)
-        ShortWaveConfig.plusTexture:SetPoint("CENTER", ShortWaveConfig.minMax, "CENTER", -2, 0)
-        ShortWaveConfig.plusTexture:SetTexture("Interface/Options/OptionsExpandListButton")
-        ShortWaveConfig.plusTexture:SetTexCoord(0, 0.234375, 0.4296875, 0.6484375)
-        ShortWaveConfig.plusTexture:SetRotation(math.pi)
+        ShortWavePlayer.plusTexture = ShortWavePlayer.minMax:CreateTexture("PlusTexture")
+        ShortWavePlayer.plusTexture:SetSize(24, 24)
+        ShortWavePlayer.plusTexture:SetPoint("CENTER", ShortWavePlayer.minMax, "CENTER", -2, 0)
+        ShortWavePlayer.plusTexture:SetTexture("Interface/Options/OptionsExpandListButton")
+        ShortWavePlayer.plusTexture:SetTexCoord(0, 0.234375, 0.4296875, 0.6484375)
+        ShortWavePlayer.plusTexture:SetRotation(math.pi)
 
-        ShortWaveConfig.minMax:SetNormalTexture(ShortWaveConfig.plusTexture)
-        ShortWaveConfig.minMax:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
-        ShortWaveConfig.minMax:SetCheckedTexture(ShortWaveConfig.minusTexture)
+        ShortWavePlayer.minMax:SetNormalTexture(ShortWavePlayer.plusTexture)
+        ShortWavePlayer.minMax:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
+        ShortWavePlayer.minMax:SetCheckedTexture(ShortWavePlayer.minusTexture)
     end
 
     if ShortWaveVariables.IsShown == nil then
@@ -277,9 +276,9 @@ function PlayerWindow:CreateWindow()
     createTopBar()
 
     local function createTopTabBars()
-        ShortWaveConfig.tabBars = CreateFrame("Frame", nil, ShortWaveConfig)
-        ShortWaveConfig.tabBars:SetSize(startingWidth - 20, 40)
-        ShortWaveConfig.tabBars:SetPoint("TOPLEFT", ShortWaveConfig, 10, -51)
+        ShortWavePlayer.tabBars = CreateFrame("Frame", nil, ShortWavePlayer)
+        ShortWavePlayer.tabBars:SetSize(startingWidth - 20, 40)
+        ShortWavePlayer.tabBars:SetPoint("TOPLEFT", ShortWavePlayer, 10, -51)
 
         local function setTabSizes(self)
             self.Middle:SetTexCoord(0, 1, 1, 0)
@@ -309,19 +308,19 @@ function PlayerWindow:CreateWindow()
         local function selectTab(self)
             ShortWaveVariables.selectedTab = self:GetName()
             local otherTab
-            if self == ShortWaveConfig.playlistTab then
-                otherTab = ShortWaveConfig.searchTab
-                if not ShortWaveConfig.playlistTab.body then
-                    ShortWaveConfig.playlistTab.body = core.Playlist:CreateBody(startingWidth - 6, maxHeight - 102)
-                    ShortWaveConfig.playlistTab.body:SetParent(ShortWaveConfig.body)
-                    ShortWaveConfig.playlistTab.body:SetPoint("TOPLEFT", ShortWaveConfig, "TOPLEFT", 3, -96)
+            if self == ShortWavePlayer.playlistTab then
+                otherTab = ShortWavePlayer.searchTab
+                if not ShortWavePlayer.playlistTab.body then
+                    ShortWavePlayer.playlistTab.body = core.Playlist:CreateBody(startingWidth - 6, maxHeight - 100)
+                    ShortWavePlayer.playlistTab.body:SetParent(ShortWavePlayer.body)
+                    ShortWavePlayer.playlistTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 3, -96)
                 end
             else
-                otherTab = ShortWaveConfig.playlistTab
-                if not ShortWaveConfig.searchTab.body then
-                    ShortWaveConfig.searchTab.body = core.Search:CreateBody(startingWidth - 6, maxHeight - 102)
-                    ShortWaveConfig.searchTab.body:SetParent(ShortWaveConfig.body)
-                    ShortWaveConfig.searchTab.body:SetPoint("TOPLEFT", ShortWaveConfig, "TOPLEFT", 3, -96)
+                otherTab = ShortWavePlayer.playlistTab
+                if not ShortWavePlayer.searchTab.body then
+                    ShortWavePlayer.searchTab.body = core.Search:CreateBody(startingWidth - 6, maxHeight - 100)
+                    ShortWavePlayer.searchTab.body:SetParent(ShortWavePlayer.body)
+                    ShortWavePlayer.searchTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 3, -96)
                 end
                 core.Search:RefreshSearchBody()
             end
@@ -335,36 +334,36 @@ function PlayerWindow:CreateWindow()
             self.body:Show()
         end
 
-        ShortWaveConfig.playlistTab = CreateFrame("Button", "playlist", ShortWaveConfig.tabBars,
+        ShortWavePlayer.playlistTab = CreateFrame("Button", "playlist", ShortWavePlayer.tabBars,
             "PanelTabButtonTemplate")
-        ShortWaveConfig.playlistTab:SetPoint("BOTTOMLEFT", ShortWaveConfig.tabBars, "BOTTOMLEFT", 0, -6)
-        ShortWaveConfig.playlistTab:SetSize(100, 26)
-        ShortWaveConfig.playlistTab.Text:SetText("Playlists")
-        ShortWaveConfig.playlistTab.Text:SetJustifyV("TOP")
-        ShortWaveConfig.playlistTab:SetScript("OnClick", selectTab)
-        setTabSizes(ShortWaveConfig.playlistTab)
+        ShortWavePlayer.playlistTab:SetPoint("BOTTOMLEFT", ShortWavePlayer.tabBars, "BOTTOMLEFT", 0, -6)
+        ShortWavePlayer.playlistTab:SetSize(100, 26)
+        ShortWavePlayer.playlistTab.Text:SetText("Playlists")
+        ShortWavePlayer.playlistTab.Text:SetJustifyV("TOP")
+        ShortWavePlayer.playlistTab:SetScript("OnClick", selectTab)
+        setTabSizes(ShortWavePlayer.playlistTab)
 
-        ShortWaveConfig.searchTab = CreateFrame("Button", "search", ShortWaveConfig.tabBars,
+        ShortWavePlayer.searchTab = CreateFrame("Button", "search", ShortWavePlayer.tabBars,
             "PanelTabButtonTemplate")
-        ShortWaveConfig.searchTab:SetPoint("LEFT", ShortWaveConfig.playlistTab, "RIGHT", 10, 0)
-        ShortWaveConfig.searchTab:SetSize(100, 26)
-        ShortWaveConfig.searchTab.Text:SetText("Search")
-        ShortWaveConfig.searchTab.Text:SetJustifyV("TOP")
-        ShortWaveConfig.searchTab:SetScript("OnClick", selectTab)
-        setTabSizes(ShortWaveConfig.searchTab)
+        ShortWavePlayer.searchTab:SetPoint("LEFT", ShortWavePlayer.playlistTab, "RIGHT", 10, 0)
+        ShortWavePlayer.searchTab:SetSize(100, 26)
+        ShortWavePlayer.searchTab.Text:SetText("Search")
+        ShortWavePlayer.searchTab.Text:SetJustifyV("TOP")
+        ShortWavePlayer.searchTab:SetScript("OnClick", selectTab)
+        setTabSizes(ShortWavePlayer.searchTab)
 
-        ShortWaveConfig.body = CreateFrame("Frame", nil, ShortWaveConfig)
+        ShortWavePlayer.body = CreateFrame("Frame", nil, ShortWavePlayer)
 
-        selectTab(ShortWaveVariables.selectedTab == ShortWaveConfig.searchTab:GetName() and ShortWaveConfig.searchTab or
-            ShortWaveConfig.playlistTab)
+        selectTab(ShortWaveVariables.selectedTab == ShortWavePlayer.searchTab:GetName() and ShortWavePlayer.searchTab or
+            ShortWavePlayer.playlistTab)
     end
 
     createTopTabBars()
 
     local function createChannelTabs()
-        ShortWaveConfig.channelTabs = CreateFrame("Frame", nil, ShortWaveConfig)
-        ShortWaveConfig.channelTabs:SetSize(startingWidth - 20, 40)
-        ShortWaveConfig.channelTabs:SetPoint("BOTTOMLEFT", ShortWaveConfig, 10, -20)
+        ShortWavePlayer.channelTabs = CreateFrame("Frame", nil, ShortWavePlayer)
+        ShortWavePlayer.channelTabs:SetSize(startingWidth - 20, 40)
+        ShortWavePlayer.channelTabs:SetPoint("BOTTOMLEFT", ShortWavePlayer, 10, -20)
 
         local function setTabSizes(self)
             self.Middle:SetSize(26, 26)
@@ -401,7 +400,7 @@ function PlayerWindow:CreateWindow()
 
         local lastFrame = nil
         for _, channel in ipairs(core.Channel.channels) do
-            local tab = CreateFrame("Button", channel, ShortWaveConfig.channelTabs,
+            local tab = CreateFrame("Button", channel, ShortWavePlayer.channelTabs,
                 "PanelTabButtonTemplate")
             tab:SetSize(100, 26)
             tab.Text:SetText(channel)
@@ -413,7 +412,7 @@ function PlayerWindow:CreateWindow()
             if lastFrame then
                 tab:SetPoint("LEFT", lastFrame, "RIGHT", 10, 0)
             else
-                tab:SetPoint("BOTTOMLEFT", ShortWaveConfig.channelTabs, "BOTTOMLEFT", 0, -6)
+                tab:SetPoint("BOTTOMLEFT", ShortWavePlayer.channelTabs, "BOTTOMLEFT", 0, -6)
             end
             lastFrame = tab
             table.insert(tabs, tab)
@@ -428,6 +427,6 @@ function PlayerWindow:CreateWindow()
 
     PlayerLeaderCheck()
 
-    ShortWaveConfig:Hide()
-    return ShortWaveConfig
+    ShortWavePlayer:Hide()
+    return ShortWavePlayer
 end
