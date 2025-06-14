@@ -1,7 +1,7 @@
 ## Interface: 110107, 110105
 ## Title: Shortwave
 ## Author: gooby.space
-## Version: 1.0.0
+## Version: @project-version@
 ## Notes: Create playlists and play music, ambience and sound effects to your whole group! Type /shortwave for commands.
 ## SavedVariables: ShortWaveVariables
 

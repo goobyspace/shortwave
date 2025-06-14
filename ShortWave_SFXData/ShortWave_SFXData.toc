@@ -1,7 +1,7 @@
 ## Interface: 110105
 ## Title: Shortwave SFX Data
 ## Author: gooby.space
-## Version: 1.0
+## Version: @project-version@
 ## Notes: SFX Data for the Shortwave addon
 
 ## Group: ShortWave

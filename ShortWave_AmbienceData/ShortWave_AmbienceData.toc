@@ -1,7 +1,7 @@
 ## Interface: 110105
 ## Title: Shortwave Ambience Data
 ## Author: gooby.space
-## Version: 1.0
+## Version: @project-version@
 ## Notes: Ambience Data for the Shortwave addon
 
 ## Group: ShortWave
