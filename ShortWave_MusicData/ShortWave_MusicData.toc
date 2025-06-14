@@ -1,11 +1,17 @@
 ## Interface: 110105
-## Category: Roleplay
 ## Title: Shortwave Music Data
-## Group: ShortWave
+## Author: gooby.space
 ## Version: 1.0
 ## Notes: Music Data for the Shortwave addon
-## Author: gooby.space
+
+## Group: ShortWave
+## Category: Roleplay
 ## IconTexture: Interface\Icons\INV_Misc_PunchCards_Blue
+
 ## LoadOnDemand: 1
 ## Dependencies: ShortWave
+
+## X-Curse-Project-ID: 1286759
+## X-Wago-ID: qKQxok6x
+
 musicdata.lua

@@ -1,0 +1,17 @@
+package-as: ShortWave
+enable-nolib-creation: no
+
+ignore:
+    index.js
+    package.json
+    README.md
+
+externals:
+    ShortWave/libs/LibDataBroker-1.1: https://github.com/tekkub/libdatabroker-1-1
+    ShortWave/libs/LibDBIcon-1.0: https://repos.curseforge.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
+
+move-folders:
+    ShortWave/ShortWave: ShortWave
+    ShortWave/ShortWave_MusicData: ShortWave_MusicData
+    ShortWave/ShortWave_AmbienceData: ShortWave_AmbienceData
+    ShortWave/ShortWave_SFXData: ShortWave_SFXData
