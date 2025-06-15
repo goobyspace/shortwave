@@ -112,7 +112,7 @@ function Search:ClearSearchBody()
     if AddFrame then
         AddFrame:Hide()
     end
-    if not body or ShortWaveVariables.selectedTab ~= "search" then
+    if not body or ShortWaveVariables.selectedtab[core.Channel.currentChannel] ~= "search" then
         return
     end
     Search:WipeSearchbar()

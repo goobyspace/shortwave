@@ -52,9 +52,10 @@ local PlayerLeaderCheck = function()
 end
 
 function PlayerWindow:RefreshTabs()
-    if ShortWaveVariables.selectedTab == "playlist" then
+    PlayerWindow:SelectTabByName(ShortWaveVariables.selectedtab[core.Channel.currentChannel])
+    if ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "playlist" then
         core.Playlist:RefreshPlaylists()
-    elseif ShortWaveVariables.selectedTab == "search" then
+    elseif ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "search" then
         core.Search:RefreshSearchBody()
     end
 end
@@ -77,9 +78,9 @@ function PlayerWindow:CreateWindow()
         core.PlayerWindow.window = CreateFrame("Frame", "ShortWaveUIFrame", UIParent, "PortraitFrameBaseTemplate")
         ShortWavePlayer = core.PlayerWindow.window
         ShortWavePlayer:SetSize(startingWidth, startingHeight)
-        ShortWavePlayer:SetPoint("TOPLEFT", UIParent, ShortWaveVariables.point or "TOPLEFT",
-            ShortWaveVariables.xOfs or 50,
-            ShortWaveVariables.yOfs or 120)
+        ShortWavePlayer:SetPoint("TOPLEFT", UIParent, ShortWaveVariables.point or "CENTER",
+            ShortWaveVariables.xOfs or 0,
+            ShortWaveVariables.yOfs or 0)
         SetMovable(ShortWavePlayer)
 
         -- title
@@ -371,6 +372,10 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.tabBars:SetSize(startingWidth - 20, 40)
         ShortWavePlayer.tabBars:SetPoint("TOPLEFT", ShortWavePlayer, 6, -51)
 
+        if not ShortWaveVariables.selectedtab then
+            ShortWaveVariables.selectedtab = {}
+        end
+
         local function setTabSizes(self)
             self.Middle:SetTexCoord(0, 1, 1, 0)
             self.Middle:SetSize(26, 26)
@@ -397,7 +402,7 @@ function PlayerWindow:CreateWindow()
         end
 
         local function selectTab(self)
-            ShortWaveVariables.selectedTab = self:GetName()
+            ShortWaveVariables.selectedtab[core.Channel.currentChannel] = self:GetName()
             local otherTab
             if self == ShortWavePlayer.playlistTab then
                 otherTab = ShortWavePlayer.searchTab
@@ -423,6 +428,14 @@ function PlayerWindow:CreateWindow()
                 otherTab.body:Hide()
             end
             self.body:Show()
+        end
+
+        function PlayerWindow:SelectTabByName(name)
+            if ShortWavePlayer.searchTab:GetName() == name then
+                selectTab(ShortWavePlayer.searchTab)
+            else
+                selectTab(ShortWavePlayer.playlistTab)
+            end
         end
 
         ShortWavePlayer.playlistTab = CreateFrame("Button", "playlist", ShortWavePlayer.tabBars,
@@ -456,7 +469,8 @@ function PlayerWindow:CreateWindow()
 
         ShortWavePlayer.body = CreateFrame("Frame", nil, ShortWavePlayer)
 
-        selectTab(ShortWaveVariables.selectedTab == ShortWavePlayer.searchTab:GetName() and ShortWavePlayer.searchTab or
+        selectTab(ShortWaveVariables.selectedtab[core.Channel.currentChannel] == ShortWavePlayer.searchTab:GetName() and
+            ShortWavePlayer.searchTab or
             ShortWavePlayer.playlistTab)
     end
 
