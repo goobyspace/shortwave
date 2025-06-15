@@ -180,13 +180,21 @@ function Player:PlaySong(id, name, localChannel)
     currentlyPlaying[localChannel] = soundHandle
     currentText[localChannel] = name
 
-    core.Broadcast:BroadcastAudio("play", id, name, localChannel)
-
     if localChannel == core.Channel.currentChannel then
         core.PlayerWindow.window.playPauseButton:Enable()
         core.PlayerWindow.window.playPauseButton:SetChecked(willPlay)
         UpdateText()
     end
+end
+
+function Player:PlaySongFromBroadcast(id, name, localChannel)
+    -- this is essentially just PlaySongSingle, but done so that a broadcast doesnt trigger another broadcast
+    core.PlayerWindow.window.previousButton:Disable()
+    core.PlayerWindow.window.nextButton:Disable()
+    currentPlaylist[localChannel] = nil
+    currentPlaylistIndex[localChannel] = 1
+
+    Player:PlaySong(id, name, localChannel)
 end
 
 function Player:PlaySongSingle(id, name, localChannel)
@@ -198,6 +206,8 @@ function Player:PlaySongSingle(id, name, localChannel)
     currentPlaylist[localChannel] = nil
     currentPlaylistIndex[localChannel] = 1
 
+    -- They have to be here rather than in playsong to ensure that the broadcast doesnt trigger another broadcast
+    core.Broadcast:BroadcastAudio("play", id, name, localChannel)
     Player:PlaySong(id, name, localChannel)
 end
 
@@ -211,6 +221,8 @@ function Player:PlayNextSongInPlaylist(localChannel)
     local currentSong = currentPlaylist[localChannel].songs
         [currentPlaylistIndex[localChannel]]
 
+    -- They have to be here rather than in playsong to ensure that the broadcast doesnt trigger another broadcast
+    core.Broadcast:BroadcastAudio("play", currentSong.id, currentSong.name, localChannel)
     Player:PlaySong(currentSong.id, currentSong.name, localChannel)
 end
 

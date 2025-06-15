@@ -5,12 +5,13 @@
 ## Notes: Create playlists and play music, ambience and sound effects to your whole group! Type /shortwave for commands.
 ## SavedVariables: ShortWaveVariables
 
-## IconTexture: Interface\Icons\INV_111_StatSoundWaveEmitter_Gallywix
 ## Group: ShortWave
 ## Category: Roleplay
+## IconTexture: Interface\Icons\INV_111_StatSoundWaveEmitter_Gallywix
 
 ## X-Curse-Project-ID: 1286759
 ## X-Wago-ID: qKQxok6x
+## X-WoWI-ID: 26937
 
 # Libraries
 libs/LibDataBroker-1.1/LibDataBroker-1.1.lua

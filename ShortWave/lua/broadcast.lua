@@ -66,7 +66,7 @@ eventFrame:SetScript("OnEvent", function(_, _, prefix, message, _, sender)
         local type, id, name, channel = strsplit(":", message)
         if type and id and name and channel and ShortWaveVariables.listening[channel] then
             if type == "play" then
-                core.Player:PlaySongSingle(id, name, channel)
+                core.Player:PlaySongFromBroadcast(id, name, channel)
             elseif type == "pause" then
                 core.Player:StopMusicOnChannel(channel)
             end

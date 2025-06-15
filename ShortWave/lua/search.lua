@@ -89,7 +89,7 @@ local function SetCoreSwitchButtons()
     if expand then
         body.ScrollBox:SetSize(body.ScrollBox:GetWidth(), body:GetHeight() - 64)
         body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -54)
-        body.SearchBar:SetPoint("TOP", body, "TOP", 2, -28)
+        body.SearchBar:SetPoint("TOP", body, "TOP", 2, -26)
         body.CategoryButtons:Show()
     else
         body.ScrollBox:SetSize(body.ScrollBox:GetWidth(), body:GetHeight() - 34)
