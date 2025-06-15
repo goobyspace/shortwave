@@ -10,6 +10,7 @@ Player.currentPlaylistIndex = {}
 Player.currentlyPlaying = {}
 Player.currentSoloIndex = {}
 Player.currentId = {}
+local firstFrame = {}
 local currentName = {}
 local currentText = {}
 
@@ -47,6 +48,25 @@ function Player:UpdatePlayer()
     end
 end
 
+local function ZeroFrameAudio(localChannel)
+    -- stop EVERYTHING on this channel
+    Player.UpdateFrame[localChannel]:SetScript("OnUpdate", nil)
+    Player.currentlyPlaying[localChannel] = nil
+    Player.currentId[localChannel] = nil
+    Player.currentPlaylist[localChannel] = nil
+    Player.currentPlaylistIndex[localChannel] = 1
+    Player.currentSoloIndex[localChannel] = nil
+    currentName[localChannel] = nil
+    currentText[localChannel] = "No audio for ID"
+    UpdateText()
+    core.PlayerWindow:RefreshTabs()
+    core.PlayerWindow.window.playPauseButton:SetChecked(false)
+    core.PlayerWindow.window.playPauseButton:Disable()
+    core.PlayerWindow.window.previousButton:Disable()
+    core.PlayerWindow.window.nextButton:Disable()
+end
+
+
 local function LoopCurrentlyPlaying(self)
     local localChannel
     for playerCore, frame in pairs(Player.UpdateFrame) do
@@ -57,6 +77,10 @@ local function LoopCurrentlyPlaying(self)
     if Player.currentlyPlaying[localChannel] and Player.currentPlaylist[localChannel] then
         local isPlaying = C_Sound.IsPlaying(Player.currentlyPlaying[localChannel])
         if not isPlaying then
+            if firstFrame[localChannel] then
+                ZeroFrameAudio(localChannel)
+                return
+            end
             Player.currentPlaylistIndex[localChannel] = Player.currentPlaylistIndex[localChannel] + 1
             if Player.currentPlaylistIndex[localChannel] > #Player.currentPlaylist[localChannel].songs then
                 Player.currentPlaylistIndex[localChannel] = 1
@@ -66,6 +90,10 @@ local function LoopCurrentlyPlaying(self)
     elseif Player.currentlyPlaying[localChannel] and core.Channel.LoopType[core.Channel.channelIndex[localChannel]] then
         local isPlaying = C_Sound.IsPlaying(Player.currentlyPlaying[localChannel])
         if not isPlaying then
+            if firstFrame[localChannel] then
+                ZeroFrameAudio(localChannel)
+                return
+            end
             if Player.currentId[localChannel] and currentName[localChannel] then
                 Player:PlaySongSingle(Player.currentId[localChannel], currentName[localChannel], localChannel)
             end
@@ -73,19 +101,17 @@ local function LoopCurrentlyPlaying(self)
     elseif Player.currentlyPlaying[localChannel] and not core.Channel.LoopType[core.Channel.channelIndex[localChannel]] then
         local isPlaying = C_Sound.IsPlaying(Player.currentlyPlaying[localChannel])
         if not isPlaying then
-            core.PlayerWindow.window.playPauseButton:SetChecked(false)
-            core.PlayerWindow.window.playPauseButton:Disable()
-            Player.currentlyPlaying[localChannel] = nil
-            Player.currentId[localChannel] = nil
-            currentName[localChannel] = nil
-            currentText[localChannel] = core.Channel.defaultText
-                [core.Channel.channelIndex[localChannel]] or "No sound playing"
-            UpdateText()
+            if firstFrame[localChannel] then
+                ZeroFrameAudio(localChannel)
+                return
+            end
+            Player:PauseSong()
             self:SetScript("OnUpdate", nil)
         end
     else
         self:SetScript("OnUpdate", nil)
     end
+    firstFrame[localChannel] = false
 end
 
 local function EmptyPlaylist()
@@ -182,6 +208,7 @@ function Player:PlaySong(id, name, localChannel)
     SetCVar("Sound_EnableMusic", "0")
 
     Player.UpdateFrame[localChannel]:SetScript("OnUpdate", LoopCurrentlyPlaying)
+    firstFrame[localChannel] = true
     local willPlay, soundHandle = PlaySoundFile(id, "Master")
     Player.currentlyPlaying[localChannel] = soundHandle
     currentText[localChannel] = name

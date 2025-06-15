@@ -1,28 +1,6 @@
 local _, core = ...
 
-local shortwaveLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Shortwave", {
-    type = "data source",
-    text = "Shortwave",
-    icon = "Interface\\Icons\\INV_111_StatSoundWaveEmitter_Blackwater",
-    OnClick = function(_, e)
-        if (e == "RightButton") then
-            ShortWaveVariables.minimap.hide = true
-            core.Icon:Hide("Shortwave")
-        else
-            core.PlayerWindow:Toggle()
-        end
-    end,
-    OnEnter = function()
-        GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-        GameTooltip:SetText(
-            "|cffffd100Shortwave!|r\n|cff00cc66Left-Click|r to toggle the audio player. \n|cff00cc66Right-Click|r to hide the minimap icon.",
-            1, 1, 1)
-        GameTooltip:Show()
-    end,
-    OnLeave = function()
-        GameTooltip:Hide()
-    end
-})
+
 
 if not ShortWaveGlobalData then
     -- this object is populated by the data addons
@@ -42,8 +20,8 @@ function core:OnLoadHandler(_, name)
         ShortWaveVariables.minimap = { hide = false }
     end
 
-    core.Icon = LibStub("LibDBIcon-1.0")
-    core.Icon:Register("Shortwave", shortwaveLDB, ShortWaveVariables.minimap)
+    core.Minimap:CreatIcon()
+    core.Settings:Initialize()
 
     SLASH_ShortWaveShort1 = "/SW"
     SlashCmdList.ShortWaveShort = core.SlashCommandHandler

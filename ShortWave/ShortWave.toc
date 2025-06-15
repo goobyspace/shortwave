@@ -23,15 +23,17 @@ xml/playlist.xml
 xml/tooltipplaylist.xml
 
 # Main lua
-lua/broadcast.lua
-lua/dataloader.lua
-lua/playlist.lua
-lua/channel.lua
-lua/search.lua
-lua/player.lua
-lua/playerwindow.lua
-lua/commands.lua
-lua/utils.lua
+lua/resources/dataloader.lua
+lua/resources/utils.lua
+lua/core/broadcast.lua
+lua/core/channel.lua
+lua/core/player.lua
+lua/player/playlist.lua
+lua/player/search.lua
+lua/player/playerwindow.lua
+lua/addon/minimap.lua
+lua/addon/settings.lua
+lua/addon/commands.lua
 
 # Init
 init.lua
