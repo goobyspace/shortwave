@@ -98,29 +98,31 @@
                 <DisabledTexture file="Interface\Buttons\UI-SquareButton-Up" desaturated="true" />
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
-            <Button parentKey="SoloPlayButton">
+            <Button parentKey="LoopButton">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="RIGHT" x="-44"/>
                 </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="LoopIcon" file="Interface\Glues\CharacterSelect\CharacterUndelete" rotation="180">
-                            <Anchors>
-                                <Anchor point="CENTER"/>
-                            </Anchors>
-                            <Size x="24" y="24"/>
-                        </Texture>
-                        <Texture parentKey="SoundIcon" file="Interface\Common\VOICECHAT-SPEAKER">
-                            <Anchors>
-                                <Anchor point="CENTER" x="2"/>
-                            </Anchors>
-                            <Size x="16" y="16"/>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <NormalTexture file="Interface\Buttons\UI-SquareButton-Up"/>
-				<PushedTexture file="Interface\Buttons\UI-SquareButton-Down"/>
+                <NormalTexture file="interface/addons/ShortWave/assets/loopbutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/loopbutton-down.png"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+            <Button parentKey="SinglePlayButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="RIGHT" x="-44"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/playbutton-once-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/playbutton-once-down.png"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+            <Button parentKey="StopSpecialButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="RIGHT" x="-44"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/stopbutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/stopbutton-down.png"/>
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
 			<Button parentKey="PlayButton">
@@ -132,23 +134,22 @@
 				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
+            <Button parentKey="StopButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="RIGHT" x="-24"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/stopbutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/stopbutton-down.png"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
             <Button parentKey="DeleteButton">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="RIGHT" x="-4"/>
                 </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture file="Interface\Buttons\UI-GroupLoot-Pass-Up" >
-                            <Anchors>
-                                <Anchor point="CENTER"/>
-                            </Anchors>
-                            <Size x="12" y="12"/>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <NormalTexture file="Interface\Buttons\UI-SquareButton-Up"/>
-				<PushedTexture file="Interface\Buttons\UI-SquareButton-Down"/>
+                <NormalTexture file="interface/addons/ShortWave/assets/deletebutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/deletebutton-down.png"/>
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
 		</Frames>

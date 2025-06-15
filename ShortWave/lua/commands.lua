@@ -15,12 +15,16 @@ core.commands = {
             core.Icon:Show("Shortwave")
         end
     end,
+    ["debug"] = function()
+        ShortWaveVariables.Debug = not ShortWaveVariables.Debug or true
+        print("Shortwave debug mode is now " .. (ShortWaveVariables.Debug and "on" or "off"))
+    end,
     ["vars"] = function()
         print("Current variables:")
         DevTools_Dump(ShortWaveVariables)
         print("--------------------------")
     end,
-    ["dumpcore"] = function()
+    ["core"] = function()
         print("Current core:")
         DevTools_Dump(core)
         print("--------------------------")

@@ -40,6 +40,15 @@
 				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
+            <Button parentKey="StopButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="RIGHT" x="-24"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/stopbutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/stopbutton-down.png"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
             <Button parentKey="PlaylistButton" text="Add">
                 <Size x="24" y="24"/>
                 <Layers>

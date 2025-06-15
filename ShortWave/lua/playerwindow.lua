@@ -51,6 +51,14 @@ local PlayerLeaderCheck = function()
     end
 end
 
+function PlayerWindow:RefreshTabs()
+    if ShortWaveVariables.selectedTab == "playlist" then
+        core.Playlist:RefreshPlaylists()
+    elseif ShortWaveVariables.selectedTab == "search" then
+        core.Search:RefreshSearchBody()
+    end
+end
+
 local groupFrame = CreateFrame("Frame")
 groupFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 groupFrame:SetScript("OnEvent", PlayerLeaderCheck)
@@ -185,7 +193,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.playPauseButton:SetPoint("RIGHT", ShortWavePlayer.previousButton, 30, 0)
         ShortWavePlayer.playPauseButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
         ShortWavePlayer.playPauseButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
-        ShortWavePlayer.playPauseButton:SetCheckedTexture("Interface/Timemanager/PauseButton")
+        ShortWavePlayer.playPauseButton:SetCheckedTexture("interface/addons/ShortWave/assets/stopbutton-up.png")
         ShortWavePlayer.playPauseButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
         ShortWavePlayer.playPauseButton:Disable()
         ShortWavePlayer.playPauseButton:SetScript("OnClick", playButton)
@@ -405,7 +413,7 @@ function PlayerWindow:CreateWindow()
                     ShortWavePlayer.searchTab.body:SetParent(ShortWavePlayer.body)
                     ShortWavePlayer.searchTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 3, -96)
                 end
-                core.Search:RefreshSearchBody()
+                core.Search:ClearSearchBody()
             end
             PanelTemplates_SelectTab(self)
             PanelTemplates_DeselectTab(otherTab)
@@ -434,6 +442,17 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.searchTab.Text:SetJustifyV("TOP")
         ShortWavePlayer.searchTab:SetScript("OnClick", selectTab)
         setTabSizes(ShortWavePlayer.searchTab)
+
+        ShortWavePlayer.settingsTab = CreateFrame("Button", "search", ShortWavePlayer.tabBars,
+            "PanelTabButtonTemplate")
+        ShortWavePlayer.settingsTab:SetPoint("BOTTOMRIGHT", ShortWavePlayer.tabBars, "BOTTOMRIGHT", 0, -6)
+        ShortWavePlayer.settingsTab:SetSize(100, 26)
+        ShortWavePlayer.settingsTab.Text:SetText("Settings")
+        ShortWavePlayer.settingsTab.Text:SetHeight(1)
+        ShortWavePlayer.settingsTab.Text:SetJustifyV("TOP")
+        ShortWavePlayer.settingsTab:SetScript("OnClick", function() print("open settings here") end)
+        setTabSizes(ShortWavePlayer.settingsTab)
+        PanelTemplates_DeselectTab(ShortWavePlayer.settingsTab)
 
         ShortWavePlayer.body = CreateFrame("Frame", nil, ShortWavePlayer)
 

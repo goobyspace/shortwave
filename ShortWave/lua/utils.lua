@@ -1,7 +1,7 @@
 local _, core = ...;
-core.utils = {};
+core.Utils = {};
 
-core.utils.filter = function(arr, func)
+core.Utils.filter = function(arr, func)
     local new_index = 1
     local newArray = {}
     for old_index, v in ipairs(arr) do
@@ -13,11 +13,26 @@ core.utils.filter = function(arr, func)
     return newArray
 end
 
-core.utils.contains = function(arr, value)
+core.Utils.contains = function(arr, value)
     for _, v in ipairs(arr) do
         if v == value then
             return true
         end
     end
     return false
+end
+
+core.Utils.createGameTooltip = function(frame, text)
+    if not frame then
+        return
+    end
+    frame:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(text, 1, 1, 1)
+        GameTooltip:Show()
+    end)
+
+    frame:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
 end

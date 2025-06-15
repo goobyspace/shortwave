@@ -9,11 +9,15 @@ local function FlattenPlaylists()
     if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
         return flattenedArray
     end
-    for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
+    for playlistIndex, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
+        local isPlaylistPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel] and
+            core.Player.currentPlaylist[core.Channel.currentChannel] and
+            core.Player.currentPlaylist[core.Channel.currentChannel].name == playlist.name
         local playlistData = {
             name = playlist.name,
             type = "playlist",
             songs = playlist.songs,
+            playing = isPlaylistPlaying,
             collapsed = playlist.collapsed
         }
         table.insert(flattenedArray, playlistData)
@@ -24,6 +28,12 @@ local function FlattenPlaylists()
                     path = song.path,
                     id = song.id,
                     index = index,
+                    playing = isPlaylistPlaying and
+                        core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
+                    soloPlaying = core.Player.currentSoloIndex and
+                        core.Player.currentSoloIndex[core.Channel.currentChannel] and
+                        core.Player.currentSoloIndex[core.Channel.currentChannel].songIndex == index and
+                        core.Player.currentSoloIndex[core.Channel.currentChannel].playlistIndex == playlistIndex,
                     playlistName = playlist.name,
                     type = "song"
                 }
@@ -169,6 +179,18 @@ local function CreateScrollView(body, width, height)
             frame.ColorHeaderBackground:Show()
         end
 
+        if data.playing then
+            frame.PlayButton:Hide()
+            frame.StopButton:Show()
+        else
+            frame.PlayButton:Show()
+            frame.StopButton:Hide()
+        end
+
+        frame.StopButton:SetScript("OnClick", function()
+            core.Player:PauseSong()
+        end)
+
         if data.type == "song" then
             if playlistIndex % 2 == 0 then
                 frame.BlackBackground:Show()
@@ -177,15 +199,25 @@ local function CreateScrollView(body, width, height)
             end
             frame.ColorHeaderBackground:Hide()
             frame.BlackHeaderBackground:Hide()
-            frame.SoloPlayButton:Show()
 
-            if core.Channel.LoopType[core.Channel.channelIndex[core.Channel.currentChannel]] then
-                frame.SoloPlayButton.LoopIcon:Show()
-                frame.SoloPlayButton.SoundIcon:Hide()
+            if data.soloPlaying then
+                frame.SinglePlayButton:Hide()
+                frame.LoopButton:Hide()
+                frame.StopSpecialButton:Show()
             else
-                frame.SoloPlayButton.LoopIcon:Hide()
-                frame.SoloPlayButton.SoundIcon:Show()
+                if core.Channel.LoopType[core.Channel.channelIndex[core.Channel.currentChannel]] then
+                    frame.LoopButton:Show()
+                    core.Utils.createGameTooltip(frame.LoopButton, "Loop Sound")
+                    frame.SinglePlayButton:Hide()
+                else
+                    frame.LoopButton:Hide()
+                    core.Utils.createGameTooltip(frame.SinglePlayButton, "Play Sound Once")
+                    frame.SinglePlayButton:Show()
+                end
+                frame.StopSpecialButton:Hide()
             end
+
+
 
             frame.MoveUpButton:Show()
             frame.MoveDownButton:Show()
@@ -214,8 +246,14 @@ local function CreateScrollView(body, width, height)
                 core.Player:SetPlaylist(playlist)
                 core.Player:SetPlaylistIndex(data.index)
             end)
-            frame.SoloPlayButton:SetScript("OnClick", function()
-                core.Player:PlaySongSingle(data.id, data.name)
+            frame.SinglePlayButton:SetScript("OnClick", function()
+                core.Player:PlaySongSingle(data.id, data.name, nil, playlistIndex, data.index)
+            end)
+            frame.LoopButton:SetScript("OnClick", function()
+                core.Player:PlaySongSingle(data.id, data.name, nil, playlistIndex, data.index)
+            end)
+            frame.StopSpecialButton:SetScript("OnClick", function()
+                core.Player:PauseSong()
             end)
             frame.MoveUpButton:SetScript("OnClick", function()
                 ChangeDirection(true, data)
@@ -231,7 +269,9 @@ local function CreateScrollView(body, width, height)
             end
             frame.ColorBackground:Hide()
             frame.BlackBackground:Hide()
-            frame.SoloPlayButton:Hide()
+            frame.LoopButton:Hide()
+            frame.SinglePlayButton:Hide()
+            frame.StopSpecialButton:Hide()
             frame.MoveUpButton:Hide()
             frame.MoveDownButton:Hide()
             frame.MinMaxButton:Show()
@@ -279,7 +319,7 @@ function Playlist:NewPlaylist(name)
 
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == name then
-            print("Playlist with this name already exists")
+            print("|cff0070ddShortwave: Playlist with this name already exists")
             return
         end
     end
@@ -356,6 +396,7 @@ function Playlist:CreateBody(width, height)
     body.PlaylistName = CreateFrame("EditBox", "PlaylistName", body, "SearchBoxTemplate");
     body.PlaylistName:SetSize(width - 100, 30);
     body.PlaylistName:SetPoint("LEFT", body.minMax, "RIGHT", 6, 0);
+    body.PlaylistName:SetMaxLetters(28);
     body.PlaylistName.Instructions:SetText("Enter playlist name");
     body.PlaylistName.searchIcon:SetTexture("Interface/BUTTONS/UI-GuildButton-PublicNote-Up")
     body.PlaylistName.searchIcon:SetDesaturated(true)

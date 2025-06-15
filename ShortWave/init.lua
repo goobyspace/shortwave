@@ -38,8 +38,6 @@ function core:OnLoadHandler(_, name)
     core.Channel:OnLoad()
     core.Broadcast:Setup()
 
-    core.Debug = false
-
     if not ShortWaveVariables.minimap then
         ShortWaveVariables.minimap = { hide = false }
     end
@@ -54,6 +52,10 @@ function core:OnLoadHandler(_, name)
 
     SLASH_RELOADUI1 = "/rl" -- For quicker reloading whilst debugging
     SlashCmdList.RELOADUI = ReloadUI
+
+    if ShortWaveVariables.Debug then
+        core.PlayerWindow:Toggle()
+    end
 end
 
 local events = CreateFrame("Frame")

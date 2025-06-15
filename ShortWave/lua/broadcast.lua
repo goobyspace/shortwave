@@ -39,7 +39,7 @@ function Broadcast:BroadcastAudio(type, id, name, channel)
         print(
             "|cff0070ddIf you have your master volume set to 0, the blizzard API tells the addon that the sound instantly finished, which will cause it to go through the playlist instantly and also overload the broadcast.")
     end
-    if core.Debug then
+    if ShortWaveVariables.Debug then
         print("Broadcasting audio:")
         print("Message: " .. message)
         print("Channel: " .. channel)
@@ -55,7 +55,7 @@ eventFrame:SetScript("OnEvent", function(_, _, prefix, message, _, sender)
         return
     end
 
-    if core.Debug then
+    if ShortWaveVariables.Debug then
         print("Received addon message:")
         print("Prefix: " .. prefix)
         print("Message: " .. message)

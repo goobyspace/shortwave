@@ -8,6 +8,8 @@ local AddFrameScrollView
 local selectedSong = nil
 local body
 
+local searchTable = nil
+
 local function OpenAddFrame()
     local uiScale, x, y = UIParent:GetEffectiveScale(), GetCursorPosition()
     AddFrame:ClearAllPoints()
@@ -100,6 +102,13 @@ local function SetCoreSwitchButtons()
 end
 
 function Search:RefreshSearchBody()
+    if ScrollView then
+        local DataProvider = CreateDataProvider(searchTable)
+        ScrollView:SetDataProvider(DataProvider)
+    end
+end
+
+function Search:ClearSearchBody()
     if AddFrame then
         AddFrame:Hide()
     end
@@ -109,11 +118,8 @@ function Search:RefreshSearchBody()
     Search:WipeSearchbar()
     SelectCore()
     SetCoreSwitchButtons()
-    if not ScrollView then
-        return
-    end
-    local DataProvider = CreateDataProvider(GetSearchList())
-    ScrollView:SetDataProvider(DataProvider)
+    searchTable = GetSearchList()
+    Search:RefreshSearchBody()
 end
 
 function Search:SetErrorText(text)
@@ -161,12 +167,24 @@ local function CreateScrollView(width, height)
             frame.ColorBackground:Show()
             frame.BlackBackground:Hide()
         end
+
         frame.Text:SetText(data.name)
+
+        if core.Player.currentlyPlaying[core.Channel.currentChannel] and core.Player.currentId[core.Channel.currentChannel] == data.id and core.Player.currentSoloIndex[core.Channel.currentChannel] == nil and core.Player.currentPlaylist[core.Channel.currentChannel] == nil then
+            frame.PlayButton:Hide()
+            frame.StopButton:Show()
+        else
+            frame.PlayButton:Show()
+            frame.StopButton:Hide()
+        end
         frame.PlayButton:SetScript("OnClick", function()
             -- Play the sound when the frame is clicked
             if data.id then
                 core.Player:PlaySongSingle(data.id, data.name)
             end
+        end)
+        frame.StopButton:SetScript("OnClick", function()
+            core.Player:PauseSong()
         end)
         frame.PlaylistButton:SetScript("OnClick", function()
             OpenAddFrame()
@@ -212,25 +230,24 @@ function Search:CreateBody(width, height)
         if searchText and searchText ~= "" then
             local filteredData
             if ShortWaveVariables.selectedCore[core.Channel.currentChannel] == "creature" then
-                filteredData = core.utils.filter(GetSearchList(),
+                filteredData = core.Utils.filter(GetSearchList(),
                     function(_, index)
                         return string.find(string.lower(ShortWaveGlobalData.creaturePath[index]),
                             string.lower(searchText), 1,
                             true) ~= nil or ShortWaveGlobalData.creatureId[index] == searchText;
                     end);
             else
-                filteredData = core.utils.filter(GetSearchList(),
+                filteredData = core.Utils.filter(GetSearchList(),
                     function(file)
                         return string.find(string.lower(file.path), string.lower(searchText), 1,
                             true) ~= nil or file.id == searchText;
                     end);
             end
 
-
-            local DataProvider = CreateDataProvider(filteredData)
-            ScrollView:SetDataProvider(DataProvider)
-        elseif searchText == "" then
+            searchTable = filteredData
             Search:RefreshSearchBody()
+        elseif searchText == "" then
+            Search:ClearSearchBody()
         end
         body.SearchBar:ClearFocus();
     end);
@@ -277,7 +294,7 @@ function Search:CreateBody(width, height)
                 PanelTemplates_SelectTab(tab)
                 tab.Text:SetHeight(20)
                 ShortWaveVariables.selectedCore[core.Channel.channels[3]] = tabName
-                Search:RefreshSearchBody()
+                Search:ClearSearchBody()
             else
                 PanelTemplates_DeselectTab(tab)
                 tab.Text:SetHeight(1)

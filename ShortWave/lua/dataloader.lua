@@ -4,11 +4,11 @@ local DataLoader = core.DataLoader
 
 function DataLoader:GetData(dataToGet)
     local AddonToLoad = ""
-    if core.utils.contains(core.Channel.searchData[core.Channel.channels[1]], dataToGet) then
+    if core.Utils.contains(core.Channel.searchData[core.Channel.channels[1]], dataToGet) then
         AddonToLoad = "ShortWave_MusicData"
-    elseif core.utils.contains(core.Channel.searchData[core.Channel.channels[2]], dataToGet) then
+    elseif core.Utils.contains(core.Channel.searchData[core.Channel.channels[2]], dataToGet) then
         AddonToLoad = "ShortWave_AmbienceData"
-    elseif core.utils.contains(core.Channel.searchData[core.Channel.channels[3]], dataToGet) then
+    elseif core.Utils.contains(core.Channel.searchData[core.Channel.channels[3]], dataToGet) then
         AddonToLoad = "ShortWave_SFXData"
     else
         return {}
