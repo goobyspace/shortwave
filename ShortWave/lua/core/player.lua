@@ -163,7 +163,6 @@ function Player:SetPlaylistIndex(index)
 end
 
 function Player:StopMusicOnChannel(localChannel)
-    Player.currentSoloIndex[localChannel] = nil
     if Player.currentlyPlaying[localChannel] then
         StopSound(Player.currentlyPlaying[localChannel])
         Player.currentlyPlaying[localChannel] = nil
@@ -189,8 +188,12 @@ function Player:ResumeSong()
     if Player.currentPlaylist[core.Channel.currentChannel] then
         Player:PlayNextSongInPlaylist(core.Channel.currentChannel)
     elseif Player.currentId[core.Channel.currentChannel] and currentName[core.Channel.currentChannel] then
+        local playlistIndex = Player.currentSoloIndex[core.Channel.currentChannel] and
+            Player.currentSoloIndex[core.Channel.currentChannel].playlistIndex
+        local songIndex = Player.currentSoloIndex[core.Channel.currentChannel] and
+            Player.currentSoloIndex[core.Channel.currentChannel].songIndex
         Player:PlaySongSingle(Player.currentId[core.Channel.currentChannel], currentName[core.Channel.currentChannel],
-            core.Channel.currentChannel)
+            core.Channel.currentChannel, playlistIndex, songIndex)
     end
 end
 

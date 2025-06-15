@@ -30,7 +30,8 @@ local function FlattenPlaylists()
                     index = index,
                     playing = isPlaylistPlaying and
                         core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
-                    soloPlaying = core.Player.currentSoloIndex and
+                    soloPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel]
+                        and core.Player.currentSoloIndex and
                         core.Player.currentSoloIndex[core.Channel.currentChannel] and
                         core.Player.currentSoloIndex[core.Channel.currentChannel].songIndex == index and
                         core.Player.currentSoloIndex[core.Channel.currentChannel].playlistIndex == playlistIndex,
