@@ -5,11 +5,12 @@ local Search = core.Search
 local ScrollView = nil
 local AddFrame
 local AddFrameScrollView
-local selectedSong = nil
+local selectedSound = nil
 local body
 
 local searchTable = nil
 
+-- this opens the add frame with a list of playlists to add the clicked sound to
 local function OpenAddFrame()
     local uiScale, x, y = UIParent:GetEffectiveScale(), GetCursorPosition()
     AddFrame:ClearAllPoints()
@@ -20,6 +21,7 @@ local function OpenAddFrame()
     AddFrame:Show()
 end
 
+-- this creates the scroll view for the add frame
 local function CreateTooltipScrollView(body, width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
@@ -48,9 +50,9 @@ local function CreateTooltipScrollView(body, width, height)
         frame.Text:SetText(data.name)
 
         frame:SetScript("OnClick", function()
-            if selectedSong then
-                core.Playlist:AddSong(data.name, selectedSong)
-                selectedSong = nil
+            if selectedSound then
+                core.Playlist:AddSound(data.name, selectedSound)
+                selectedSound = nil
                 AddFrame:Hide()
             end
         end)
@@ -63,11 +65,13 @@ local function CreateTooltipScrollView(body, width, height)
     return body.ScrollBox, body.ScrollBar
 end
 
+-- this gets a fresh search list from the data loader, which in turn will load the addon for that data
 local function GetSearchList()
     local searchList = core.DataLoader:GetData(ShortWaveVariables.selectedCore[core.Channel.currentChannel])
     return searchList or {}
 end
 
+-- change core depending on the selected tab
 local function SelectCore()
     if not ShortWaveVariables.selectedCore then
         ShortWaveVariables.selectedCore = {}
@@ -84,6 +88,7 @@ local function SelectCore()
     end
 end
 
+-- show or hide the core switch buttons and adjust the scroll box size to fit them
 local function SetCoreSwitchButtons()
     local searchData = core.Channel.searchData[core.Channel.currentChannel] or {}
     local expand = #searchData > 1
@@ -101,6 +106,7 @@ local function SetCoreSwitchButtons()
     end
 end
 
+-- create a new data provider with the selected search table & refresh the scroll view
 function Search:RefreshSearchBody()
     if ScrollView then
         local DataProvider = CreateDataProvider(searchTable)
@@ -108,6 +114,7 @@ function Search:RefreshSearchBody()
     end
 end
 
+-- wipe the search bar and reset the scroll view with normal data
 function Search:ClearSearchBody()
     if AddFrame then
         AddFrame:Hide()
@@ -122,6 +129,7 @@ function Search:ClearSearchBody()
     Search:RefreshSearchBody()
 end
 
+-- sets any error text in the search body, in case an addon is disabled or otherwise won't load
 function Search:SetErrorText(text)
     if not body or not body.ErrorText then
         return
@@ -134,6 +142,8 @@ function Search:SetErrorText(text)
     end
 end
 
+-- creates the main scroll view for the search body
+-- the initializer functin inside sets all the important information for each sound
 local function CreateScrollView(width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
@@ -148,6 +158,8 @@ local function CreateScrollView(width, height)
 
     local function Initializer(frame, data)
         local index = frame:GetOrderIndex()
+
+        -- exception for the creature data, which has an entirely different structure
         if ShortWaveVariables.selectedCore[core.Channel.currentChannel] == "creature" then
             local creatureData = {
                 name = ShortWaveGlobalData.creatureName[data] or "",
@@ -170,6 +182,7 @@ local function CreateScrollView(width, height)
 
         frame.Text:SetText(data.name)
 
+        -- play/pause buttons incase you played a sound from here
         if core.Player.currentlyPlaying[core.Channel.currentChannel] and core.Player.currentId[core.Channel.currentChannel] == data.id and core.Player.currentSoloIndex[core.Channel.currentChannel] == nil and core.Player.currentPlaylist[core.Channel.currentChannel] == nil then
             frame.PlayButton:Hide()
             frame.StopButton:Show()
@@ -180,17 +193,18 @@ local function CreateScrollView(width, height)
         frame.PlayButton:SetScript("OnClick", function()
             -- Play the sound when the frame is clicked
             if data.id then
-                core.Player:PlaySongSingle(data.id, data.name)
+                core.Player:PlaySoundSingle(data.id, data.name)
             end
         end)
         frame.StopButton:SetScript("OnClick", function()
-            core.Player:PauseSong()
+            core.Player:PauseSound()
         end)
         frame.PlaylistButton:SetScript("OnClick", function()
             OpenAddFrame()
-            selectedSong = data
+            selectedSound = data
         end)
 
+        -- if the name is too long, we show a tooltip on hover
         frame:SetScript("OnEnter", function()
             if frame.Text:GetUnboundedStringWidth() > frame.Text:GetWidth() then
                 GameTooltip:SetOwner(frame, "ANCHOR_CURSOR")
@@ -203,11 +217,12 @@ local function CreateScrollView(width, height)
             GameTooltip:Hide()
         end)
     end
-    ScrollView:SetElementInitializer("SongFrameTemplate", Initializer)
+    ScrollView:SetElementInitializer("SearchSoundTemplate", Initializer)
 
     return body.ScrollBox, body.ScrollBar
 end
 
+-- create the main search tab body
 function Search:CreateBody(width, height)
     body = CreateFrame("Frame", "SearchBody", nil, "InsetFrameTemplate");
     body:SetSize(width, height);
@@ -222,6 +237,8 @@ function Search:CreateBody(width, height)
     body.SearchBar = CreateFrame("EditBox", "SearchBar", body, "SearchBoxTemplate")
     body.SearchBar:SetSize(width - 20, 30);
     body.SearchBar:SetPoint("TOP", body, "TOP", 2, -2)
+
+    -- filter function
     body.SearchBar:SetScript("OnEnterPressed", function()
         local searchText = body.SearchBar:GetText();
         if not ScrollView then
@@ -229,6 +246,8 @@ function Search:CreateBody(width, height)
         end
         if searchText and searchText ~= "" then
             local filteredData
+            -- like with everything, we have an exception for the creature data which has a different structure
+            -- we also let people search directly for the sound ID, which is useful if you've found a sound on wowhead or other database sites
             if ShortWaveVariables.selectedCore[core.Channel.currentChannel] == "creature" then
                 filteredData = core.Utils.filter(GetSearchList(),
                     function(_, index)

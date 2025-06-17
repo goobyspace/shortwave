@@ -1,12 +1,11 @@
--------------------------------
--- Namespaces & Variables
--------------------------------
 local _, core = ...
 core.PlayerWindow = {}
 local PlayerWindow = core.PlayerWindow
 local ShortWavePlayer
 -------------------------------
 
+-- If the window isn't already created, create it
+-- Else, show it
 function PlayerWindow:Toggle()
     local menu = ShortWavePlayer or PlayerWindow:CreateWindow()
     menu:SetShown(not menu:IsShown())
@@ -29,11 +28,14 @@ local SetMovable = function(f)
     f:SetUserPlaced(true);
 end
 
+-- Check if the player is the leader and updates a lil cosmetic crown icon
+-- This is seperate so that it can be called on event updates
 local PlayerLeaderCheck = function()
     local isLeader = core.Broadcast:IsLeader("player")
-    if core.isLeader ~= isLeader then
+    if core.isLeader ~= isLeader then -- only update if the leader status has changed
         core.isLeader = isLeader
         if PlayerWindow.window then
+            -- create the crown icon if it doesnt already exist
             if not PlayerWindow.window.crown then
                 PlayerWindow.window.crown = CreateFrame("Frame", "CrownContainer", PlayerWindow.window)
                 PlayerWindow.window.crown:SetSize(24, 24)
@@ -43,20 +45,10 @@ local PlayerLeaderCheck = function()
                 PlayerWindow.window.CrownTexture:SetAllPoints(PlayerWindow.window.crown)
                 PlayerWindow.window.CrownTexture:SetRotation(math.pi / 5.5)
                 PlayerWindow.window.CrownTexture:SetTexture("Interface/GroupFrame/UI-Group-LeaderIcon")
-                PlayerWindow.window.crown:SetShown(isLeader)
-            else
-                PlayerWindow.window.crown:SetShown(isLeader)
             end
+            -- then toggle it
+            PlayerWindow.window.crown:SetShown(isLeader)
         end
-    end
-end
-
-function PlayerWindow:RefreshTabs()
-    PlayerWindow:SelectTabByName(ShortWaveVariables.selectedtab[core.Channel.currentChannel])
-    if ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "playlist" then
-        core.Playlist:RefreshPlaylists()
-    elseif ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "search" then
-        core.Search:RefreshSearchBody()
     end
 end
 
@@ -64,11 +56,24 @@ local groupFrame = CreateFrame("Frame")
 groupFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 groupFrame:SetScript("OnEvent", PlayerLeaderCheck)
 
+-- this function refreshes the tabs based on the currently selected channel
+-- so that when you switch channels, the tabs are updated to the correct state
+-- this is mostly done so you can avoid loading the creatures
+function PlayerWindow:RefreshTabs()
+    PlayerWindow:SelectTabByName(ShortWaveVariables.selectedtab[core.Channel.currentChannel])
+    if ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "playlist" then
+        core.Playlist:RefreshPlaylists()
+    elseif ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "search" then
+        core.Search:ClearSearchBody()
+    end
+end
+
 function PlayerWindow:CreateWindow()
     local startingWidth = 310
     local startingHeight = 74
     local maxHeight = 380
 
+    -- slightly misleading name, this checks if the player is expanded or not
     if ShortWaveVariables.IsShown == nil then
         ShortWaveVariables.IsShown = true
     end
@@ -78,6 +83,7 @@ function PlayerWindow:CreateWindow()
         core.PlayerWindow.window = CreateFrame("Frame", "ShortWaveUIFrame", UIParent, "PortraitFrameBaseTemplate")
         ShortWavePlayer = core.PlayerWindow.window
         ShortWavePlayer:SetSize(startingWidth, startingHeight)
+        -- if it has not yet been created, put it in the center of the screen
         ShortWavePlayer:SetPoint("TOPLEFT", UIParent, ShortWaveVariables.point or "CENTER",
             ShortWaveVariables.xOfs or 0,
             ShortWaveVariables.yOfs or 0)
@@ -89,6 +95,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.title:SetPoint("CENTER")
         ShortWavePlayer.title:SetText("Shortwave Player")
 
+        -- close button
         ShortWavePlayer.closeButton = CreateFrame("Button", nil,
             ShortWavePlayer, "UIPanelCloseButton")
         ShortWavePlayer.closeButton:SetPoint("TOPRIGHT", ShortWavePlayer, "TOPRIGHT", -1, -2)
@@ -103,6 +110,8 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.circularIcon:SetPoint("CENTER", 24, -22)
         ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_VentureCo")
 
+        -- this function sets the icon based on the current channel
+        -- its also called in set channel
         function core.PlayerWindow:SetIcon()
             if core.Channel.channels[3] == core.Channel.currentChannel then
                 ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_VentureCo")
@@ -123,30 +132,36 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.circularIcon:AddMaskTexture(ShortWavePlayer.circularIcon.mask)
     end
 
+    -- the top player bar
     do
+        -- the play button is a check button
         local function playButton(self)
             if self:GetChecked() then
-                core.Player:ResumeSong()
+                core.Player:ResumeSound()
             else
-                core.Player:PauseSong()
+                core.Player:PauseSound()
             end
         end
 
+        -- this function is called in other files to set the text of the currently playing sound, or any error messages
         function PlayerWindow:SetText(text)
             ShortWavePlayer.currentlyPlaying:SetText(text)
         end
 
+        -- go back in playlist
         local function onPreviousClick()
-            core.Player:PreviousSongInPlaylist()
+            core.Player:PreviousSoundInPlaylist()
         end
 
+        -- go forward in playlist
         local function onNextClick()
-            core.Player:NextSongInPlaylist()
+            core.Player:NextSoundInPlaylist()
         end
 
         local topBarHeight = 48
         local topBarExpandedHeight = 74
 
+        -- expand the player window, the topbar height here is the texture behind the top bar
         function PlayerWindow:ToggleExpand(expanded)
             if expanded then
                 ShortWavePlayer:SetSize(startingWidth, maxHeight)
@@ -167,6 +182,7 @@ function PlayerWindow:CreateWindow()
             PlayerWindow:ToggleExpand(self:GetChecked())
         end
 
+        -- all the frame & button creations
         ShortWavePlayer.topBar = CreateFrame("Frame", nil, ShortWavePlayer)
         ShortWavePlayer.topBar:SetSize(startingWidth, topBarHeight)
         ShortWavePlayer.topBar:SetPoint("TOP", ShortWavePlayer, "TOP", 0, -22)
@@ -220,6 +236,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.playerTexture:SetSize(startingWidth - 176, 30)
         ShortWavePlayer.playerTexture:SetPoint("TOPLEFT", ShortWavePlayer.nextButton, 30, 0)
 
+        -- this function sets the icon to different coloured versions based on the channel
         function PlayerWindow:SetColor(color)
             if color == "red" then
                 ShortWavePlayer.playerTexture:SetTexture("interface/addons/ShortWave/assets/red.png")
@@ -238,6 +255,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.currentlyPlaying:SetPoint("BOTTOMRIGHT", ShortWavePlayer.playerTexture, "RIGHT", -4, -4)
         ShortWavePlayer.currentlyPlaying:SetText("No music playing")
 
+        -- this function makes sure the text is set to the default text whenever you switch channel
         function PlayerWindow:SetDefaultText(text)
             local texts = core.Channel.defaultText;
             if not texts then
@@ -260,6 +278,7 @@ function PlayerWindow:CreateWindow()
             [core.Channel.channelIndex[core.Channel.currentChannel]] or
             "No sound playing")
 
+        -- if a sound name is too long, we show a fooltip with the full name on mouseover
         ShortWavePlayer.playerTexture:SetScript("OnEnter", function()
             if ShortWavePlayer.currentlyPlaying:GetUnboundedStringWidth() > ShortWavePlayer.currentlyPlaying:GetWidth() then
                 GameTooltip:SetOwner(ShortWavePlayer, "ANCHOR_CURSOR")
@@ -307,6 +326,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.broadcastingToggle.text:SetText("Broadcasting")
         ShortWavePlayer.broadcastingToggle.HoverBackground = nil
 
+        -- broadcasting toggle, per channel basis
         function PlayerWindow:SetBroadcasting(isBroadcasting)
             if not ShortWaveVariables.broadcasting then
                 ShortWaveVariables.broadcasting = {}
@@ -342,6 +362,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.listeningToggle.text:SetText("Listening")
         ShortWavePlayer.listeningToggle.HoverBackground = nil
 
+        -- listening toggle, per channel basis
         function PlayerWindow:SetListening(isListening)
             if not ShortWaveVariables.listening then
                 ShortWaveVariables.listening = {}
@@ -367,6 +388,7 @@ function PlayerWindow:CreateWindow()
         PlayerWindow:SetListening()
     end
 
+    -- the tab bars for the playlist/search tabs
     do
         ShortWavePlayer.tabBars = CreateFrame("Frame", nil, ShortWavePlayer)
         ShortWavePlayer.tabBars:SetSize(startingWidth - 20, 40)
@@ -376,6 +398,7 @@ function PlayerWindow:CreateWindow()
             ShortWaveVariables.selectedtab = {}
         end
 
+        -- we're flipping the tab texture upside down
         local function setTabSizes(self)
             self.Middle:SetTexCoord(0, 1, 1, 0)
             self.Middle:SetSize(26, 26)
@@ -401,6 +424,7 @@ function PlayerWindow:CreateWindow()
             self.RightActive:SetSize(26, 30)
         end
 
+        -- this is just hard coded since there's only two tabs
         local function selectTab(self)
             ShortWaveVariables.selectedtab[core.Channel.currentChannel] = self:GetName()
             local otherTab
@@ -430,6 +454,7 @@ function PlayerWindow:CreateWindow()
             self.body:Show()
         end
 
+        -- alternative to the above that gets the tab by name instead of by reference
         function PlayerWindow:SelectTabByName(name)
             if ShortWavePlayer.searchTab:GetName() == name then
                 selectTab(ShortWavePlayer.searchTab)
@@ -474,6 +499,8 @@ function PlayerWindow:CreateWindow()
             ShortWavePlayer.playlistTab)
     end
 
+    -- the channel tabs at the bottom of the screen
+    -- unlike the body tabs, these are automatically generated based on the channels
     do
         ShortWavePlayer.channelTabs = CreateFrame("Frame", nil, ShortWavePlayer)
         ShortWavePlayer.channelTabs:SetSize(startingWidth - 20, 40)
@@ -537,6 +564,7 @@ function PlayerWindow:CreateWindow()
 
     PlayerWindow:ToggleExpand(ShortWaveVariables.IsShown)
 
+    -- call this on creation incase you were already a party leader
     PlayerLeaderCheck()
 
     ShortWavePlayer:Hide()

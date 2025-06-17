@@ -2,6 +2,7 @@ local _, core = ...
 core.Broadcast = {}
 local Broadcast = core.Broadcast
 
+-- check if unit is the leader or assistant of the group
 function Broadcast:IsLeader(unit)
     --there's probably a neater way to write this
     --but tldr if leader/assistant is from a different realm, we have to check with the realm name
@@ -20,11 +21,14 @@ function Broadcast:IsLeader(unit)
     return isLeader
 end
 
-function Broadcast:Setup()
+-- initialize broadcast by setting our prefix and registering it
+-- this means the addon can listen to messages with this prefix
+function Broadcast:Initialize()
     core.prefix = "Shortwave"
     C_ChatInfo.RegisterAddonMessagePrefix(core.prefix)
 end
 
+-- broadcast an audio to the group to either play or pause
 function Broadcast:BroadcastAudio(type, id, name, channel)
     if not Broadcast:IsLeader("player") or not id or not name or not channel or not ShortWaveVariables.broadcasting[channel] or id == "" or name == "" or channel == "" then
         return
@@ -47,6 +51,7 @@ function Broadcast:BroadcastAudio(type, id, name, channel)
     end
 end
 
+-- we use this frame to listen for addon messages that we registered for earlier
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 eventFrame:SetScript("OnEvent", function(_, _, prefix, message, _, sender)
@@ -62,11 +67,15 @@ eventFrame:SetScript("OnEvent", function(_, _, prefix, message, _, sender)
         print("Sender: " .. sender)
     end
 
+    -- a message looks like this: play:12345:stormwind01:music
+    -- this would play the sound 12345 with the name stormwind01 on the music channel
+    -- then if the user is listenign to the music channel, we will send the sound to be played on that channel
+
     if prefix == core.prefix then
         local type, id, name, channel = strsplit(":", message)
         if type and id and name and channel and ShortWaveVariables.listening[channel] then
             if type == "play" then
-                core.Player:PlaySongFromBroadcast(id, name, channel)
+                core.Player:PlaySoundFromBroadcast(id, name, channel)
             elseif type == "pause" then
                 core.Player:StopMusicOnChannel(channel)
             end

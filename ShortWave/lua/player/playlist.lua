@@ -4,6 +4,13 @@ local Playlist = core.Playlist
 
 local ScrollView = nil
 
+-- so the playlist function works as follows:
+-- playlists are object in the ShortWaveVariables saved variable, so that they persist
+-- playlist objects have a name & a list of sounds
+-- sounds have a name, path, & id
+-- to get a nice overview of the playlists in one scroll window
+-- we flatten the playlists into a single array, rather than having a nested structure
+-- this way we can easily display the playlists and their sounds in a single scroll view
 local function FlattenPlaylists()
     local flattenedArray = {}
     if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
@@ -16,35 +23,38 @@ local function FlattenPlaylists()
         local playlistData = {
             name = playlist.name,
             type = "playlist",
-            songs = playlist.songs,
+            sounds = playlist.sounds,
             playing = isPlaylistPlaying,
             collapsed = playlist.collapsed
         }
         table.insert(flattenedArray, playlistData)
         if not playlist.collapsed then
-            for index, song in ipairs(playlist.songs) do
-                local songData = {
-                    name = song.name,
-                    path = song.path,
-                    id = song.id,
+            for index, sound in ipairs(playlist.sounds) do
+                local soundData = {
+                    name = sound.name,
+                    path = sound.path,
+                    id = sound.id,
                     index = index,
                     playing = isPlaylistPlaying and
                         core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
                     soloPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel]
                         and core.Player.currentSoloIndex and
                         core.Player.currentSoloIndex[core.Channel.currentChannel] and
-                        core.Player.currentSoloIndex[core.Channel.currentChannel].songIndex == index and
+                        core.Player.currentSoloIndex[core.Channel.currentChannel].soundIndex == index and
                         core.Player.currentSoloIndex[core.Channel.currentChannel].playlistIndex == playlistIndex,
                     playlistName = playlist.name,
-                    type = "song"
+                    type = "sound"
                 }
-                table.insert(flattenedArray, songData)
+                table.insert(flattenedArray, soundData)
             end
         end
     end
     return flattenedArray
 end
 
+-- create a new data provider for the scroll view
+-- then set it
+-- this is faster than directly manipulating the data or the scroll view
 local function setDataProvider()
     local flattenedArray = FlattenPlaylists()
     local DataProvider = CreateDataProvider(flattenedArray)
@@ -54,20 +64,23 @@ local function setDataProvider()
     ScrollView:SetDataProvider(DataProvider)
 end
 
+-- wipe the name then go agane, used by the channel to refresh the playlists
 function Playlist:RefreshPlaylists()
     if not ScrollView then
         return;
     end
+    -- this resets the playlist name input field specifically
     Playlist:WipePlaylistName()
     setDataProvider()
 end
 
-local function deleteSongFromPlaylist(playlistName, index)
+-- delete a specific sound from a playlist, this is also part of why playlist names have to be unique
+local function deleteSoundFromPlaylist(playlistName, index)
     for i, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
-            for j, _ in ipairs(playlist.songs) do
+            for j, _ in ipairs(playlist.sounds) do
                 if j == index then
-                    table.remove(ShortWaveVariables.Playlists[core.Channel.currentChannel][i].songs, j)
+                    table.remove(ShortWaveVariables.Playlists[core.Channel.currentChannel][i].sounds, j)
                     setDataProvider()
                     return
                 end
@@ -76,6 +89,7 @@ local function deleteSongFromPlaylist(playlistName, index)
     end
 end
 
+-- delete the entire playlist
 local function deletePlaylist(playlistName)
     for i, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
@@ -86,6 +100,7 @@ local function deletePlaylist(playlistName)
     end
 end
 
+-- this sets the collapsed state of a playlist, meaning flattenPlaylists will ignore the sounds inside the playlist
 local function collapsePlaylist(collapsed, playlistName)
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
@@ -96,24 +111,26 @@ local function collapsePlaylist(collapsed, playlistName)
     end
 end
 
+-- this swaps the position of a sound in the playlist with the one above or below it, depending on the direction
+-- direction is true for up aka lowering the index, false for down aka increasing the index
 local function ChangeDirection(direction, data)
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == data.playlistName then
-            local songIndex = nil
-            for j, song in ipairs(playlist.songs) do
-                if song.id == data.id then
-                    songIndex = j
+            local soundIndex = nil
+            for j, sound in ipairs(playlist.sounds) do
+                if sound.id == data.id then
+                    soundIndex = j
                     break
                 end
             end
-            if songIndex and #playlist.songs > 1 then
+            if soundIndex and #playlist.sounds > 1 then
                 local directionNumber = direction and -1 or 1
-                if songIndex + directionNumber < 1 or songIndex + directionNumber > #playlist.songs then
+                if soundIndex + directionNumber < 1 or soundIndex + directionNumber > #playlist.sounds then
                     return
                 end
-                local temp = playlist.songs[songIndex + directionNumber]
-                playlist.songs[songIndex + directionNumber] = playlist.songs[songIndex]
-                playlist.songs[songIndex] = temp
+                local temp = playlist.sounds[soundIndex + directionNumber]
+                playlist.sounds[soundIndex + directionNumber] = playlist.sounds[soundIndex]
+                playlist.sounds[soundIndex] = temp
                 break
             end
         end
@@ -122,6 +139,8 @@ local function ChangeDirection(direction, data)
     setDataProvider()
 end
 
+-- Creates the entire scrollview
+-- the initializer function inside does all the work
 local function CreateScrollView(body, width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
@@ -136,21 +155,21 @@ local function CreateScrollView(body, width, height)
 
     function Playlist.Initializer(frame, data)
         local playlistIndex = 0
-        local firstSong = false
-        local lastSong = false
+        local firstSound = false
+        local lastSound = false
         for i = 1, #ShortWaveVariables.Playlists[core.Channel.currentChannel] do
             if data.type == "playlist" and data.name == ShortWaveVariables.Playlists[core.Channel.currentChannel][i].name then
                 playlistIndex = i
                 break
-            elseif data.type == "song" and data.playlistName == ShortWaveVariables.Playlists[core.Channel.currentChannel][i].name then
+            elseif data.type == "sound" and data.playlistName == ShortWaveVariables.Playlists[core.Channel.currentChannel][i].name then
                 playlistIndex = i
-                for j = 1, #ShortWaveVariables.Playlists[core.Channel.currentChannel][i].songs do
-                    if ShortWaveVariables.Playlists[core.Channel.currentChannel][i].songs[j].id == data.id then
+                for j = 1, #ShortWaveVariables.Playlists[core.Channel.currentChannel][i].sounds do
+                    if ShortWaveVariables.Playlists[core.Channel.currentChannel][i].sounds[j].id == data.id then
                         if j == 1 then
-                            firstSong = true
+                            firstSound = true
                         end
-                        if j == #ShortWaveVariables.Playlists[core.Channel.currentChannel][i].songs then
-                            lastSong = true
+                        if j == #ShortWaveVariables.Playlists[core.Channel.currentChannel][i].sounds then
+                            lastSound = true
                         end
                         break
                     end
@@ -168,6 +187,7 @@ local function CreateScrollView(body, width, height)
             core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].g or 0.1,
             core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].b or 0.1, 0.10)
 
+        -- Set the frame's background color based on the playlist index so that we alternate color
         if playlistIndex % 2 == 0 then
             frame.ColorBackground:Hide()
             frame.ColorHeaderBackground:Hide()
@@ -180,6 +200,8 @@ local function CreateScrollView(body, width, height)
             frame.ColorHeaderBackground:Show()
         end
 
+        -- play/pause buttons so that we can see if a sound is playing from the playlist
+        -- gives it a nice visual indicator
         if data.playing then
             frame.PlayButton:Hide()
             frame.StopButton:Show()
@@ -189,10 +211,11 @@ local function CreateScrollView(body, width, height)
         end
 
         frame.StopButton:SetScript("OnClick", function()
-            core.Player:PauseSong()
+            core.Player:PauseSound()
         end)
 
-        if data.type == "song" then
+        -- sets all the frame data depending on if its a sound or a playlist
+        if data.type == "sound" then
             if playlistIndex % 2 == 0 then
                 frame.BlackBackground:Show()
             else
@@ -223,7 +246,7 @@ local function CreateScrollView(body, width, height)
             frame.MoveUpButton:Show()
             frame.MoveDownButton:Show()
             frame.MinMaxButton:Hide()
-            if firstSong then
+            if firstSound then
                 frame.MoveUpButton:Disable()
                 frame.MoveUpButton.ArrowTexture:SetDesaturated(true)
             else
@@ -231,7 +254,7 @@ local function CreateScrollView(body, width, height)
                 frame.MoveUpButton.ArrowTexture:SetDesaturated(false)
             end
 
-            if lastSong then
+            if lastSound then
                 frame.MoveDownButton:Disable()
                 frame.MoveDownButton.ArrowTexture:SetDesaturated(true)
             else
@@ -240,7 +263,7 @@ local function CreateScrollView(body, width, height)
             end
 
             frame.DeleteButton:SetScript("OnClick", function()
-                deleteSongFromPlaylist(data.playlistName, data.index)
+                deleteSoundFromPlaylist(data.playlistName, data.index)
             end)
             frame.PlayButton:SetScript("OnClick", function()
                 local playlist = ShortWaveVariables.Playlists[core.Channel.currentChannel][playlistIndex]
@@ -248,13 +271,13 @@ local function CreateScrollView(body, width, height)
                 core.Player:SetPlaylistIndex(data.index)
             end)
             frame.SinglePlayButton:SetScript("OnClick", function()
-                core.Player:PlaySongSingle(data.id, data.name, nil, playlistIndex, data.index)
+                core.Player:PlaySoundSingle(data.id, data.name, nil, playlistIndex, data.index)
             end)
             frame.LoopButton:SetScript("OnClick", function()
-                core.Player:PlaySongSingle(data.id, data.name, nil, playlistIndex, data.index)
+                core.Player:PlaySoundSingle(data.id, data.name, nil, playlistIndex, data.index)
             end)
             frame.StopSpecialButton:SetScript("OnClick", function()
-                core.Player:PauseSong()
+                core.Player:PauseSound()
             end)
             frame.MoveUpButton:SetScript("OnClick", function()
                 ChangeDirection(true, data)
@@ -290,6 +313,7 @@ local function CreateScrollView(body, width, height)
             end)
         end
 
+        -- if the name is too long, we show a tooltip on hover
         frame:SetScript("OnEnter", function()
             if frame.Text:GetUnboundedStringWidth() > frame.Text:GetWidth() then
                 GameTooltip:SetOwner(frame, "ANCHOR_CURSOR")
@@ -313,6 +337,7 @@ local function CreateScrollView(body, width, height)
     return body.ScrollBox, body.ScrollBar
 end
 
+-- Make a new playlist and ensure the name is unique
 function Playlist:NewPlaylist(name)
     if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
         ShortWaveVariables.Playlists[core.Channel.currentChannel] = {}
@@ -328,20 +353,21 @@ function Playlist:NewPlaylist(name)
     local newPlaylist = {
         name = name,
         collapsed = false,
-        songs = {}
+        sounds = {}
     }
     table.insert(ShortWaveVariables.Playlists[core.Channel.currentChannel], newPlaylist)
     setDataProvider()
 end
 
-function Playlist:AddSong(playlistName, data)
+-- insert a sound into a playlist
+function Playlist:AddSound(playlistName, data)
     if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
         ShortWaveVariables.Playlists[core.Channel.currentChannel] = {}
     end
 
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == playlistName then
-            table.insert(playlist.songs, {
+            table.insert(playlist.sounds, {
                 name = data.name,
                 path = data.path,
                 id = data.id,
@@ -352,6 +378,7 @@ function Playlist:AddSong(playlistName, data)
     end
 end
 
+-- set all playlists to collapsed or expanded based on the checkbox state
 local function minMaxAll(self)
     local isChecked = self:GetChecked()
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
@@ -360,6 +387,7 @@ local function minMaxAll(self)
     setDataProvider()
 end
 
+-- create the playlist body, including the scrollview
 function Playlist:CreateBody(width, height)
     if not ShortWaveVariables.Playlists then
         ShortWaveVariables.Playlists = {}

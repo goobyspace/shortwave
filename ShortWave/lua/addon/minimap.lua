@@ -1,6 +1,8 @@
 local _, core = ...
 core.Minimap = {}
 
+-- we use these libraries to create the minimap icon
+-- so that other addons can actually work with our minimap icon
 local shortwaveLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Shortwave", {
     type = "data source",
     text = "Shortwave",
@@ -24,7 +26,13 @@ local shortwaveLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Shortwave", {
     end
 })
 
-function core.Minimap:CreatIcon()
+-- initialize the minimap icon
+function core.Minimap:Initialize()
+    -- variable uses a "hide" property of an object thanks to the library, can't change this
+    if not ShortWaveVariables.minimap then
+        ShortWaveVariables.minimap = { hide = false }
+    end
+
     core.Minimap.Icon = LibStub("LibDBIcon-1.0")
     core.Minimap.Icon:Register("Shortwave", shortwaveLDB, ShortWaveVariables.minimap)
     if ShortWaveVariables.minimap.hide then

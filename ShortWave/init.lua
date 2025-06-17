@@ -1,35 +1,25 @@
 local _, core = ...
 
-
-
-if not ShortWaveGlobalData then
-    -- this object is populated by the data addons
-    -- it contains the filterable data for the search function
-    -- but only if they get loaded
-    ShortWaveGlobalData = {}
-end
+-- this object is populated by the data addons
+-- it contains the filterable data for the search function
+-- but only if they get loaded
+ShortWaveGlobalData = {}
 
 function core:OnLoadHandler(_, name)
     if name ~= "ShortWave" then return end;
 
+    -- if this is a first launch create the saved variables
     if ShortWaveVariables == nil then ShortWaveVariables = {} end
-    core.Channel:OnLoad()
-    core.Broadcast:Setup()
 
-    if not ShortWaveVariables.minimap then
-        ShortWaveVariables.minimap = { hide = false }
-    end
-
-    core.Minimap:CreatIcon()
+    -- set all the initializations
+    -- few order things are important:
+    -- channel needs to go before everything else
+    -- minimap needs to go before settings & commands
+    core.Channel:Initialize()
+    core.Broadcast:Initialize()
+    core.Minimap:Initialize()
     core.Settings:Initialize()
-
-    SLASH_ShortWaveShort1 = "/SW"
-    SlashCmdList.ShortWaveShort = core.SlashCommandHandler
-    SLASH_ShortWave1 = "/ShortWave"
-    SlashCmdList.ShortWave = core.SlashCommandHandler
-
-    SLASH_RELOADUI1 = "/rl" -- For quicker reloading whilst debugging
-    SlashCmdList.RELOADUI = ReloadUI
+    core.Commands.Initialize()
 
     if ShortWaveVariables.Debug then
         core.PlayerWindow:Toggle()

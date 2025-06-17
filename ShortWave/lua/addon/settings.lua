@@ -1,6 +1,7 @@
 local _, core = ...
 core.Settings = {}
 
+-- call this on any setting changers if they need special functions to update other frames
 core.Settings.settingChangers = {
     ["minimap"] = function(value)
         if value then
@@ -17,18 +18,23 @@ core.Settings.settingChangers = {
     end,
 }
 
+-- just a wrapper for settingChangers
 local function OnSettingChanged(setting, value)
     if core.Settings.settingChangers[setting:GetVariable()] then
         core.Settings.settingChangers[setting:GetVariable()](value)
     end
 end
 
+-- create the vertical layout category and add the settings to it
 function core.Settings:Initialize()
     MyAddOn_SavedVars = {}
 
+    -- there's practically 0 documentation on this, but you can find some stuff by searching through the wow UI source
+    -- https://github.com/Gethe/wow-ui-source
     local category, layout = Settings.RegisterVerticalLayoutCategory("Shortwave")
 
     do
+        -- this creates a slightly inset button
         local initializer = CreateSettingsButtonInitializer("Reset Shortwave Player", "Reset Position", function()
             core.PlayerWindow.window:ClearAllPoints()
             core.PlayerWindow.window:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -37,6 +43,9 @@ function core.Settings:Initialize()
     end
 
     do
+        -- this creates a checkbox for the minimap icon
+        -- by default it already changes the value in the saved variables
+        -- but we still need to call the onSettingChanged function to actually update the minimap icon
         local name = "Show Minimap Icon"
         local variable = "minimap"
         local variableKey = "toggle"
@@ -53,6 +62,7 @@ function core.Settings:Initialize()
 
     Settings.RegisterAddOnCategory(category)
 
+    -- call this fucntion to open the settings page to our addon settings
     function core.Settings:OpenSettings()
         Settings.OpenToCategory(category.ID)
     end

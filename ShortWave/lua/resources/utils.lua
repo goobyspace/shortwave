@@ -1,6 +1,9 @@
 local _, core = ...;
 core.Utils = {};
 
+-- generic functions i've made in previous projects that were relevant here
+-- i should probably make a library for this at some point
+
 core.Utils.filter = function(arr, func)
     local new_index = 1
     local newArray = {}
