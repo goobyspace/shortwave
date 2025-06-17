@@ -17,7 +17,7 @@ local shortwaveLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Shortwave", {
     OnEnter = function()
         GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
         GameTooltip:SetText(
-            "|cffffd100Shortwave!|r\n|cff00cc66Left-Click|r to toggle the audio player. \n|cff00cc66Right-Click|r to open Shortwave settings.",
+            "|cffffd100Shortwave!|r\n|cff2c71f2Left-Click|r to toggle the audio player. \n|cff2c71f2Right-Click|r to open Shortwave settings.",
             1, 1, 1)
         GameTooltip:Show()
     end,

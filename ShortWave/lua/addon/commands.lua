@@ -36,10 +36,10 @@ core.Commands.commands = {
     ["help"] = function()
         print(" ")
         print("Shortwave Help")
-        print("|cff00cc66/shortwave player|r - toggle the player");
-        print("|cff00cc66/shortwave minimap|r - toggle the minimap icon");
+        print("|cff647afa/shortwave player|r - toggle the player");
+        print("|cff647afa/shortwave minimap|r - toggle the minimap icon");
 
-        print("|cff00cc66/shortwave reset|r - resets the player window position back to the center");
+        print("|cff647afa/shortwave reset|r - resets the player window position back to the center");
         print(" ")
     end
 }

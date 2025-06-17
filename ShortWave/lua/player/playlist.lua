@@ -345,7 +345,7 @@ function Playlist:NewPlaylist(name)
 
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == name then
-            print("|cff0070ddShortwave: Playlist with this name already exists")
+            print("|cffff4a4aShortwave: Playlist with this name already exists")
             return
         end
     end

@@ -434,6 +434,8 @@ function PlayerWindow:CreateWindow()
                     ShortWavePlayer.playlistTab.body = core.Playlist:CreateBody(startingWidth - 6, maxHeight - 100)
                     ShortWavePlayer.playlistTab.body:SetParent(ShortWavePlayer.body)
                     ShortWavePlayer.playlistTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 3, -96)
+                else
+                    core.Playlist:RefreshPlaylists()
                 end
             else
                 otherTab = ShortWavePlayer.playlistTab
@@ -441,8 +443,9 @@ function PlayerWindow:CreateWindow()
                     ShortWavePlayer.searchTab.body = core.Search:CreateBody(startingWidth - 6, maxHeight - 100)
                     ShortWavePlayer.searchTab.body:SetParent(ShortWavePlayer.body)
                     ShortWavePlayer.searchTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 3, -96)
+                else
+                    core.Search:ClearSearchBody()
                 end
-                core.Search:ClearSearchBody()
             end
             PanelTemplates_SelectTab(self)
             PanelTemplates_DeselectTab(otherTab)
