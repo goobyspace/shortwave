@@ -1,12 +1,11 @@
 ---
-name: Package and release
+name: Prerelease
 on:
   push:
     tags:
-      # ignore alpha and beta releases and put them in the other release workflow instead
-      - "*"
-      - "!**-alpha**"
-      - "!**-beta**"
+      # alpha and beta only, and ignore wowinterface since it doesn't support alpha/beta releases
+      - "**-alpha**"
+      - "**-beta**"
 
 jobs:
   build:
@@ -25,4 +24,3 @@ jobs:
           CF_API_KEY: ${{ secrets.CF_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_KEY }}
-          WOWI_API_TOKEN: ${{ secrets.WOWI_KEY }}
