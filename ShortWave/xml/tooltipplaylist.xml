@@ -9,7 +9,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" inherits="GameFontHighlight" wordwrap="false" justifyH="LEFT">
+                <FontString parentKey="Text" inherits="GameFontHighlightSmall" wordwrap="false" justifyH="LEFT">
                     <Anchors>
                         <Anchor point="LEFT" x="4"/>
                         <Anchor point="RIGHT" x="-4"/>

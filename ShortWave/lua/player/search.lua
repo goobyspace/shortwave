@@ -15,7 +15,14 @@ local function OpenAddFrame()
     local uiScale, x, y = UIParent:GetEffectiveScale(), GetCursorPosition()
     AddFrame:ClearAllPoints()
     AddFrame:SetPoint("TOPLEFT", nil, "BOTTOMLEFT", x / uiScale - 20, y / uiScale + 10)
-    local DataProvider = CreateDataProvider(ShortWaveVariables.Playlists[core.Channel.currentChannel])
+    local data = ShortWaveVariables.Playlists[core.Channel.currentChannel]
+    if #data == 0 then
+        AddFrame.title:SetText("No Playlists")
+    else
+        AddFrame.title:SetText("Add to Playlist")
+    end
+
+    local DataProvider = CreateDataProvider(data)
     AddFrameScrollView:SetDataProvider(DataProvider)
 
     AddFrame:Show()
@@ -25,8 +32,8 @@ end
 local function CreateTooltipScrollView(body, width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
-    body.ScrollBox:SetSize(width - 20, height - 34)
-    body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -20)
+    body.ScrollBox:SetSize(width - 18, height - 24)
+    body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -22)
     body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPRIGHT")
     body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMRIGHT")
 
@@ -352,12 +359,12 @@ function Search:CreateBody(width, height)
 
     AddFrame = CreateFrame("Frame", "AddFrame", body, "DefaultPanelTemplate")
     AddFrame:SetFrameStrata("TOOLTIP")
-    AddFrame:SetSize(100, 180);
+    AddFrame:SetSize(162, 180);
     AddFrame.title = AddFrame.TitleContainer:CreateFontString("TITLETEXT");
     AddFrame.title:SetFontObject("GameFontNormal")
     AddFrame.title:SetPoint("CENTER")
     AddFrame.title:SetText("Add to Playlist")
-    CreateTooltipScrollView(AddFrame, 100, 180)
+    CreateTooltipScrollView(AddFrame, 162, 180)
     OpenAddFrame();
     AddFrame:Hide()
 
