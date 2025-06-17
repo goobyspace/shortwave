@@ -18,7 +18,7 @@ libs/LibDataBroker-1.1/LibDataBroker-1.1.lua
 libs/LibDBIcon-1.0/lib.xml
 
 # XML
-xml/songframe.xml
+xml/search.xml
 xml/playlist.xml
 xml/tooltipplaylist.xml
 
