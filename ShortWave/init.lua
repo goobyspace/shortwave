@@ -21,6 +21,10 @@ function core:OnLoadHandler(_, name)
     core.Settings:Initialize()
     core.Commands.Initialize()
 
+    core.Version = "@project-version@"
+    core.Broadcast:SetVersionCheck("@project-version@",
+        "Shortwave: Version @project-version@ is now available! Please update to get the latest features and bug fixes.")
+
     if ShortWaveVariables.Debug then
         core.PlayerWindow:Toggle()
     end

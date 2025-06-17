@@ -1,4 +1,3 @@
-import { get } from "https"; // or 'https' for https:// URLs
 import { createWriteStream } from "fs";
 
 async function getFiles() {
@@ -79,73 +78,76 @@ async function getFiles() {
   return [music, ambience, creature, spells, character, other];
 }
 
-const fileNames = [
-  "music",
-  "ambience",
-  "creature",
-  "spells",
-  "character",
-  "other",
-];
+async function writeFiles(soundFiles) {
+  console.log("Writing files to addons");
 
-const folder = [
-  "ShortWave_MusicData",
-  "ShortWave_AmbienceData",
-  "ShortWave_SFXData",
-  "ShortWave_SFXData",
-  "ShortWave_SFXData",
-  "ShortWave_SFXData",
-];
+  const fileNames = [
+    "music",
+    "ambience",
+    "creature",
+    "spells",
+    "character",
+    "other",
+  ];
 
-const soundFiles = await getFiles();
+  const folder = [
+    "ShortWave_MusicData",
+    "ShortWave_AmbienceData",
+    "ShortWave_SFXData",
+    "ShortWave_SFXData",
+    "ShortWave_SFXData",
+    "ShortWave_SFXData",
+  ];
+  for (let i = 0; i < soundFiles.length; i++) {
+    //creature is special, it has 4 files because 1 file is too large for wow, and wow starts hitting us with a stick if we include it
+    if (fileNames[i] === "creature") {
+      const indexFilestream = createWriteStream(
+        `${folder[i]}/${fileNames[i]}index.lua`
+      );
+      indexFilestream.write(`
+  ShortWaveGlobalData.${fileNames[i]} = {
+          ${soundFiles[i].map((_, index) => ` ${index + 1}`).join(",\n ")}
+      }`);
 
-console.log("Writing files to assets folder");
-for (let i = 0; i < soundFiles.length; i++) {
-  //creature is special, it has 4 files because 1 file is too large for wow, and wow starts hitting us with a stick if we include it
-  if (fileNames[i] === "creature") {
-    const indexFilestream = createWriteStream(
-      `${folder[i]}/${fileNames[i]}index.lua`
-    );
-    indexFilestream.write(`
-ShortWaveGlobalData.${fileNames[i]} = {
-        ${soundFiles[i].map((_, index) => ` ${index + 1}`).join(",\n ")}
-    }`);
+      const idFilestream = createWriteStream(
+        `${folder[i]}/${fileNames[i]}id.lua`
+      );
+      idFilestream.write(`
+  ShortWaveGlobalData.${fileNames[i]}Id = {
+          ${soundFiles[i].map((item) => ` "${item.id}"`).join(",\n ")}
+      }`);
 
-    const idFilestream = createWriteStream(
-      `${folder[i]}/${fileNames[i]}id.lua`
-    );
-    idFilestream.write(`
-ShortWaveGlobalData.${fileNames[i]}Id = {
-        ${soundFiles[i].map((item) => ` "${item.id}"`).join(",\n ")}
-    }`);
+      const pathFilestream = createWriteStream(
+        `${folder[i]}/${fileNames[i]}path.lua`
+      );
+      pathFilestream.write(`
+  ShortWaveGlobalData.${fileNames[i]}Path = {
+          ${soundFiles[i].map((item) => `"${item.path}"`).join(",\n ")}
+      }`);
 
-    const pathFilestream = createWriteStream(
-      `${folder[i]}/${fileNames[i]}path.lua`
-    );
-    pathFilestream.write(`
-ShortWaveGlobalData.${fileNames[i]}Path = {
-        ${soundFiles[i].map((item) => `"${item.path}"`).join(",\n ")}
-    }`);
-
-    const nameFilestream = createWriteStream(
-      `${folder[i]}/${fileNames[i]}name.lua`
-    );
-    nameFilestream.write(`
-ShortWaveGlobalData.${fileNames[i]}Name = {
-        ${soundFiles[i].map((item) => `"${item.name}"`).join(",\n ")}
-    }`);
-  } else {
-    const fileStream = createWriteStream(
-      `${folder[i]}/${fileNames[i]}data.lua`
-    );
-    fileStream.write(`
-ShortWaveGlobalData.${fileNames[i]} = {
-        ${soundFiles[i]
-          .map(
-            (item) =>
-              ` { id = "${item.id}", path = "${item.path}", name = "${item.name}" }`
-          )
-          .join(",\n ")}
-    }`);
+      const nameFilestream = createWriteStream(
+        `${folder[i]}/${fileNames[i]}name.lua`
+      );
+      nameFilestream.write(`
+  ShortWaveGlobalData.${fileNames[i]}Name = {
+          ${soundFiles[i].map((item) => `"${item.name}"`).join(",\n ")}
+      }`);
+    } else {
+      const fileStream = createWriteStream(
+        `${folder[i]}/${fileNames[i]}data.lua`
+      );
+      fileStream.write(`
+  ShortWaveGlobalData.${fileNames[i]} = {
+          ${soundFiles[i]
+            .map(
+              (item) =>
+                ` { id = "${item.id}", path = "${item.path}", name = "${item.name}" }`
+            )
+            .join(",\n ")}
+      }`);
+    }
   }
 }
+
+await writeFiles(await getFiles());
+console.log("finished");

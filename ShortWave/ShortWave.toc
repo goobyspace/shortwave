@@ -9,10 +9,6 @@
 ## Category: Roleplay
 ## IconTexture: Interface\Icons\INV_111_StatSoundWaveEmitter_Gallywix
 
-## X-Curse-Project-ID: 1286759
-## X-Wago-ID: qKQxok6x
-## X-WoWI-ID: 26937
-
 # Libraries
 libs/LibDataBroker-1.1/LibDataBroker-1.1.lua
 libs/LibDBIcon-1.0/lib.xml
