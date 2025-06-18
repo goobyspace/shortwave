@@ -1,6 +1,6 @@
 
-ShortWaveGlobalData.music = {
-         { id = "53183", path = "Sound/music/CityMusic/Darnassus/Darnassus Intro", name = "Darnassus Intro" },
+  ShortWaveGlobalData.music = {
+           { id = "53183", path = "Sound/music/CityMusic/Darnassus/Darnassus Intro", name = "Darnassus Intro" },
   { id = "53184", path = "Sound/music/CityMusic/Darnassus/Darnassus Walking 1", name = "Darnassus Walking 1" },
   { id = "53185", path = "Sound/music/CityMusic/Darnassus/Darnassus Walking 2", name = "Darnassus Walking 2" },
   { id = "53186", path = "Sound/music/CityMusic/Darnassus/Darnassus Walking 3", name = "Darnassus Walking 3" },
@@ -5763,4 +5763,4 @@ ShortWaveGlobalData.music = {
   { id = "7115745", path = "sound/music/warwithin/mus_1117_scene_fwo", name = "mus_1117_scene_fwo" },
   { id = "7115747", path = "sound/music/warwithin/mus_1117_scene_mcs", name = "mus_1117_scene_mcs" },
   { id = "7115749", path = "sound/music/warwithin/mus_1117_scene_xat", name = "mus_1117_scene_xat" }
-    }
+      }

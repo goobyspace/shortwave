@@ -1,4 +1,4 @@
-## Interface: 110105
+## Interface: 110107
 ## Title: Shortwave SFX Data
 ## Author: gooby.space
 ## Version: @project-version@

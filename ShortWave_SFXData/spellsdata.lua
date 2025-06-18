@@ -1,6 +1,6 @@
 
-ShortWaveGlobalData.spells = {
-         { id = "567948", path = "Sound/SPELLS/Priest_MindShear4", name = "Priest_MindShear4" },
+  ShortWaveGlobalData.spells = {
+           { id = "567948", path = "Sound/SPELLS/Priest_MindShear4", name = "Priest_MindShear4" },
   { id = "567949", path = "Sound/SPELLS/SPELL_CommuneWithFireSpirits_State_Loop_01", name = "SPELL_CommuneWithFireSpirits_State_Loop_01" },
   { id = "567950", path = "Sound/SPELLS/Fear", name = "Fear" },
   { id = "567951", path = "Sound/SPELLS/WandFireCast2", name = "WandFireCast2" },
@@ -11858,4 +11858,4 @@ ShortWaveGlobalData.spells = {
   { id = "6655095", path = "Sound/Spell/G99Breakneck_aurastart_loop_6655095", name = "G99Breakneck_aurastart_loop_6655095" },
   { id = "6658707", path = "Sound/Spell/DeployableBattleSupplies_areatriggerstart_oneshot_6658707", name = "DeployableBattleSupplies_areatriggerstart_oneshot_6658707" },
   { id = "6663411", path = "Sound/Spell/PersonalFishingBarge_precaststart_loop_6663411", name = "PersonalFishingBarge_precaststart_loop_6663411" }
-    }
+      }

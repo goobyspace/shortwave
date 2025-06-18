@@ -1,6 +1,6 @@
 
-ShortWaveGlobalData.other = {
-         { id = "222756", path = "sound/CINEMATICVOICES/BloodElfNarration", name = "BloodElfNarration" },
+  ShortWaveGlobalData.other = {
+           { id = "222756", path = "sound/CINEMATICVOICES/BloodElfNarration", name = "BloodElfNarration" },
   { id = "222757", path = "sound/CINEMATICVOICES/DeathKnightNarration", name = "DeathKnightNarration" },
   { id = "222758", path = "sound/CINEMATICVOICES/DraeneiNarration", name = "DraeneiNarration" },
   { id = "222759", path = "sound/CINEMATICVOICES/DwarfNarration", name = "DwarfNarration" },
@@ -12290,4 +12290,4 @@ ShortWaveGlobalData.other = {
   { id = "6867118", path = "Sound/UI/UI_HERO_TALENTS_UNLOCKED_3_6867118", name = "UI_HERO_TALENTS_UNLOCKED_3_6867118" },
   { id = "6867120", path = "Sound/UI/UI_HERO_TALENTS_UNLOCKED_4_6867120", name = "UI_HERO_TALENTS_UNLOCKED_4_6867120" },
   { id = "6996940", path = "Sound/UI/BARBERSHOP_DEFAULT_ACCEPT_0_6996940", name = "BARBERSHOP_DEFAULT_ACCEPT_0_6996940" }
-    }
+      }

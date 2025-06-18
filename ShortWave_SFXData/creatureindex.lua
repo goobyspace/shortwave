@@ -1,6 +1,6 @@
 
-ShortWaveGlobalData.creature = {
-         1,
+  ShortWaveGlobalData.creature = {
+           1,
   2,
   3,
   4,
@@ -162980,5 +162980,14 @@ ShortWaveGlobalData.creature = {
   162978,
   162979,
   162980,
-  162981
-    }
+  162981,
+  162982,
+  162983,
+  162984,
+  162985,
+  162986,
+  162987,
+  162988,
+  162989,
+  162990
+      }

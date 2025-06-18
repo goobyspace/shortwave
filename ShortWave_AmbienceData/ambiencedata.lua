@@ -1,6 +1,6 @@
 
-ShortWaveGlobalData.ambience = {
-         { id = "537320", path = "Sound/ambience/WMOAmbience/AhnQirajInterirorFireFlyRoom", name = "AhnQirajInterirorFireFlyRoom" },
+  ShortWaveGlobalData.ambience = {
+           { id = "537320", path = "Sound/ambience/WMOAmbience/AhnQirajInterirorFireFlyRoom", name = "AhnQirajInterirorFireFlyRoom" },
   { id = "537321", path = "Sound/ambience/WMOAmbience/AhnQirajRuinsBareRoomTone", name = "AhnQirajRuinsBareRoomTone" },
   { id = "537322", path = "Sound/ambience/WMOAmbience/AhnQirajRuinsTriangleRoom", name = "AhnQirajRuinsTriangleRoom" },
   { id = "537323", path = "Sound/ambience/WMOAmbience/AuchindounDemonWing", name = "AuchindounDemonWing" },
@@ -3872,4 +3872,4 @@ ShortWaveGlobalData.ambience = {
   { id = "6710425", path = "sound/ambience/zoneambience/amb_underminetailgatepark_day_6710425", name = "amb_underminetailgatepark_day_6710425" },
   { id = "6710427", path = "sound/ambience/zoneambience/amb_underminetailgatepark_day_6710427", name = "amb_underminetailgatepark_day_6710427" },
   { id = "6710429", path = "sound/ambience/zoneambience/amb_underminetailgatepark_day_6710429", name = "amb_underminetailgatepark_day_6710429" }
-    }
+      }
