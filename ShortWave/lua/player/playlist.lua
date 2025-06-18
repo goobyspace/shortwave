@@ -493,8 +493,6 @@ local function minMaxAll(self)
     setDataProvider()
 end
 
--- fix playlists, playlists used to have a songs value but we've changed it to sounds
-
 -- create the playlist body, including the scrollview
 function Playlist:CreateBody(width, height)
     if not ShortWaveVariables.Playlists then
@@ -507,6 +505,7 @@ function Playlist:CreateBody(width, height)
             for _, playlist in ipairs(ShortWaveVariables.Playlists[channel]) do
                 if not playlist.sounds then
                     playlist.sounds = playlist.songs or {}
+                    playlist.songs = nil
                 end
             end
         end
