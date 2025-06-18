@@ -25,7 +25,19 @@ end
 -- UpdatePlayer updates the player window based on the current channel
 function Player:UpdatePlayer()
     UpdateText()
-    core.PlayerWindow:RefreshTabs()
+    if ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "playlist" then
+        if (Player.currentlyPlaying[core.Channel.currentChannel] or Player.currentDelay[core.Channel.currentChannel]) and Player.currentPlaylist[core.Channel.currentChannel] then
+            core.Playlist:RefreshPlaylists()
+        elseif not Player.currentlyPlaying[core.Channel.currentChannel] and not Player.currentDelay[core.Channel.currentChannel] then
+            core.Playlist:RefreshPlaylists()
+        end
+    elseif ShortWaveVariables.selectedtab[core.Channel.currentChannel] == "search" and ShortWaveVariables.selectedCore[core.Channel.currentChannel] ~= "creature" then
+        if core.Player.currentlyPlaying[core.Channel.currentChannel] and core.Player.currentSoloIndex[core.Channel.currentChannel] == nil and core.Player.currentPlaylist[core.Channel.currentChannel] == nil then
+            core.Search:RefreshSearchBody()
+        elseif not Player.currentlyPlaying[core.Channel.currentChannel] and not Player.currentDelay[core.Channel.currentChannel] then
+            core.Search:RefreshSearchBody()
+        end
+    end
     if Player.currentlyPlaying[core.Channel.currentChannel] or Player.currentDelay[core.Channel.currentChannel] then
         core.PlayerWindow.window.playPauseButton:SetChecked(true)
         core.PlayerWindow.window.playPauseButton:Enable()
@@ -70,7 +82,6 @@ local function ZeroFrameAudio(localChannel)
     currentName[localChannel] = nil
     currentText[localChannel] = "No audio for ID"
     UpdateText()
-    core.PlayerWindow:RefreshTabs()
     core.PlayerWindow.window.playPauseButton:SetChecked(false)
     core.PlayerWindow.window.playPauseButton:Disable()
     core.PlayerWindow.window.previousButton:Disable()
@@ -337,6 +348,9 @@ function Player:PlayNextSoundInPlaylist(localChannel)
         currentText[localChannel] = "Delaying for " .. currentSound.time .. " seconds"
         Player.currentDelay[localChannel] = currentSound.delay
         Player.currentDelay[localChannel] = C_Timer.NewTimer(currentSound.time, function()
+            if not Player.currentPlaylist[localChannel] then
+                return
+            end
             Player:NextSoundInPlaylist(localChannel)
         end)
         Player:UpdatePlayer()
