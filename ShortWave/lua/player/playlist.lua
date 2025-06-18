@@ -28,7 +28,7 @@ local function FlattenPlaylists()
             collapsed = playlist.collapsed
         }
         table.insert(flattenedArray, playlistData)
-        if not playlist.collapsed then
+        if not playlist.collapsed and playlist.sounds then
             for index, sound in ipairs(playlist.sounds) do
                 local soundData = {}
                 if sound.delay then
