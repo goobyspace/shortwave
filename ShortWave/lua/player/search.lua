@@ -104,6 +104,8 @@ local function SetCoreSwitchButtons()
         body.ScrollBox:SetSize(body.ScrollBox:GetWidth(), body:GetHeight() - 64)
         body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -54)
         body.SearchBar:SetPoint("TOP", body, "TOP", 2, -26)
+        -- if we dont have this hide here, then the buttons will be really big on first switch to search tab
+        body.CategoryButtons:Hide()
         body.CategoryButtons:Show()
     else
         body.ScrollBox:SetSize(body.ScrollBox:GetWidth(), body:GetHeight() - 34)
@@ -235,7 +237,7 @@ function Search:CreateBody(width, height)
     body:SetSize(width, height);
 
     body.ErrorText = body:CreateFontString("ErrorText", "OVERLAY", "GameFontNormal")
-    body.ErrorText:SetPoint("LEFT", 4, 0)
+    body.ErrorText:SetPoint("LEFT", -4, 0)
     body.ErrorText:SetPoint("RIGHT", -16, 0)
     body.ErrorText:SetJustifyV("MIDDLE")
     body.ErrorText:SetTextColor(1, 1, 0, 1)
@@ -284,7 +286,7 @@ function Search:CreateBody(width, height)
     end
 
     body.CategoryButtons = CreateFrame("Frame", "CategoryButtons", body)
-    body.CategoryButtons:SetPoint("TOPLEFT", body, "TOPLEFT", 12, -2)
+    body.CategoryButtons:SetPoint("TOPLEFT", body, "TOPLEFT", 12, -1)
     body.CategoryButtons:SetSize(body:GetWidth() - 8, 24)
 
     local function setTabSizes(self)
@@ -354,8 +356,6 @@ function Search:CreateBody(width, height)
 
     selectTab(ShortWaveVariables.selectedCore[core.Channel.channels[3]] or
         core.Channel.searchData[core.Channel.channels[3]][1])
-
-    body.CategoryButtons:Hide()
 
     AddFrame = CreateFrame("Frame", "AddFrame", body, "DefaultPanelTemplate")
     AddFrame:SetFrameStrata("TOOLTIP")

@@ -82,6 +82,7 @@ function Broadcast:BroadcastAudio(type, id, name, channel)
     -- raid messages are sent to the party if you're not in a raid
     local raidResult = C_ChatInfo.SendAddonMessage(core.prefix, message, "RAID")
     if raidResult == 3 then
+        core.Player:StopSoundOnChannel(channel)
         print(
             "|cffff4a4aShortwave: You are sending too many broadcast requests and being rate-limited by the server. Please wait a moment or don't loop any very short sounds.")
         print(
@@ -128,7 +129,7 @@ eventFrame:SetScript("OnEvent", function(_, _, prefix, message, _, sender)
             if type == "play" then
                 core.Player:PlaySoundFromBroadcast(id, name, channel)
             elseif type == "pause" then
-                core.Player:StopMusicOnChannel(channel)
+                core.Player:StopSoundOnChannel(channel)
             end
         end
     end

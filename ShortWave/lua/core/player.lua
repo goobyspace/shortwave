@@ -9,6 +9,7 @@ Player.currentPlaylistIndex = {}
 Player.currentlyPlaying = {}
 Player.currentSoloIndex = {}
 Player.currentId = {}
+Player.currentDelay = {}
 local firstFrame = {}
 local currentName = {}
 local currentText = {}
@@ -24,7 +25,8 @@ end
 -- UpdatePlayer updates the player window based on the current channel
 function Player:UpdatePlayer()
     UpdateText()
-    if Player.currentlyPlaying[core.Channel.currentChannel] then
+    core.PlayerWindow:RefreshTabs()
+    if Player.currentlyPlaying[core.Channel.currentChannel] or Player.currentDelay[core.Channel.currentChannel] then
         core.PlayerWindow.window.playPauseButton:SetChecked(true)
         core.PlayerWindow.window.playPauseButton:Enable()
     elseif Player.currentId[core.Channel.currentChannel] and currentName[core.Channel.currentChannel] then
@@ -136,17 +138,21 @@ end
 
 -- Set the index to be the next sound in the playlist and then play it
 -- Used when the user clicks on the next button in the player window
-function Player:NextSoundInPlaylist()
-    if not Player.currentPlaylist[core.Channel.currentChannel] or #Player.currentPlaylist[core.Channel.currentChannel].sounds == 0 then
+-- And after a delay
+function Player:NextSoundInPlaylist(localChannel)
+    if not localChannel then
+        localChannel = core.Channel.currentChannel
+    end
+    if not Player.currentPlaylist[localChannel] or #Player.currentPlaylist[localChannel].sounds == 0 then
         EmptyPlaylist()
         return
     end
-    Player.currentPlaylistIndex[core.Channel.currentChannel] = Player.currentPlaylistIndex[core.Channel.currentChannel] +
+    Player.currentPlaylistIndex[localChannel] = Player.currentPlaylistIndex[localChannel] +
         1
-    if Player.currentPlaylistIndex[core.Channel.currentChannel] > #Player.currentPlaylist[core.Channel.currentChannel].sounds then
-        Player.currentPlaylistIndex[core.Channel.currentChannel] = 1
+    if Player.currentPlaylistIndex[localChannel] > #Player.currentPlaylist[localChannel].sounds then
+        Player.currentPlaylistIndex[localChannel] = 1
     end
-    Player:PlayNextSoundInPlaylist(core.Channel.currentChannel)
+    Player:PlayNextSoundInPlaylist(localChannel)
 end
 
 -- Set the index to be the previous sound in the playlist and then play it
@@ -186,12 +192,11 @@ end
 function Player:SetPlaylist(playlist)
     Player.currentPlaylist[core.Channel.currentChannel] = playlist
     Player.currentPlaylistIndex[core.Channel.currentChannel] = 1
-    Player:PlayNextSoundInPlaylist(core.Channel.currentChannel)
 end
 
 -- Stops the music on a specific channel or the current channel if no channel is specified
 -- Called directly from the broadcast window, or via the PauseSound function
-function Player:StopMusicOnChannel(localChannel)
+function Player:StopSoundOnChannel(localChannel)
     if Player.currentlyPlaying[localChannel] then
         StopSound(Player.currentlyPlaying[localChannel])
         Player.currentlyPlaying[localChannel] = nil
@@ -206,7 +211,12 @@ function Player:PauseSound()
     if Player.currentlyPlaying[core.Channel.currentChannel] then
         core.Broadcast:BroadcastAudio("pause", Player.currentlyPlaying[core.Channel.currentChannel],
             currentName[core.Channel.currentChannel], core.Channel.currentChannel)
-        Player:StopMusicOnChannel(core.Channel.currentChannel)
+        Player:StopSoundOnChannel(core.Channel.currentChannel)
+    end
+    if Player.currentDelay[core.Channel.currentChannel] then
+        Player.currentDelay[core.Channel.currentChannel]:Cancel()
+        Player.currentDelay[core.Channel.currentChannel] = nil
+        Player:UpdatePlayer()
     end
     SetCVar("Sound_EnableMusic", cvarInitial)
     cvarInitial = nil
@@ -289,6 +299,8 @@ function Player:PlaySoundSingle(id, name, localChannel, playlistIndex, soundInde
             playlistIndex = playlistIndex,
             soundIndex = soundIndex
         }
+    else
+        Player.currentSoloIndex[localChannel] = nil
     end
 
     Player.currentPlaylist[localChannel] = nil
@@ -314,6 +326,27 @@ function Player:PlayNextSoundInPlaylist(localChannel)
     local currentSound = Player.currentPlaylist[localChannel].sounds
         [Player.currentPlaylistIndex[localChannel]]
 
+    if currentSound.delay then
+        if Player.currentDelay[localChannel] then
+            Player.currentDelay[localChannel]:Cancel()
+        end
+        Player:StopSoundOnChannel(localChannel)
+        Player.UpdateFrame[localChannel]:SetScript("OnUpdate", nil)
+        Player.currentId[core.Channel.currentChannel] = currentSound.id
+        currentName[core.Channel.currentChannel] = currentSound.name
+        currentText[localChannel] = "Delaying for " .. currentSound.time .. " seconds"
+        Player.currentDelay[localChannel] = currentSound.delay
+        Player.currentDelay[localChannel] = C_Timer.NewTimer(currentSound.time, function()
+            Player:NextSoundInPlaylist(localChannel)
+        end)
+        Player:UpdatePlayer()
+        return
+    end
+
+    if Player.currentDelay[localChannel] then
+        Player.currentDelay[localChannel]:Cancel()
+        Player.currentDelay[localChannel] = nil
+    end
     -- They have to be here rather than in playsound to ensure that the broadcast doesnt trigger another broadcast
     core.Broadcast:BroadcastAudio("play", currentSound.id, currentSound.name, localChannel)
     Player:PlaySound(currentSound.id, currentSound.name, localChannel)

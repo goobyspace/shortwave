@@ -17,7 +17,7 @@ local function FlattenPlaylists()
         return flattenedArray
     end
     for playlistIndex, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
-        local isPlaylistPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel] and
+        local isPlaylistPlaying = (core.Player.currentlyPlaying[core.Channel.currentChannel] or core.Player.currentDelay[core.Channel.currentChannel]) and
             core.Player.currentPlaylist[core.Channel.currentChannel] and
             core.Player.currentPlaylist[core.Channel.currentChannel].name == playlist.name
         local playlistData = {
@@ -30,21 +30,35 @@ local function FlattenPlaylists()
         table.insert(flattenedArray, playlistData)
         if not playlist.collapsed then
             for index, sound in ipairs(playlist.sounds) do
-                local soundData = {
-                    name = sound.name,
-                    path = sound.path,
-                    id = sound.id,
-                    index = index,
-                    playing = isPlaylistPlaying and
-                        core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
-                    soloPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel]
-                        and core.Player.currentSoloIndex and
-                        core.Player.currentSoloIndex[core.Channel.currentChannel] and
-                        core.Player.currentSoloIndex[core.Channel.currentChannel].soundIndex == index and
-                        core.Player.currentSoloIndex[core.Channel.currentChannel].playlistIndex == playlistIndex,
-                    playlistName = playlist.name,
-                    type = "sound"
-                }
+                local soundData = {}
+                if sound.delay then
+                    soundData = {
+                        name = sound.name,
+                        time = sound.time,
+                        index = index,
+                        playing = isPlaylistPlaying and
+                            core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
+                        playlistName = playlist.name,
+                        type = "delay",
+                        id = sound.id,
+                    }
+                else
+                    soundData = {
+                        name = sound.name,
+                        path = sound.path,
+                        id = sound.id,
+                        index = index,
+                        playing = isPlaylistPlaying and
+                            core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
+                        soloPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel]
+                            and core.Player.currentSoloIndex and
+                            core.Player.currentSoloIndex[core.Channel.currentChannel] and
+                            core.Player.currentSoloIndex[core.Channel.currentChannel].soundIndex == index and
+                            core.Player.currentSoloIndex[core.Channel.currentChannel].playlistIndex == playlistIndex,
+                        playlistName = playlist.name,
+                        type = "sound"
+                    }
+                end
                 table.insert(flattenedArray, soundData)
             end
         end
@@ -111,18 +125,32 @@ local function collapsePlaylist(collapsed, playlistName)
     end
 end
 
+-- function inserts a delay sound before the given item
+local function CreateDelay(data)
+    if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
+        ShortWaveVariables.Playlists[core.Channel.currentChannel] = {}
+    end
+
+    for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
+        if playlist.name == data.playlistName then
+            table.insert(playlist.sounds, data.index, {
+                delay = true,
+                name = "Wait",
+                id = "delay_" .. data.id .. "_" .. data.index .. GetTimePreciseSec(), -- should create a unique ID for the delay
+                time = 0.5,
+            })
+            setDataProvider()
+            return
+        end
+    end
+end
+
 -- this swaps the position of a sound in the playlist with the one above or below it, depending on the direction
 -- direction is true for up aka lowering the index, false for down aka increasing the index
 local function ChangeDirection(direction, data)
     for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
         if playlist.name == data.playlistName then
-            local soundIndex = nil
-            for j, sound in ipairs(playlist.sounds) do
-                if sound.id == data.id then
-                    soundIndex = j
-                    break
-                end
-            end
+            local soundIndex = data.index
             if soundIndex and #playlist.sounds > 1 then
                 local directionNumber = direction and -1 or 1
                 if soundIndex + directionNumber < 1 or soundIndex + directionNumber > #playlist.sounds then
@@ -161,10 +189,10 @@ local function CreateScrollView(body, width, height)
             if data.type == "playlist" and data.name == ShortWaveVariables.Playlists[core.Channel.currentChannel][i].name then
                 playlistIndex = i
                 break
-            elseif data.type == "sound" and data.playlistName == ShortWaveVariables.Playlists[core.Channel.currentChannel][i].name then
+            elseif data.playlistName == ShortWaveVariables.Playlists[core.Channel.currentChannel][i].name then
                 playlistIndex = i
                 for j = 1, #ShortWaveVariables.Playlists[core.Channel.currentChannel][i].sounds do
-                    if ShortWaveVariables.Playlists[core.Channel.currentChannel][i].sounds[j].id == data.id then
+                    if j == data.index then
                         if j == 1 then
                             firstSound = true
                         end
@@ -241,11 +269,13 @@ local function CreateScrollView(body, width, height)
                 frame.StopSpecialButton:Hide()
             end
 
-
-
+            frame.DelayEdit:Hide()
+            frame.DelayText:Hide()
             frame.MoveUpButton:Show()
             frame.MoveDownButton:Show()
             frame.MinMaxButton:Hide()
+            frame.DelayButton:Show()
+            core.Utils.createGameTooltip(frame.DelayButton, "Add Delay")
             if firstSound then
                 frame.MoveUpButton:Disable()
                 frame.MoveUpButton.ArrowTexture:SetDesaturated(true)
@@ -285,12 +315,86 @@ local function CreateScrollView(body, width, height)
             frame.MoveDownButton:SetScript("OnClick", function()
                 ChangeDirection(false, data)
             end)
+            frame.DelayButton:SetScript("OnClick", function()
+                CreateDelay(data)
+            end)
+        elseif data.type == "delay" then
+            if playlistIndex % 2 == 0 then
+                frame.BlackBackground:Show()
+            else
+                frame.ColorBackground:Show()
+            end
+
+            frame.DelayEdit:Show()
+            frame.DelayEdit:SetText(data.time or "0.5")
+            frame.DelayEdit:SetScript("OnTextChanged", function()
+                local newTime = tonumber(frame.DelayEdit:GetText())
+                if newTime and newTime > 0 then
+                    for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
+                        if playlist.name == data.playlistName then
+                            for _, sound in ipairs(playlist.sounds) do
+                                if sound.id == data.id then
+                                    sound.time = newTime
+                                    return
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+            frame.DelayText:Show()
+            frame.ColorHeaderBackground:Hide()
+            frame.BlackHeaderBackground:Hide()
+
+            if firstSound then
+                frame.MoveUpButton:Disable()
+                frame.MoveUpButton.ArrowTexture:SetDesaturated(true)
+            else
+                frame.MoveUpButton:Enable()
+                frame.MoveUpButton.ArrowTexture:SetDesaturated(false)
+            end
+            if lastSound then
+                frame.MoveDownButton:Disable()
+                frame.MoveDownButton.ArrowTexture:SetDesaturated(true)
+            else
+                frame.MoveDownButton:Enable()
+                frame.MoveDownButton.ArrowTexture:SetDesaturated(false)
+            end
+
+            frame.MoveUpButton:SetScript("OnClick", function()
+                ChangeDirection(true, data)
+            end)
+            frame.MoveDownButton:SetScript("OnClick", function()
+                ChangeDirection(false, data)
+            end)
+            frame.DelayButton:SetScript("OnClick", function()
+                CreateDelay(data)
+            end)
+            frame.SinglePlayButton:Hide()
+            frame.LoopButton:Hide()
+            frame.StopSpecialButton:Hide()
+            frame.MoveUpButton:Show()
+            frame.MoveDownButton:Show()
+            frame.MinMaxButton:Hide()
+            frame.DelayButton:Show()
+            frame.DeleteButton:SetScript("OnClick", function()
+                deleteSoundFromPlaylist(data.playlistName, data.index)
+            end)
+            frame.PlayButton:SetScript("OnClick", function()
+                local playlist = ShortWaveVariables.Playlists[core.Channel.currentChannel][playlistIndex]
+                core.Player:SetPlaylist(playlist)
+                core.Player:SetPlaylistIndex(data.index)
+            end)
+            core.Utils.createGameTooltip(frame.DelayButton, "Add Delay")
         else
             if playlistIndex % 2 == 0 then
                 frame.BlackHeaderBackground:Show()
             else
                 frame.ColorHeaderBackground:Show()
             end
+
+            frame.DelayEdit:Hide()
+            frame.DelayText:Hide()
             frame.ColorBackground:Hide()
             frame.BlackBackground:Hide()
             frame.LoopButton:Hide()
@@ -298,6 +402,7 @@ local function CreateScrollView(body, width, height)
             frame.StopSpecialButton:Hide()
             frame.MoveUpButton:Hide()
             frame.MoveDownButton:Hide()
+            frame.DelayButton:Hide()
             frame.MinMaxButton:Show()
             frame.MinMaxButton:SetChecked(data.collapsed)
 
@@ -307,6 +412,7 @@ local function CreateScrollView(body, width, height)
 
             frame.PlayButton:SetScript("OnClick", function()
                 core.Player:SetPlaylist(data)
+                core.Player:SetPlaylistIndex(1)
             end)
             frame.DeleteButton:SetScript("OnClick", function()
                 deletePlaylist(data.name)

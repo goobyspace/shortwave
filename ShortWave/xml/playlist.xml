@@ -7,8 +7,14 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" inherits="GameFontHighlight" wordwrap="false" justifyH="LEFT">
                     <Anchors>
-                        <Anchor point="LEFT" x="50"/>
+                        <Anchor point="LEFT" x="74"/>
                         <Anchor point="RIGHT" x="-66"/>
+                    </Anchors>
+                    <Color r="0.95" g="0.95" b="0.95"/>
+                </FontString>
+                <FontString parentKey="DelayText" inherits="GameFontHighlight" text="seconds" wordwrap="false" justifyH="RIGHT">
+                    <Anchors>
+                        <Anchor point="RIGHT" x="-88"/>
                     </Anchors>
                     <Color r="0.95" g="0.95" b="0.95"/>
                 </FontString>
@@ -45,6 +51,12 @@
             </Layer>
         </Layers>
         <Frames>
+            <EditBox parentKey="DelayEdit" inherits="InputBoxTemplate" numericFullRange="true" autoFocus="false">
+                <Size x="50" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" x="-146"/>
+                </Anchors>
+            </EditBox>
             <CheckButton parentKey="MinMaxButton">
                 <Size x="20" y="20"/>
                 <Anchors>
@@ -96,6 +108,15 @@
                 <NormalTexture file="Interface\Buttons\UI-SquareButton-Up"/>
 				<PushedTexture file="Interface\Buttons\UI-SquareButton-Down"/>
                 <DisabledTexture file="Interface\Buttons\UI-SquareButton-Up" desaturated="true" />
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+            <Button parentKey="DelayButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="40"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/delaybutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/delaybutton-down.png"/>
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
             <Button parentKey="LoopButton">
