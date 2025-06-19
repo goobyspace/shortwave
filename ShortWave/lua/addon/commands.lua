@@ -23,6 +23,11 @@ core.Commands.commands = {
         ShortWaveVariables.Debug = ShortWaveVariables.Debug == false
         print("Shortwave debug mode is now " .. (ShortWaveVariables.Debug and "on" or "off"))
     end,
+    ["testfunc"] = function()
+        for _, coreChannel in pairs(core.Channel.channels) do
+            core.Player:StopSoundOnChannel(coreChannel)
+        end
+    end,
     ["vars"] = function()
         print("Current variables:")
         DevTools_Dump(ShortWaveVariables)
