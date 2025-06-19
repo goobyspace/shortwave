@@ -269,6 +269,7 @@ local function CreateScrollView(body, width, height)
                 frame.StopSpecialButton:Hide()
             end
 
+            frame.EditButton:Hide()
             frame.DelayEdit:Hide()
             frame.DelayText:Hide()
             frame.MoveUpButton:Show()
@@ -293,7 +294,12 @@ local function CreateScrollView(body, width, height)
             end
 
             frame.DeleteButton:SetScript("OnClick", function()
-                deleteSoundFromPlaylist(data.playlistName, data.index)
+                core.Popup:Confirmation(
+                    "Are you sure you want to delete |cffff4a4a" ..
+                    data.name .. "|r from playlist |cffff4a4a" .. data.playlistName .. "|r?",
+                    "Confirm Deletion", function()
+                        deleteSoundFromPlaylist(data.playlistName, data.index)
+                    end)
             end)
             frame.PlayButton:SetScript("OnClick", function()
                 local playlist = ShortWaveVariables.Playlists[core.Channel.currentChannel][playlistIndex]
@@ -370,6 +376,8 @@ local function CreateScrollView(body, width, height)
             frame.DelayButton:SetScript("OnClick", function()
                 CreateDelay(data)
             end)
+
+            frame.EditButton:Hide()
             frame.SinglePlayButton:Hide()
             frame.LoopButton:Hide()
             frame.StopSpecialButton:Hide()
@@ -378,7 +386,11 @@ local function CreateScrollView(body, width, height)
             frame.MinMaxButton:Hide()
             frame.DelayButton:Show()
             frame.DeleteButton:SetScript("OnClick", function()
-                deleteSoundFromPlaylist(data.playlistName, data.index)
+                core.Popup:Confirmation(
+                    "Are you sure you want to delete this delay from playlist |cffff4a4a" .. data.playlistName .. "|r?",
+                    "Confirm Deletion", function()
+                        deleteSoundFromPlaylist(data.playlistName, data.index)
+                    end)
             end)
             frame.PlayButton:SetScript("OnClick", function()
                 local playlist = ShortWaveVariables.Playlists[core.Channel.currentChannel][playlistIndex]
@@ -393,6 +405,7 @@ local function CreateScrollView(body, width, height)
                 frame.ColorHeaderBackground:Show()
             end
 
+            frame.EditButton:Show()
             frame.DelayEdit:Hide()
             frame.DelayText:Hide()
             frame.ColorBackground:Hide()
@@ -415,7 +428,33 @@ local function CreateScrollView(body, width, height)
                 core.Player:SetPlaylistIndex(1)
             end)
             frame.DeleteButton:SetScript("OnClick", function()
-                deletePlaylist(data.name)
+                core.Popup:Confirmation(
+                    "Are you sure you want to delete playlist |cffff4a4a" .. data.name .. "|r?",
+                    "Confirm Deletion", function()
+                        deletePlaylist(data.name)
+                    end)
+            end)
+
+            frame.EditButton:SetScript("OnClick", function()
+                core.Popup:Edit("Edit playlist name:", "Edit " .. data.name, data.name,
+                    function(name)
+                        Playlist:ChangePlaylistName(data.name, name)
+                    end,
+                    function(name)
+                        -- this is the callback for the popup, it will be called with the name entered in the popup
+                        if not name or name == "" then
+                            return "|cffff4a4aPlaylist name cannot be empty"
+                        elseif name == data.name then
+                            return "|cffff4a4aPlaylist name is the same as before"
+                        else
+                            for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
+                                if playlist.name == name then
+                                    return "|cffff4a4aPlaylist with this name already exists"
+                                end
+                            end
+                            return nil
+                        end
+                    end)
             end)
         end
 
@@ -465,6 +504,20 @@ function Playlist:NewPlaylist(name)
     setDataProvider()
 end
 
+function Playlist:ChangePlaylistName(oldName, newName)
+    if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
+        return
+    end
+
+    for _, playlist in ipairs(ShortWaveVariables.Playlists[core.Channel.currentChannel]) do
+        if playlist.name == oldName then
+            playlist.name = newName
+            setDataProvider()
+            return
+        end
+    end
+end
+
 -- insert a sound into a playlist
 function Playlist:AddSound(playlistName, data)
     if not ShortWaveVariables.Playlists[core.Channel.currentChannel] then
@@ -502,7 +555,10 @@ function Playlist:CreateBody(width, height)
         end
     else
         for _, channel in ipairs(core.Channel.channels) do
-            for _, playlist in ipairs(ShortWaveVariables.Playlists[channel]) do
+            for index, playlist in ipairs(ShortWaveVariables.Playlists[channel]) do
+                if not playlist.name then
+                    playlist.name = "noname" .. index
+                end
                 if not playlist.sounds then
                     playlist.sounds = playlist.songs or {}
                     playlist.songs = nil

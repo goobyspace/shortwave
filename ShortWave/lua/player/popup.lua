@@ -35,6 +35,13 @@ local function createPopupFrame()
         Popup.frame.texture:SetHorizTile(true)
         Popup.frame.texture:SetVertTile(true)
         Popup.frame:Hide()
+
+        Popup.frame:RegisterEvent("GLOBAL_MOUSE_DOWN")
+        Popup.frame:SetScript("OnEvent", function()
+            if Popup.frame:IsShown() and not Popup.frame:IsMouseOver() then
+                Popup.frame:Hide()
+            end
+        end)
     end
 
     do
