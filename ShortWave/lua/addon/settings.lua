@@ -16,6 +16,37 @@ core.Settings.settingChangers = {
             core.Minimap.Icon:Hide("Shortwave")
         end
     end,
+    ["broadcastMusic"] = function(value)
+        if core.Channel.currentChannel == "Music" then
+            core.PlayerWindow.window.broadcastingToggle:SetChecked(value)
+        end
+    end,
+    ["broadcastAmbience"] = function(value)
+        if core.Channel.currentChannel == "Ambience" then
+            core.PlayerWindow.window.broadcastingToggle:SetChecked(value)
+        end
+    end,
+    ["broadcastSFX"] = function(value)
+        if core.Channel.currentChannel == "SFX" then
+            core.PlayerWindow.window.broadcastingToggle:SetChecked(value)
+        end
+    end,
+    ["listenMusic"] = function(value)
+        if core.Channel.currentChannel == "Music" then
+            core.PlayerWindow.window.listeningToggle:SetChecked(value)
+        end
+    end,
+    ["listenAmbience"] = function(value)
+        if core.Channel.currentChannel == "Ambience" then
+            core.PlayerWindow.window.listeningToggle:SetChecked(value)
+        end
+    end,
+    ["listenSFX"] = function(value)
+        if core.Channel.currentChannel == "SFX" then
+            core.PlayerWindow.window.listeningToggle:SetChecked(value)
+        end
+    end,
+
 }
 
 -- just a wrapper for settingChangers
@@ -82,7 +113,7 @@ function core.Settings:Initialize()
         local name = "Keep Delay Before Sound"
         local variable = "delayFirst"
         local variableKey = "delayFirst"
-        local defaultValue = true
+        local defaultValue = false
 
         local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, ShortWaveVariables,
             type(defaultValue),
@@ -90,7 +121,113 @@ function core.Settings:Initialize()
         setting:SetValueChangedCallback(OnSettingChanged)
 
         local tooltip =
-        "When this toggle is ticked, delays before the sound are kept in place in a shuffled playlist. \nToggling it off will attempt to keep delays after the sound instead."
+        "When this toggle is ticked, delays will attempt to stay before their original next sound when shuffling a playlist. \nToggling it off will attempt to keep delays intact after their original sound instead."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Broadcasting"));
+    do
+        if not ShortWaveVariables.broadcasting then
+            ShortWaveVariables.broadcasting = {}
+        end
+        local name = "Music"
+        local variable = "broadcastMusic"
+        local variableKey = "Music"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey,
+            ShortWaveVariables.broadcasting,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, any audio you play in the music channel will be broadcasted to your group if you are the leader. \nToggling it off will mean any audio you play will only be heard by you no matter if you are the leader or not."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+    do
+        local name = "Ambience"
+        local variable = "broadcastAmbience"
+        local variableKey = "Ambience"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey,
+            ShortWaveVariables.broadcasting,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, any audio you play in the ambience channel will be broadcasted to your group if you are the leader. \nToggling it off will mean any audio you play will only be heard by you no matter if you are the leader or not."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+    do
+        local name = "SFX"
+        local variable = "broadcastSFX"
+        local variableKey = "SFX"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey,
+            ShortWaveVariables.broadcasting,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, any audio you play in the SFX channel will be broadcasted to your group if you are the leader. \nToggling it off will mean any audio you play will only be heard by you no matter if you are the leader or not."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Listening"));
+    do
+        if not ShortWaveVariables.listening then
+            ShortWaveVariables.listening = {}
+        end
+        local name = "Music"
+        local variable = "listenMusic"
+        local variableKey = "Music"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey,
+            ShortWaveVariables.listening,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, any audio your group leader (or assist) plays in their music channel will be played back to you.\nToggling it off mean you will not hear any music played by your group."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+    do
+        local name = "Ambience"
+        local variable = "listenAmbience"
+        local variableKey = "Ambience"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey,
+            ShortWaveVariables.listening,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, any audio your group leader (or assist) plays in their ambience channel will be played back to you.\nToggling it off mean you will not hear any ambience played by your group."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+    do
+        local name = "SFX"
+        local variable = "listenSFX"
+        local variableKey = "SFX"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey,
+            ShortWaveVariables.listening,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, any audio your group leader (or assist) plays in their SFX channel will be played back to you.\nToggling it off mean you will not hear any SFX played by your group."
         Settings.CreateCheckbox(category, setting, tooltip)
     end
 

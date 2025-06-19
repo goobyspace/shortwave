@@ -11,7 +11,7 @@ core.Commands.commands = {
     ["minimap"] = function()
         core.Settings.settingChangers["minimap"](ShortWaveVariables.minimap.hide)
     end,
-    ["options"] = function()
+    ["settings"] = function()
         core.Settings:OpenSettings()
     end,
     ["debug"] = function()
@@ -38,7 +38,7 @@ core.Commands.commands = {
         print("Shortwave Help")
         print("|cff647afa/shortwave player|r - toggle the player");
         print("|cff647afa/shortwave minimap|r - toggle the minimap icon");
-
+        print("|cff647afa/shortwave settings|r - toggle the settings window");
         print("|cff647afa/shortwave reset|r - resets the player window position back to the center");
         print(" ")
     end

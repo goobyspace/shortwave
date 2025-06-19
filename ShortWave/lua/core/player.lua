@@ -241,9 +241,10 @@ function Player:SetPlaylistShuffled(playlist)
         for newIndex, sound in ipairs(shuffledPlaylist.sounds) do
             for _, delay in ipairs(shuffleDelays) do
                 local delayDirection = ShortWaveVariables.delayFirst and -1 or 1
-                if sound.originalIndex + delayDirection == delay.originalIndex and (ShortWaveVariables.delayFirst and (not shuffledPlaylist.sounds[newIndex + delayDirection] or not shuffledPlaylist.sounds[newIndex + delayDirection].delay) or (not shuffledPlaylist.sounds[newIndex].delay)) then
-                    local indexAddition = ShortWaveVariables.delayFirst and 0 or 1
-                    table.insert(shuffledPlaylist.sounds, newIndex + indexAddition, delay)
+
+                if sound.originalIndex + delayDirection == delay.originalIndex and ((ShortWaveVariables.delayFirst and (not shuffledPlaylist.sounds[newIndex + delayDirection] or not shuffledPlaylist.sounds[newIndex + delayDirection].delay)) or (not ShortWaveVariables.delayFirst and not shuffledPlaylist.sounds[newIndex].delay)) then
+                    local insertIndex = ShortWaveVariables.delayFirst and newIndex or newIndex + 1
+                    table.insert(shuffledPlaylist.sounds, insertIndex, delay)
                 end
             end
         end
