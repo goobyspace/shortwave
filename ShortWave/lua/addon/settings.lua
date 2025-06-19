@@ -57,7 +57,24 @@ function core.Settings:Initialize()
             name, defaultValue)
         setting:SetValueChangedCallback(OnSettingChanged)
 
-        local tooltip = "This is a tooltip for the checkbox."
+        Settings.CreateCheckbox(category, setting, nil)
+    end
+
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Shuffle"));
+
+    do
+        local name = "Keep Delay in Shuffle"
+        local variable = "ShortWaveVariables"
+        local variableKey = "keepDelay"
+        local defaultValue = ShortWaveVariables.keepDelay or true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, ShortWaveVariables,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, a shuffled playlist will try to keep the delay between songs in the same place it was before shuffling. \nToggling it off will ignore the delays entirely when shuffling."
         Settings.CreateCheckbox(category, setting, tooltip)
     end
 

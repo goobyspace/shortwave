@@ -6,6 +6,7 @@ local Player = core.Player
 -- to see if a sound that is on screen is currently playing
 Player.currentPlaylist = {}
 Player.currentPlaylistIndex = {}
+Player.currentCosmeticIndex = {}
 Player.currentlyPlaying = {}
 Player.currentSoloIndex = {}
 Player.currentId = {}
@@ -201,7 +202,47 @@ end
 -- Set a playlist for the current channel
 -- Called when you press play in the playlist header
 function Player:SetPlaylist(playlist)
+    for index, _ in ipairs(playlist.sounds) do
+        playlist.sounds[index].originalIndex = index
+    end
     Player.currentPlaylist[core.Channel.currentChannel] = playlist
+    Player.currentPlaylistIndex[core.Channel.currentChannel] = 1
+end
+
+-- implements the fisher-yates shuffle algorithm to shuffle a playlist
+-- then we set the new shuffled playlist as the playlist data
+function Player:SetPlaylistShuffled(playlist)
+    local shuffleSounds = {}
+    local shuffleDelays = {}
+    for index, _ in ipairs(playlist.sounds) do
+        playlist.sounds[index].originalIndex = index
+    end
+
+    for _, sound in ipairs(playlist.sounds) do
+        if sound.delay then
+            table.insert(shuffleDelays, sound)
+        else
+            table.insert(shuffleSounds, sound)
+        end
+    end
+
+
+    local shuffledPlaylist = {
+        name = playlist.name,
+        sounds = core.Utils.shuffle(shuffleSounds)
+    }
+
+    if ShortWaveVariables.keepDelay then
+        for newIndex, sound in ipairs(shuffledPlaylist.sounds) do
+            for _, delay in ipairs(shuffleDelays) do
+                if sound.originalIndex - 1 == delay.originalIndex and (not shuffledPlaylist.sounds[newIndex - 1] or not shuffledPlaylist.sounds[newIndex - 1].delay) then
+                    table.insert(shuffledPlaylist.sounds, newIndex, delay)
+                end
+            end
+        end
+    end
+
+    Player.currentPlaylist[core.Channel.currentChannel] = shuffledPlaylist
     Player.currentPlaylistIndex[core.Channel.currentChannel] = 1
 end
 
@@ -337,6 +378,10 @@ function Player:PlayNextSoundInPlaylist(localChannel)
     local currentSound = Player.currentPlaylist[localChannel].sounds
         [Player.currentPlaylistIndex[localChannel]]
 
+    if currentSound.originalIndex then
+        Player.currentCosmeticIndex[localChannel] = currentSound.originalIndex
+    end
+
     if currentSound.delay then
         if Player.currentDelay[localChannel] then
             Player.currentDelay[localChannel]:Cancel()
@@ -361,6 +406,7 @@ function Player:PlayNextSoundInPlaylist(localChannel)
         Player.currentDelay[localChannel]:Cancel()
         Player.currentDelay[localChannel] = nil
     end
+
     -- They have to be here rather than in playsound to ensure that the broadcast doesnt trigger another broadcast
     core.Broadcast:BroadcastAudio("play", currentSound.id, currentSound.name, localChannel)
     Player:PlaySound(currentSound.id, currentSound.name, localChannel)

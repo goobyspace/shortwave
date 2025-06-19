@@ -25,6 +25,18 @@ core.Utils.contains = function(arr, value)
     return false
 end
 
+core.Utils.shuffle = function(array)
+    local shuffledArray = {}
+    for i = 1, #array do
+        shuffledArray[i] = array[i]
+    end
+    for i = #shuffledArray, 2, -1 do
+        local j = math.random(i)
+        shuffledArray[i], shuffledArray[j] = shuffledArray[j], shuffledArray[i]
+    end
+    return shuffledArray
+end
+
 core.Utils.createGameTooltip = function(frame, text)
     if not frame then
         return

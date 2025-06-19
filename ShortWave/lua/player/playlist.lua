@@ -37,7 +37,7 @@ local function FlattenPlaylists()
                         time = sound.time,
                         index = index,
                         playing = isPlaylistPlaying and
-                            core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
+                            core.Player.currentCosmeticIndex[core.Channel.currentChannel] == index,
                         playlistName = playlist.name,
                         type = "delay",
                         id = sound.id,
@@ -49,7 +49,7 @@ local function FlattenPlaylists()
                         id = sound.id,
                         index = index,
                         playing = isPlaylistPlaying and
-                            core.Player.currentPlaylistIndex[core.Channel.currentChannel] == index,
+                            core.Player.currentCosmeticIndex[core.Channel.currentChannel] == index,
                         soloPlaying = core.Player.currentlyPlaying[core.Channel.currentChannel]
                             and core.Player.currentSoloIndex and
                             core.Player.currentSoloIndex[core.Channel.currentChannel] and
@@ -269,6 +269,7 @@ local function CreateScrollView(body, width, height)
                 frame.StopSpecialButton:Hide()
             end
 
+            frame.ShuffleButton:Hide()
             frame.EditButton:Hide()
             frame.DelayEdit:Hide()
             frame.DelayText:Hide()
@@ -379,6 +380,7 @@ local function CreateScrollView(body, width, height)
 
             frame.EditButton:Hide()
             frame.SinglePlayButton:Hide()
+            frame.ShuffleButton:Hide()
             frame.LoopButton:Hide()
             frame.StopSpecialButton:Hide()
             frame.MoveUpButton:Show()
@@ -416,11 +418,19 @@ local function CreateScrollView(body, width, height)
             frame.MoveUpButton:Hide()
             frame.MoveDownButton:Hide()
             frame.DelayButton:Hide()
+            frame.ShuffleButton:Show()
             frame.MinMaxButton:Show()
             frame.MinMaxButton:SetChecked(data.collapsed)
 
             frame.MinMaxButton:SetScript("OnClick", function()
                 collapsePlaylist(not data.collapsed, data.name)
+            end)
+
+            core.Utils.createGameTooltip(frame.ShuffleButton, "Shuffle Playlist")
+
+            frame.ShuffleButton:SetScript("OnClick", function()
+                core.Player:SetPlaylistShuffled(data)
+                core.Player:SetPlaylistIndex(1)
             end)
 
             frame.PlayButton:SetScript("OnClick", function()

@@ -128,6 +128,15 @@
 				<PushedTexture file="interface/addons/ShortWave/assets/delaybutton-down.png"/>
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
+            <Button parentKey="ShuffleButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="RIGHT" x="-44"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/shufflebutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/shufflebutton-down.png"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
             <Button parentKey="LoopButton">
                 <Size x="24" y="24"/>
                 <Anchors>
