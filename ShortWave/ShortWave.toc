@@ -28,6 +28,7 @@ lua/resources/utils.lua
 lua/core/broadcast.lua
 lua/core/channel.lua
 lua/core/player.lua
+lua/player/popup.lua
 lua/player/playlist.lua
 lua/player/search.lua
 lua/player/playerwindow.lua

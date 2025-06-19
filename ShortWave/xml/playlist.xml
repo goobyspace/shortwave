@@ -110,6 +110,15 @@
                 <DisabledTexture file="Interface\Buttons\UI-SquareButton-Up" desaturated="true" />
                 <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
             </Button>
+            <Button parentKey="EditButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="40"/>
+                </Anchors>
+                <NormalTexture file="interface/addons/ShortWave/assets/editbutton-up.png"/>
+				<PushedTexture file="interface/addons/ShortWave/assets/editbutton-down.png"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
             <Button parentKey="DelayButton">
                 <Size x="24" y="24"/>
                 <Anchors>
