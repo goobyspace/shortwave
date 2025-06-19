@@ -33,13 +33,14 @@ function core.Settings:Initialize()
     -- https://github.com/Gethe/wow-ui-source
     local category, layout = Settings.RegisterVerticalLayoutCategory("Shortwave")
 
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("General"));
+
     do
         -- this creates a slightly inset button
-        local initializer = CreateSettingsButtonInitializer("Reset Shortwave Player", "Reset Position", function()
+        layout:AddInitializer(CreateSettingsButtonInitializer("Reset Shortwave Player", "Reset Position", function()
             core.PlayerWindow.window:ClearAllPoints()
             core.PlayerWindow.window:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-        end, nil, true)
-        layout:AddInitializer(initializer)
+        end, nil, true))
     end
 
     do

@@ -324,6 +324,8 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.broadcastingToggle.text:SetPoint("LEFT", ShortWavePlayer.broadcastingToggle, "RIGHT", 4, 0)
         ShortWavePlayer.broadcastingToggle.text:SetFontObject("GameFontNormal")
         ShortWavePlayer.broadcastingToggle.text:SetText("Broadcasting")
+        core.Utils.createGameTooltip(ShortWavePlayer.broadcastingToggle,
+            "Toggle to broadcast current channel to\nyour group if you are the party leader.")
         ShortWavePlayer.broadcastingToggle.HoverBackground = nil
 
         -- broadcasting toggle, per channel basis
@@ -361,6 +363,8 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.listeningToggle.text:SetFontObject("GameFontNormal")
         ShortWavePlayer.listeningToggle.text:SetText("Listening")
         ShortWavePlayer.listeningToggle.HoverBackground = nil
+        core.Utils.createGameTooltip(ShortWavePlayer.listeningToggle,
+            "Toggle to listen to audio played on current\nchannel by your group leader.")
 
         -- listening toggle, per channel basis
         function PlayerWindow:SetListening(isListening)
