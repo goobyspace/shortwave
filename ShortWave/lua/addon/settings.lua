@@ -50,7 +50,7 @@ function core.Settings:Initialize()
         local name = "Show Minimap Icon"
         local variable = "minimap"
         local variableKey = "toggle"
-        local defaultValue = not ShortWaveVariables.minimap.hide
+        local defaultValue = true
 
         local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, ShortWaveVariables.minimap,
             type(defaultValue),
@@ -64,9 +64,9 @@ function core.Settings:Initialize()
 
     do
         local name = "Keep Delay in Shuffle"
-        local variable = "ShortWaveVariables"
+        local variable = "keepDelay"
         local variableKey = "keepDelay"
-        local defaultValue = ShortWaveVariables.keepDelay or true
+        local defaultValue = true
 
         local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, ShortWaveVariables,
             type(defaultValue),
@@ -75,6 +75,22 @@ function core.Settings:Initialize()
 
         local tooltip =
         "When this toggle is ticked, a shuffled playlist will try to keep the delay between songs in the same place it was before shuffling. \nToggling it off will ignore the delays entirely when shuffling."
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+
+    do
+        local name = "Keep Delay Before Sound"
+        local variable = "delayFirst"
+        local variableKey = "delayFirst"
+        local defaultValue = true
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, ShortWaveVariables,
+            type(defaultValue),
+            name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        local tooltip =
+        "When this toggle is ticked, delays before the sound are kept in place in a shuffled playlist. \nToggling it off will attempt to keep delays after the sound instead."
         Settings.CreateCheckbox(category, setting, tooltip)
     end
 

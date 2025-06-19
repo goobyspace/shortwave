@@ -227,16 +227,23 @@ function Player:SetPlaylistShuffled(playlist)
     end
 
 
+
     local shuffledPlaylist = {
         name = playlist.name,
         sounds = core.Utils.shuffle(shuffleSounds)
     }
 
+    -- tldr
+    -- if user wants to keep the delays, we need to insert them back into the shuffled playlist
+    -- ideally in the same place they were before shuffling
+    -- we have a setting to check if the user wants them before or after the sound
     if ShortWaveVariables.keepDelay then
         for newIndex, sound in ipairs(shuffledPlaylist.sounds) do
             for _, delay in ipairs(shuffleDelays) do
-                if sound.originalIndex - 1 == delay.originalIndex and (not shuffledPlaylist.sounds[newIndex - 1] or not shuffledPlaylist.sounds[newIndex - 1].delay) then
-                    table.insert(shuffledPlaylist.sounds, newIndex, delay)
+                local delayDirection = ShortWaveVariables.delayFirst and -1 or 1
+                if sound.originalIndex + delayDirection == delay.originalIndex and (ShortWaveVariables.delayFirst and (not shuffledPlaylist.sounds[newIndex + delayDirection] or not shuffledPlaylist.sounds[newIndex + delayDirection].delay) or (not shuffledPlaylist.sounds[newIndex].delay)) then
+                    local indexAddition = ShortWaveVariables.delayFirst and 0 or 1
+                    table.insert(shuffledPlaylist.sounds, newIndex + indexAddition, delay)
                 end
             end
         end
