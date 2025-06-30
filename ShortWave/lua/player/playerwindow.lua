@@ -435,7 +435,7 @@ function PlayerWindow:CreateWindow()
             if self == ShortWavePlayer.playlistTab then
                 otherTab = ShortWavePlayer.searchTab
                 if not ShortWavePlayer.playlistTab.body then
-                    ShortWavePlayer.playlistTab.body = core.Playlist:CreateBody(startingWidth, maxHeight - 96)
+                    ShortWavePlayer.playlistTab.body = core.Playlist:CreateBody(startingWidth, maxHeight - 98)
                     ShortWavePlayer.playlistTab.body:SetParent(ShortWavePlayer.body)
                     ShortWavePlayer.playlistTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 0, -96)
                 else
@@ -444,7 +444,7 @@ function PlayerWindow:CreateWindow()
             else
                 otherTab = ShortWavePlayer.playlistTab
                 if not ShortWavePlayer.searchTab.body then
-                    ShortWavePlayer.searchTab.body = core.Search:CreateBody(startingWidth, maxHeight - 96)
+                    ShortWavePlayer.searchTab.body = core.Search:CreateBody(startingWidth, maxHeight - 98)
                     ShortWavePlayer.searchTab.body:SetParent(ShortWavePlayer.body)
                     ShortWavePlayer.searchTab.body:SetPoint("TOPLEFT", ShortWavePlayer, "TOPLEFT", 0, -96)
                 else

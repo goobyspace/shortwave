@@ -1,6 +1,14 @@
 local _, core = ...
 core.Settings = {}
 
+local channels = {
+    [1] = "Master",
+    [2] = "SFX",
+    [3] = "Ambience",
+    [4] = "Dialog",
+    [5] = "Talking Head"
+}
+
 -- call this on any setting changers if they need special functions to update other frames
 core.Settings.settingChangers = {
     ["minimap"] = function(value)
@@ -15,6 +23,9 @@ core.Settings.settingChangers = {
             ShortWaveVariables.minimap.toggle = false
             core.Minimap.Icon:Hide("Shortwave")
         end
+    end,
+    ["soundChannel"] = function(value)
+        ShortWaveVariables.channel = channels[value]
     end,
     ["broadcastMusic"] = function(value)
         if core.Channel.currentChannel == "Music" then
@@ -67,11 +78,33 @@ function core.Settings:Initialize()
     layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("General"));
 
     do
-        -- this creates a slightly inset button
-        layout:AddInitializer(CreateSettingsButtonInitializer("Reset Shortwave Player", "Reset Position", function()
-            core.PlayerWindow.window:ClearAllPoints()
-            core.PlayerWindow.window:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-        end, nil, true))
+        local variable = "soundChannel"
+        local variableKey = "channelIndex"
+        local defaultValue = 2 -- SFX
+        local name = "Sound Channel"
+        local tooltip =
+        "Which volume slider is used for the Shortwave audio. \nBlizzard restricts us to play audio only via their sound channels.\n\nMusic is not available, as the addon mutes it to prevent the default music from playing."
+
+        local function GetOptions()
+            local container = Settings.CreateControlTextContainer()
+            for i = 1, #channels do
+                local channelName = channels[i]
+                if channelName then
+                    container:Add(i, channelName)
+                end
+            end
+            return container:GetData()
+        end
+
+        if not ShortWaveVariables.channel then
+            ShortWaveVariables.channel = channels[defaultValue]
+        end
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, ShortWaveVariables,
+            type(defaultValue), name, defaultValue)
+        setting:SetValueChangedCallback(OnSettingChanged)
+
+        Settings.CreateDropdown(category, setting, GetOptions, tooltip)
     end
 
     do
@@ -91,7 +124,15 @@ function core.Settings:Initialize()
         Settings.CreateCheckbox(category, setting, nil)
     end
 
-    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Shuffle"));
+    do
+        -- this creates a slightly inset button
+        layout:AddInitializer(CreateSettingsButtonInitializer("Reset Shortwave Player", "Reset Position", function()
+            core.PlayerWindow.window:ClearAllPoints()
+            core.PlayerWindow.window:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        end, nil, true))
+    end
+
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Shuffling"));
 
     do
         local name = "Keep Delay in Shuffle"

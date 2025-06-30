@@ -318,7 +318,7 @@ function Player:PlaySound(id, name, localChannel)
 
     Player.UpdateFrame[localChannel]:SetScript("OnUpdate", LoopCurrentlyPlaying)
     firstFrame[localChannel] = true
-    local willPlay, soundHandle = PlaySoundFile(id, "Master")
+    local willPlay, soundHandle = PlaySoundFile(id, ShortWaveVariables.channel or "SFX")
     Player.currentlyPlaying[localChannel] = soundHandle
     currentText[localChannel] = name
 
