@@ -83,7 +83,7 @@ function core.Settings:Initialize()
         local defaultValue = 2 -- SFX
         local name = "Sound Channel"
         local tooltip =
-        "Which volume slider is used for the Shortwave audio. \nBlizzard restricts us to play audio only via their sound channels.\n\nMusic is not available, as the addon mutes it to prevent the default music from playing."
+        "Which of the in-game volume sliders is used for the Shortwave audio. \n\nMusic is not available, as the addon mutes it to prevent the default music from playing."
 
         local function GetOptions()
             local container = Settings.CreateControlTextContainer()

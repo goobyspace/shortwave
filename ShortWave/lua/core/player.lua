@@ -67,12 +67,7 @@ for _, value in ipairs(core.Channel.channels) do
     Player.UpdateFrame[value]:SetScript("OnUpdate", nil)
 end
 
--- zeroframeaudio is called when a sound stops playing immediately on frame 0
--- blizzard API doesn't tell us when a sound won't play, or when an ID is invalid
--- and will instead just play it and instantly stop
--- this way we can detect that and give the user feedback
--- as well as stopping playlists with non-existant sounds and VOs
-local function ZeroFrameAudio(localChannel)
+local function FullStop(localChannel)
     -- stop EVERYTHING on this channel
     Player.UpdateFrame[localChannel]:SetScript("OnUpdate", nil)
     Player.currentlyPlaying[localChannel] = nil
@@ -81,12 +76,27 @@ local function ZeroFrameAudio(localChannel)
     Player.currentPlaylistIndex[localChannel] = 1
     Player.currentSoloIndex[localChannel] = nil
     currentName[localChannel] = nil
-    currentText[localChannel] = "No audio for ID"
-    UpdateText()
     core.PlayerWindow.window.playPauseButton:SetChecked(false)
     core.PlayerWindow.window.playPauseButton:Disable()
     core.PlayerWindow.window.previousButton:Disable()
     core.PlayerWindow.window.nextButton:Disable()
+end
+
+-- zeroframeaudio is called when a sound stops playing immediately on frame 0
+-- blizzard API doesn't tell us when a sound won't play, or when an ID is invalid
+-- and will instead just play it and instantly stop
+-- this way we can detect that and give the user feedback
+-- as well as stopping playlists with non-existant sounds and VOs
+local function ZeroFrameAudio(localChannel)
+    FullStop(localChannel)
+    currentText[localChannel] = "No audio for ID"
+    Player:UpdatePlayer()
+end
+
+local function MutedAudio(localChannel)
+    FullStop(localChannel)
+    currentText[localChannel] = "Can't Play: Muted"
+    Player:UpdatePlayer()
 end
 
 -- loopcurrentlyplaying is called every frame whenever a channel has audio playing
@@ -101,6 +111,11 @@ local function LoopCurrentlyPlaying(self)
     end
     if Player.currentlyPlaying[localChannel] and Player.currentPlaylist[localChannel] then
         local isPlaying = C_Sound.IsPlaying(Player.currentlyPlaying[localChannel])
+        local volume = C_Sound.GetSoundScaledVolume(Player.currentlyPlaying[localChannel])
+        if not isPlaying and volume == 0 then
+            MutedAudio(localChannel)
+            return
+        end
         if not isPlaying then
             if firstFrame[localChannel] then
                 ZeroFrameAudio(localChannel)
@@ -114,6 +129,11 @@ local function LoopCurrentlyPlaying(self)
         end
     elseif Player.currentlyPlaying[localChannel] and core.Channel.LoopType[core.Channel.channelIndex[localChannel]] then
         local isPlaying = C_Sound.IsPlaying(Player.currentlyPlaying[localChannel])
+        local volume = C_Sound.GetSoundScaledVolume(Player.currentlyPlaying[localChannel])
+        if not isPlaying and volume == 0 then
+            MutedAudio(localChannel)
+            return
+        end
         if not isPlaying then
             if firstFrame[localChannel] then
                 ZeroFrameAudio(localChannel)
@@ -125,6 +145,11 @@ local function LoopCurrentlyPlaying(self)
         end
     elseif Player.currentlyPlaying[localChannel] and not core.Channel.LoopType[core.Channel.channelIndex[localChannel]] then
         local isPlaying = C_Sound.IsPlaying(Player.currentlyPlaying[localChannel])
+        local volume = C_Sound.GetSoundScaledVolume(Player.currentlyPlaying[localChannel])
+        if not isPlaying and volume == 0 then
+            MutedAudio(localChannel)
+            return
+        end
         if not isPlaying then
             if firstFrame[localChannel] then
                 ZeroFrameAudio(localChannel)

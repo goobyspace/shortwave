@@ -87,8 +87,6 @@ function Broadcast:BroadcastAudio(type, id, name, channel)
         end
         print(
             "|cffff4a4aShortwave: You are sending too many broadcast requests and being rate-limited by the server. Please wait a moment or don't loop any very short sounds.")
-        print(
-            "|cffff4a4aIf you have your master volume set to 0, the blizzard API tells the addon that the sound instantly finished, which will cause it to go through the playlist instantly and also overload the broadcast.")
     end
     if ShortWaveVariables.Debug then
         print("Broadcasting audio:")
