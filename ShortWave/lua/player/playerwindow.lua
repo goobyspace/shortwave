@@ -28,6 +28,18 @@ local SetMovable = function(f)
     f:SetUserPlaced(true);
 end
 
+function PlayerWindow:SetText() end
+
+function PlayerWindow:SetIcon() end
+
+function PlayerWindow:SetColor() end
+
+function PlayerWindow:SetBroadcasting() end
+
+function PlayerWindow:SetListening() end
+
+function PlayerWindow:SetDefaultText() end
+
 -- Check if the player is the leader and updates a lil cosmetic crown icon
 -- This is seperate so that it can be called on event updates
 local PlayerLeaderCheck = function()
