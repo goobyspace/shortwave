@@ -237,8 +237,8 @@ function Search:CreateBody(width, height)
     body:SetSize(width, height);
 
     body.ErrorText = body:CreateFontString("ErrorText", "OVERLAY", "GameFontNormal")
-    body.ErrorText:SetPoint("LEFT", -4, 0)
-    body.ErrorText:SetPoint("RIGHT", -16, 0)
+    body.ErrorText:SetPoint("LEFT", 8, 0)
+    body.ErrorText:SetPoint("RIGHT", -20, 0)
     body.ErrorText:SetJustifyV("MIDDLE")
     body.ErrorText:SetTextColor(1, 1, 0, 1)
     body.ErrorText:SetJustifyH("CENTER")
