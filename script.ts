@@ -1,5 +1,17 @@
 import { createWriteStream } from "fs";
 
+interface SoundFile {
+  id: string;
+  name: string;
+  path: string;
+}
+
+// https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-the-latest-release
+interface Asset {
+  name: string;
+  browser_download_url: string;
+}
+
 async function getFiles() {
   const apiUrl =
     "https://api.github.com/repos/wowdev/wow-listfile/releases/latest";
@@ -12,16 +24,23 @@ async function getFiles() {
   console.log("Finding latest listfile from GitHub");
   const request = await fetch(apiUrl, headers);
 
-  const data = await request.json();
+  const data: { assets: Asset[] } = await request.json();
 
-  if (!data.assets || data.assets.length === 0) {
+  if (!data || !data.assets || data.assets.length === 0) {
     console.error("No assets found in the latest release.");
     process.exit(1);
   }
 
-  const listFileUrl = data.assets.find((asset) =>
+  const listFileAsset = data.assets.find((asset: Asset) =>
     asset.name.includes("community-listfile-withcapitals")
-  ).browser_download_url;
+  );
+  if (!listFileAsset) {
+    console.error(
+      "No asset with name including 'community-listfile-withcapitals' found."
+    );
+    process.exit(1);
+  }
+  const listFileUrl = listFileAsset.browser_download_url;
 
   console.log("Downloading listfile");
   const fileRequest = await fetch(listFileUrl, headers);
@@ -47,17 +66,17 @@ async function getFiles() {
     return item.name.includes(".ogg") || item.name.includes(".mp3");
   });
 
-  const music = [];
-  const ambience = [];
-  const creature = [];
-  const spells = [];
-  const character = [];
-  const other = [];
+  const music: SoundFile[] = [];
+  const ambience: SoundFile[] = [];
+  const creature: SoundFile[] = [];
+  const spells: SoundFile[] = [];
+  const character: SoundFile[] = [];
+  const other: SoundFile[] = [];
   for (let i = 0; i < soundFiles.length; i++) {
     const item = {
-      id: soundFiles[i].id,
-      name: soundFiles[i].name.replace(/(\r\n|\n|\r|.mp3|.ogg)/gm, ""),
-      path: soundFiles[i].path.replace(/(\r\n|\n|\r|.mp3|.ogg)/gm, ""),
+      id: soundFiles[i]?.id || "",
+      name: soundFiles[i]?.name?.replace(/(\r\n|\n|\r|.mp3|.ogg)/gm, "") || "",
+      path: soundFiles[i]?.path.replace(/(\r\n|\n|\r|.mp3|.ogg)/gm, "") || "",
     };
     const path = item.path.toLowerCase();
     if (path.includes("sound/music")) {
@@ -78,7 +97,7 @@ async function getFiles() {
   return [music, ambience, creature, spells, character, other];
 }
 
-async function writeFiles(soundFiles) {
+async function writeFiles(soundFiles: SoundFile[][]) {
   console.log("Writing files to addons");
 
   const fileNames = [
@@ -99,7 +118,7 @@ async function writeFiles(soundFiles) {
     "ShortWave_SFXData",
   ];
   for (let i = 0; i < soundFiles.length; i++) {
-    //creature is special, it has 4 files because 1 file is too large for wow, and wow starts hitting us with a stick if we include it
+    //creature is special, it has 4 files, one of the index/id/name & path instead of dumping it all in one because 1 file is too large for wow, and wow starts hitting us with a stick if we include it as 1 big file
     if (fileNames[i] === "creature") {
       const indexFilestream = createWriteStream(
         `${folder[i]}/${fileNames[i]}index.lua`
