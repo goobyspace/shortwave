@@ -13502,8 +13502,6 @@
   { id = "5705686", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_FOLLOW_5705686", name = "vo_EarthenDwarf_earthen_male_FOLLOW_5705686" },
   { id = "5705694", path = "sound/character/EarthenDwarf_earthen_female/vo_EarthenDwarf_earthen_female_FOLLOW_5705694", name = "vo_EarthenDwarf_earthen_female_FOLLOW_5705694" },
   { id = "5705697", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_FOLLOW_5705697", name = "vo_EarthenDwarf_earthen_male_FOLLOW_5705697" },
-  { id = "5705700", path = "sound/character/EarthenDwarf_earthen_female/vo_EarthenDwarf_earthen_female_FOLLOW_5705700", name = "vo_EarthenDwarf_earthen_female_FOLLOW_5705700" },
-  { id = "5705703", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_FOLLOW_5705703", name = "vo_EarthenDwarf_earthen_male_FOLLOW_5705703" },
   { id = "5705985", path = "sound/character/EarthenDwarf_earthen_female/vo_EarthenDwarf_earthen_female_CONGRATULATE_5705985", name = "vo_EarthenDwarf_earthen_female_CONGRATULATE_5705985" },
   { id = "5705988", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_CONGRATULATE_5705988", name = "vo_EarthenDwarf_earthen_male_CONGRATULATE_5705988" },
   { id = "5705991", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_FLIRT_5705991", name = "vo_EarthenDwarf_earthen_male_FLIRT_5705991" },
@@ -13750,5 +13748,6 @@
   { id = "6021067", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_TRAIN_6021067", name = "vo_EarthenDwarf_earthen_male_TRAIN_6021067" },
   { id = "6021068", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_APPLAUD_6021068", name = "vo_EarthenDwarf_earthen_male_APPLAUD_6021068" },
   { id = "6021069", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_APPLAUD_6021069", name = "vo_EarthenDwarf_earthen_male_APPLAUD_6021069" },
-  { id = "6021070", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_BORED_6021070", name = "vo_EarthenDwarf_earthen_male_BORED_6021070" }
+  { id = "6021070", path = "sound/character/EarthenDwarf_earthen_male/vo_EarthenDwarf_earthen_male_BORED_6021070", name = "vo_EarthenDwarf_earthen_male_BORED_6021070" },
+  { id = "7553321", path = "sound/character/Harronir_haranir_male/vo_Harronir_haranir_male_TARGETTOOFAR_7553321", name = "vo_Harronir_haranir_male_TARGETTOOFAR_7553321" }
       }
