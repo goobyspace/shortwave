@@ -217,7 +217,7 @@ local function CreateScrollView(width, height)
         frame:SetScript("OnEnter", function()
             if frame.Text:GetUnboundedStringWidth() > frame.Text:GetWidth() then
                 GameTooltip:SetOwner(frame, "ANCHOR_CURSOR")
-                GameTooltip:SetText(data.name, 1, 1, 1, true)
+                GameTooltip:SetText(data.name, 1, 1, 1)
                 GameTooltip:Show()
             end
         end)

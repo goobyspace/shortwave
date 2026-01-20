@@ -294,7 +294,7 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.playerTexture:SetScript("OnEnter", function()
             if ShortWavePlayer.currentlyPlaying:GetUnboundedStringWidth() > ShortWavePlayer.currentlyPlaying:GetWidth() then
                 GameTooltip:SetOwner(ShortWavePlayer, "ANCHOR_CURSOR")
-                GameTooltip:SetText(ShortWavePlayer.currentlyPlaying:GetText(), 1, 1, 1, true)
+                GameTooltip:SetText(ShortWavePlayer.currentlyPlaying:GetText(), 1, 1, 1)
                 GameTooltip:Show()
             end
         end)
