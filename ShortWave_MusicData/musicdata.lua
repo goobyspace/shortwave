@@ -6423,5 +6423,17 @@
   { id = "7726826", path = "Sound/Music/Midnight/Silent_317", name = "Silent_317" },
   { id = "7726828", path = "Sound/Music/Midnight/Silent_336", name = "Silent_336" },
   { id = "7872487", path = "Sound/Music/Midnight/MUS_1205_Abyss_Angler_H", name = "MUS_1205_Abyss_Angler_H" },
-  { id = "7872489", path = "Sound/Music/Midnight/MUS_1205_Abyss_Angler_A", name = "MUS_1205_Abyss_Angler_A" }
+  { id = "7872489", path = "Sound/Music/Midnight/MUS_1205_Abyss_Angler_A", name = "MUS_1205_Abyss_Angler_A" },
+  { id = "8035874", path = "Sound/Music/Midnight/MUS_1207_Midsummer_A", name = "MUS_1207_Midsummer_A" },
+  { id = "8035876", path = "Sound/Music/Midnight/MUS_1207_Midsummer_B", name = "MUS_1207_Midsummer_B" },
+  { id = "8035878", path = "Sound/Music/Midnight/MUS_1207_Midsummer_C", name = "MUS_1207_Midsummer_C" },
+  { id = "8035880", path = "Sound/Music/Midnight/MUS_1207_Midsummer_D", name = "MUS_1207_Midsummer_D" },
+  { id = "8035882", path = "Sound/Music/Midnight/MUS_1207_Midsummer_H", name = "MUS_1207_Midsummer_H" },
+  { id = "8035884", path = "Sound/Music/Midnight/MUS_1207_Rotmire_Boss_A", name = "MUS_1207_Rotmire_Boss_A" },
+  { id = "8035886", path = "Sound/Music/Midnight/MUS_1207_Rotmire_Boss_B", name = "MUS_1207_Rotmire_Boss_B" },
+  { id = "8035888", path = "Sound/Music/Midnight/MUS_1207_Rotmire_Boss_C", name = "MUS_1207_Rotmire_Boss_C" },
+  { id = "8035890", path = "Sound/Music/Midnight/MUS_1207_Rotmire_Boss_D", name = "MUS_1207_Rotmire_Boss_D" },
+  { id = "8035892", path = "Sound/Music/Midnight/MUS_1207_Rotmire_Boss_H", name = "MUS_1207_Rotmire_Boss_H" },
+  { id = "8038868", path = "Sound/Music/Midnight/MUS_1207_RTC_TOA", name = "MUS_1207_RTC_TOA" },
+  { id = "8065367", path = "Sound/Music/Midnight/MUS_1207_Midsummer_E", name = "MUS_1207_Midsummer_E" }
       }
