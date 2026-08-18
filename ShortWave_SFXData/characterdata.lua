@@ -14072,6 +14072,8 @@
   { id = "4758693", path = "sound/character/dracthyr_visage_female/vo_dracthyr_visage_female_cantaffordbankslot_4758693", name = "vo_dracthyr_visage_female_cantaffordbankslot_4758693" },
   { id = "4758694", path = "sound/character/dracthyr_visage_female/vo_dracthyr_visage_female_alreadyingroup_4758694", name = "vo_dracthyr_visage_female_alreadyingroup_4758694" },
   { id = "4758695", path = "sound/character/dracthyr_visage_female/vo_dracthyr_visage_female_outofammo_4758695", name = "vo_dracthyr_visage_female_outofammo_4758695" },
+  { id = "4758696", path = "sound/character/Dracthyr_visage_female/vo_Dracthyr_visage_female_NOENERGY_4758696", name = "vo_Dracthyr_visage_female_NOENERGY_4758696" },
+  { id = "4758697", path = "sound/character/Dracthyr_visage_female/vo_Dracthyr_visage_female_NOENERGY_4758697", name = "vo_Dracthyr_visage_female_NOENERGY_4758697" },
   { id = "4758698", path = "sound/character/dracthyr_visage_female/vo_dracthyr_visage_female_nofocus_4758698", name = "vo_dracthyr_visage_female_nofocus_4758698" },
   { id = "4758699", path = "sound/character/dracthyr_visage_female/vo_dracthyr_visage_female_nofocus_4758699", name = "vo_dracthyr_visage_female_nofocus_4758699" },
   { id = "4758700", path = "sound/character/dracthyr_visage_female/vo_dracthyr_visage_female_nofocus_4758700", name = "vo_dracthyr_visage_female_nofocus_4758700" },
