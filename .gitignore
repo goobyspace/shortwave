@@ -1,3 +1,15 @@
 ﻿.vscode
 *libs
 node_modules
+
+# .NET build output
+tools/cascdump/bin/
+tools/cascdump/obj/
+tools/TACTSharp/**/bin/
+tools/TACTSharp/**/obj/
+
+# Local CASC/version-generation artifacts
+cache/
+tools/cascdump/*-ids.txt
+tools/cascdump/*-sounds.json
+tools/cascdump/cache/

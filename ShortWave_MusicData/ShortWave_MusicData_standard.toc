@@ -1,0 +1,18 @@
+## Interface: 120100
+## Title: Shortwave Music Data
+## Author: gooby.space
+## Version: @project-version@
+## Notes: Music Data for the Shortwave addon
+
+## Group: ShortWave
+## Category: Roleplay
+## IconTexture: Interface\AddOns\ShortWave_MusicData\INV_Misc_PunchCards_Blue.PNG
+
+## LoadOnDemand: 1
+## Dependencies: ShortWave
+
+## X-Curse-Project-ID: 1286759
+## X-Wago-ID: qKQxok6x
+## X-WoWI-ID: 26937
+
+	musicdata_retail.lua

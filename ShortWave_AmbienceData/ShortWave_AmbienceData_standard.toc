@@ -1,0 +1,18 @@
+## Interface: 120100
+## Title: Shortwave Ambience Data
+## Author: gooby.space
+## Version: @project-version@
+## Notes: Ambience Data for the Shortwave addon
+
+## Group: ShortWave
+## Category: Roleplay
+## IconTexture: Interface\AddOns\ShortWave_AmbienceData\INV_Misc_PunchCards_Prismatic.PNG
+
+## LoadOnDemand: 1
+## Dependencies: ShortWave
+
+## X-Curse-Project-ID: 1286759
+## X-Wago-ID: qKQxok6x
+## X-WoWI-ID: 26937
+
+	ambiencedata_retail.lua

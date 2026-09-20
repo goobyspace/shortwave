@@ -95,11 +95,23 @@ function PlayerWindow:CreateWindow()
         core.PlayerWindow.window = CreateFrame("Frame", "ShortWaveUIFrame", UIParent, "PortraitFrameBaseTemplate")
         ShortWavePlayer = core.PlayerWindow.window
         ShortWavePlayer:SetSize(startingWidth, startingHeight)
+        -- match the strata other standalone game windows use, otherwise this defaults below them
+        ShortWavePlayer:SetFrameStrata("HIGH")
         -- if it has not yet been created, put it in the center of the screen
         ShortWavePlayer:SetPoint("TOPLEFT", UIParent, ShortWaveVariables.point or "CENTER",
             ShortWaveVariables.xOfs or 0,
             ShortWaveVariables.yOfs or 0)
         SetMovable(ShortWavePlayer)
+
+        -- on camelot, BottomLeftCorner/BottomRightCorner are created after (and so draw over) TopLeftCorner/TopRightCorner
+        -- wherever they overlap; force the portrait ring corners to draw in front regardless of window height
+        if core.isCamelot and ShortWavePlayer.NineSlice then
+            local NineSlice = ShortWavePlayer.NineSlice
+            if NineSlice.TopLeftCorner then NineSlice.TopLeftCorner:SetDrawLayer("OVERLAY", 1) end
+            if NineSlice.TopRightCorner then NineSlice.TopRightCorner:SetDrawLayer("OVERLAY", 1) end
+            if NineSlice.BottomLeftCorner then NineSlice.BottomLeftCorner:SetDrawLayer("OVERLAY", -1) end
+            if NineSlice.BottomRightCorner then NineSlice.BottomRightCorner:SetDrawLayer("OVERLAY", -1) end
+        end
 
         -- title
         ShortWavePlayer.title = ShortWavePlayer.TitleContainer:CreateFontString("TitleText")
@@ -110,7 +122,7 @@ function PlayerWindow:CreateWindow()
         -- close button
         ShortWavePlayer.closeButton = CreateFrame("Button", nil,
             ShortWavePlayer, "UIPanelCloseButton")
-        ShortWavePlayer.closeButton:SetPoint("TOPRIGHT", ShortWavePlayer, "TOPRIGHT", -1, -2)
+        ShortWavePlayer.closeButton:SetPoint("TOPRIGHT", ShortWavePlayer, "TOPRIGHT", core.isCamelot and -7 or -1, -2)
         ShortWavePlayer.closeButton:SetSize(20, 20)
         ShortWavePlayer.closeButton:SetScript("OnClick", function()
             ShortWavePlayer:Hide()
@@ -120,17 +132,21 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.circularIcon = ShortWavePlayer.PortraitContainer:CreateTexture("PortraitTexture")
         ShortWavePlayer.circularIcon:SetSize(60, 60)
         ShortWavePlayer.circularIcon:SetPoint("CENTER", 24, -22)
-        ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_VentureCo")
+        ShortWavePlayer.circularIcon:SetTexture(
+        "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_VentureCo.PNG")
 
         -- this function sets the icon based on the current channel
         -- its also called in set channel
         function core.PlayerWindow:SetIcon()
             if core.Channel.channels[3] == core.Channel.currentChannel then
-                ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_VentureCo")
+                ShortWavePlayer.circularIcon:SetTexture(
+                "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_VentureCo.PNG")
             elseif core.Channel.channels[2] == core.Channel.currentChannel then
-                ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_Bilgewater")
+                ShortWavePlayer.circularIcon:SetTexture(
+                "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_Bilgewater.PNG")
             else
-                ShortWavePlayer.circularIcon:SetTexture("Interface/Icons/INV_111_StatSoundWaveEmitter_Blackwater")
+                ShortWavePlayer.circularIcon:SetTexture(
+                "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_Blackwater.PNG")
             end
         end
 
@@ -173,20 +189,83 @@ function PlayerWindow:CreateWindow()
         local topBarHeight = 48
         local topBarExpandedHeight = 74
 
+        -- crops a corner texture, keeping the point closest to `anchor` fixed and trimming the far side by cropPixels
+        local function ClipCorner(piece, atlasName, cropPixels, minVisible, anchor)
+            if not piece or not atlasName then return end
+            local info = C_Texture.GetAtlasInfo(atlasName)
+            if not info then return end
+            local textureSource = info.file or info.filename
+            if not textureSource then return end
+            cropPixels = math.max(0, math.min(cropPixels or 0, info.height - minVisible))
+            piece:SetTexture(textureSource)
+            local uvHeightRange = info.bottomTexCoord - info.topTexCoord
+            local cropCoord = (cropPixels / info.height) * uvHeightRange
+            if anchor == "TOP" then
+                -- anchored at the top, so trim off the bottom of the texture
+                piece:SetTexCoord(info.leftTexCoord, info.rightTexCoord, info.topTexCoord,
+                    info.bottomTexCoord - cropCoord)
+            else
+                -- anchored at the bottom, so trim off the top of the texture
+                piece:SetTexCoord(info.leftTexCoord, info.rightTexCoord, info.topTexCoord + cropCoord,
+                    info.bottomTexCoord)
+            end
+            piece:SetSize(info.width, info.height - cropPixels)
+        end
+
+        -- camelot's corner art is taller than this collapsed frame and overlaps the middle; crop both top and bottom corners proportionally
+        local function UpdateCornerCropping(height)
+            if not core.isCamelot then return end
+            local NineSlice = ShortWavePlayer.NineSlice
+            local layout = NineSlice and NineSliceUtil.GetLayout(ShortWavePlayer.layoutType)
+            if not (layout and layout.TopLeftCorner and layout.BottomLeftCorner and layout.BottomRightCorner) then
+                return
+            end
+            local topInfo = C_Texture.GetAtlasInfo(layout.TopLeftCorner.atlas)
+            local bottomInfo = C_Texture.GetAtlasInfo(layout.BottomLeftCorner.atlas)
+            if not (topInfo and bottomInfo) then return end
+            local topYOffset = layout.TopLeftCorner.y or 0
+            local bottomYOffset = -(layout.BottomLeftCorner.y or 0)
+            local overlap = topInfo.height + bottomInfo.height - height - topYOffset - bottomYOffset
+            local topShare = overlap * (topInfo.height / (topInfo.height + bottomInfo.height))
+            local bottomShare = overlap - topShare
+            local topCropFactor = 0.35 -- the top corner is the portrait ring art, so only lightly trim it to avoid breaking the ring shape
+            local minVisible = 15
+            ClipCorner(NineSlice.TopLeftCorner, layout.TopLeftCorner.atlas, topShare * topCropFactor, minVisible, "TOP")
+            ClipCorner(NineSlice.TopRightCorner, layout.TopRightCorner.atlas, topShare * topCropFactor, minVisible, "TOP")
+            ClipCorner(NineSlice.BottomLeftCorner, layout.BottomLeftCorner.atlas, bottomShare, minVisible, "BOTTOM")
+            ClipCorner(NineSlice.BottomRightCorner, layout.BottomRightCorner.atlas, bottomShare, minVisible, "BOTTOM")
+        end
+
+        -- keeps the header fixed when resizing, unless that would push the bottom of the window below the screen, in which case the bottom edge is kept fixed instead
+        local function RepositionForResize(newHeight)
+            local left, top, bottom = ShortWavePlayer:GetLeft(), ShortWavePlayer:GetTop(), ShortWavePlayer:GetBottom()
+            if not (left and top and bottom) then return end
+            ShortWavePlayer:ClearAllPoints()
+            if top - newHeight < 0 then
+                ShortWavePlayer:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", left, bottom)
+            else
+                ShortWavePlayer:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
+            end
+        end
+
         -- expand the player window, the topbar height here is the texture behind the top bar
         function PlayerWindow:ToggleExpand(expanded)
             if expanded then
+                RepositionForResize(maxHeight)
                 ShortWavePlayer:SetSize(startingWidth, maxHeight)
                 ShortWavePlayer.topBar:SetSize(startingWidth, topBarExpandedHeight)
                 ShortWavePlayer.tabBars:Show()
                 ShortWavePlayer.body:Show()
                 ShortWaveVariables.IsShown = true
+                UpdateCornerCropping(maxHeight)
             else
+                RepositionForResize(startingHeight)
                 ShortWavePlayer:SetSize(startingWidth, startingHeight)
                 ShortWavePlayer.topBar:SetSize(startingWidth, topBarHeight)
                 ShortWavePlayer.tabBars:Hide()
                 ShortWavePlayer.body:Hide()
                 ShortWaveVariables.IsShown = false
+                UpdateCornerCropping(startingHeight)
             end
         end
 
@@ -305,7 +384,7 @@ function PlayerWindow:CreateWindow()
 
         ShortWavePlayer.minMax = CreateFrame("CheckButton", nil, ShortWavePlayer.topBar)
         ShortWavePlayer.minMax:SetSize(24, 24)
-        ShortWavePlayer.minMax:SetPoint("RIGHT", ShortWavePlayer.playerTexture, 29, 0)
+        ShortWavePlayer.minMax:SetPoint("RIGHT", ShortWavePlayer.playerTexture, core.isCamelot and 25 or 29, 0)
         ShortWavePlayer.minMax:SetScript("OnClick", onMinMaxClick)
         ShortWavePlayer.minMax:SetChecked(ShortWaveVariables.IsShown)
 

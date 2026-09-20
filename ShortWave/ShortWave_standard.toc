@@ -1,0 +1,29 @@
+## Interface: 120100
+## Title: Shortwave
+## Author: gooby.space
+## Version: @project-version@
+## Notes: Create playlists of music, ambience and sound effects.
+## SavedVariables: ShortWaveVariables
+
+## Group: ShortWave
+## Category: Roleplay
+## IconTexture: Interface\AddOns\ShortWave\assets\INV_111_StatSoundWaveEmitter_Gallywix.PNG
+
+libs/LibDataBroker-1.1/LibDataBroker-1.1.lua
+libs/LibDBIcon-1.0/lib.xml
+xml/search.xml
+xml/playlist.xml
+xml/tooltipplaylist.xml
+lua/resources/dataloader.lua
+lua/resources/utils.lua
+lua/core/broadcast.lua
+lua/core/channel.lua
+lua/core/player.lua
+lua/player/popup.lua
+lua/player/playlist.lua
+lua/player/search.lua
+lua/player/playerwindow.lua
+lua/addon/minimap.lua
+lua/addon/settings.lua
+lua/addon/commands.lua
+init.lua

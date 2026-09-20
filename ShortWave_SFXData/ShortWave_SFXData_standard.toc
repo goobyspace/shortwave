@@ -1,0 +1,24 @@
+## Interface: 16001
+## Title: Shortwave SFX Data
+## Author: gooby.space
+## Version: @project-version@
+## Notes: SFX Data for the Shortwave addon
+
+## Group: ShortWave
+## Category: Roleplay
+## IconTexture: Interface\AddOns\ShortWave_SFXData\INV_Misc_PunchCards_Red.PNG
+
+## LoadOnDemand: 1
+## Dependencies: ShortWave
+
+## X-Curse-Project-ID: 1286759
+## X-Wago-ID: qKQxok6x
+## X-WoWI-ID: 26937
+
+	creatureindex_retail.lua
+	creatureid_retail.lua
+	creaturename_retail.lua
+	creaturepath_retail.lua
+	characterdata_retail.lua
+	spellsdata_retail.lua
+	otherdata_retail.lua

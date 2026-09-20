@@ -6,7 +6,7 @@ core.Minimap = {}
 local shortwaveLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Shortwave", {
     type = "data source",
     text = "Shortwave",
-    icon = "Interface\\Icons\\INV_111_StatSoundWaveEmitter_Blackwater",
+    icon = "Interface\\AddOns\\ShortWave\\assets\\INV_111_StatSoundWaveEmitter_Blackwater.PNG",
     OnClick = function(_, e)
         if (e == "RightButton") then
             core.Settings:OpenSettings()

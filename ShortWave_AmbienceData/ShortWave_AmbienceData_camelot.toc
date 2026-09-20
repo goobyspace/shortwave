@@ -1,12 +1,12 @@
-## Interface: 120100
-## Title: Shortwave Music Data
+## Interface: 16001
+## Title: Shortwave Ambience Data
 ## Author: gooby.space
 ## Version: @project-version@
-## Notes: Music Data for the Shortwave addon
+## Notes: Ambience Data for the Shortwave addon
 
 ## Group: ShortWave
 ## Category: Roleplay
-## IconTexture: Interface\Icons\INV_Misc_PunchCards_Blue
+## IconTexture: Interface\AddOns\ShortWave_AmbienceData\INV_Misc_PunchCards_Prismatic.PNG
 
 ## LoadOnDemand: 1
 ## Dependencies: ShortWave
@@ -15,4 +15,4 @@
 ## X-Wago-ID: qKQxok6x
 ## X-WoWI-ID: 26937
 
-musicdata.lua
+	ambiencedata_forever.lua

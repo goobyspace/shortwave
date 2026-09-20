@@ -174,8 +174,9 @@ local function CreateScrollView(body, width, height)
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
     body.ScrollBox:SetSize(width - 20, height - 36)
     body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -32)
-    body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPRIGHT")
-    body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMRIGHT")
+    local scrollBarXOffset = core.isCamelot and -8 or 0
+    body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPRIGHT", scrollBarXOffset, 0)
+    body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMRIGHT", scrollBarXOffset, 0)
 
     ScrollView = CreateScrollBoxListLinearView()
     ScrollUtil.InitScrollBoxListWithScrollBar(body.ScrollBox, body.ScrollBar, ScrollView)
