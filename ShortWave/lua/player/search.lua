@@ -15,6 +15,8 @@ local function OpenAddFrame()
     local uiScale, x, y = UIParent:GetEffectiveScale(), GetCursorPosition()
     AddFrame:ClearAllPoints()
     AddFrame:SetPoint("TOPLEFT", nil, "BOTTOMLEFT", x / uiScale - 20, y / uiScale + 10)
+    AddFrame:SetFrameStrata("TOOLTIP")
+    AddFrame:SetToplevel(true)
     local data = ShortWaveVariables.Playlists[core.Channel.currentChannel]
     if #data == 0 then
         AddFrame.title:SetText("No Playlists")
@@ -44,6 +46,17 @@ local function CreateTooltipScrollView(body, width, height)
 
     local function Initializer(frame, data)
         local index = frame:GetOrderIndex()
+        local leftInset = core.isCamelot and 4 or 0
+        frame:SetHitRectInsets(leftInset, 0, 0, 0)
+        frame.ColorBackground:ClearAllPoints()
+        frame.ColorBackground:SetPoint("TOPLEFT", leftInset, -2)
+        frame.ColorBackground:SetPoint("BOTTOMRIGHT", 0, 2)
+        frame.BlackBackground:ClearAllPoints()
+        frame.BlackBackground:SetPoint("TOPLEFT", leftInset, -2)
+        frame.BlackBackground:SetPoint("BOTTOMRIGHT", 0, 2)
+        frame.Text:ClearAllPoints()
+        frame.Text:SetPoint("LEFT", 4 + leftInset, 0)
+        frame.Text:SetPoint("RIGHT", -4, 0)
         frame.ColorBackground:SetColorTexture(
             core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].r or 0.1,
             core.Channel.defaultColours[core.Channel.channelIndex[core.Channel.currentChannel]].g or 0.1,
@@ -157,11 +170,12 @@ end
 local function CreateScrollView(width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
-    body.ScrollBox:SetSize(width - 20, height - 34)
-    body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -30)
     local scrollBarXOffset = core.isCamelot and -8 or 0
-    body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPRIGHT", scrollBarXOffset, 0)
-    body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMRIGHT", scrollBarXOffset, 0)
+    body.ScrollBox:SetSize(width - 20 + scrollBarXOffset, height - 34)
+    body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -30)
+    local scrollBarAnchorX = (width - 20) + scrollBarXOffset
+    body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPLEFT", scrollBarAnchorX, 0)
+    body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMLEFT", scrollBarAnchorX, 0)
 
     ScrollView = CreateScrollBoxListLinearView()
     ScrollUtil.InitScrollBoxListWithScrollBar(body.ScrollBox, body.ScrollBar, ScrollView)

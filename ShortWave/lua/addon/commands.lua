@@ -1,51 +1,6 @@
 local _, core = ...
 core.Commands = {}
 
--- opens a resizable, selectable text box so debug output can be copied out of the game
-local function ShowCopyableText(title, text)
-    if not core.Commands.copyFrame then
-        local frame = CreateFrame("Frame", "ShortWaveCopyFrame", UIParent, "DefaultPanelTemplate")
-        frame:SetSize(500, 400)
-        frame:SetPoint("CENTER")
-        frame:SetFrameStrata("DIALOG")
-        frame:SetMovable(true)
-        frame:EnableMouse(true)
-        frame:RegisterForDrag("LeftButton")
-        frame:SetScript("OnDragStart", frame.StartMoving)
-        frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-
-        frame.title = frame.TitleContainer:CreateFontString("TitleText")
-        frame.title:SetFontObject("GameFontNormal")
-        frame.title:SetPoint("CENTER")
-
-        frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-        frame.closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -1, -2)
-        frame.closeButton:SetSize(20, 20)
-        frame.closeButton:SetScript("OnClick", function() frame:Hide() end)
-
-        frame.scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-        frame.scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -30)
-        frame.scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 12)
-
-        frame.editBox = CreateFrame("EditBox", nil, frame.scrollFrame)
-        frame.editBox:SetMultiLine(true)
-        frame.editBox:SetFontObject("ChatFontNormal")
-        frame.editBox:SetWidth(440)
-        frame.editBox:SetAutoFocus(false)
-        frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
-        frame.scrollFrame:SetScrollChild(frame.editBox)
-
-        core.Commands.copyFrame = frame
-    end
-
-    local frame = core.Commands.copyFrame
-    frame.title:SetText(title)
-    frame.editBox:SetText(text)
-    frame.editBox:HighlightText()
-    frame.editBox:SetFocus()
-    frame:Show()
-end
-
 -- list of commands, structure goes like "/sw [command]" or "/shortwave [command]"
 -- debug, vars & core are for debugging purposes only
 core.Commands.commands = {
@@ -83,33 +38,6 @@ core.Commands.commands = {
         print("Current core:")
         DevTools_Dump(core)
         print("--------------------------")
-    end,
-    ["bordercheck"] = function()
-        local window = core.PlayerWindow.window
-        if not window or not window.NineSlice then
-            print("Shortwave: player window isn't created yet, open it first")
-            return
-        end
-        local NineSlice = window.NineSlice
-        local layout = NineSliceUtil.GetLayout(window.layoutType)
-        local lines = { "Shortwave border check, frame height: " .. window:GetHeight() }
-        for _, corner in ipairs({ "TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner" }) do
-            local piece = NineSlice[corner]
-            local pieceLayout = layout and layout[corner]
-            local info = pieceLayout and C_Texture.GetAtlasInfo(pieceLayout.atlas)
-            if piece and info then
-                table.insert(lines, string.format("%s: atlas=%s atlasSize=%dx%d pieceSize=%dx%d layoutOffset=%s,%s",
-                    corner, pieceLayout.atlas, info.width, info.height, piece:GetWidth(), piece:GetHeight(),
-                    tostring(pieceLayout.x), tostring(pieceLayout.y)))
-            end
-        end
-        for _, edge in ipairs({ "TopEdge", "BottomEdge" }) do
-            local piece = NineSlice[edge]
-            if piece then
-                table.insert(lines, string.format("%s: pieceSize=%dx%d", edge, piece:GetWidth(), piece:GetHeight()))
-            end
-        end
-        ShowCopyableText("Shortwave Border Check", table.concat(lines, "\n"))
     end,
     ["help"] = function()
         print(" ")

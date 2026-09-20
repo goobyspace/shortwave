@@ -95,7 +95,6 @@ function PlayerWindow:CreateWindow()
         core.PlayerWindow.window = CreateFrame("Frame", "ShortWaveUIFrame", UIParent, "PortraitFrameBaseTemplate")
         ShortWavePlayer = core.PlayerWindow.window
         ShortWavePlayer:SetSize(startingWidth, startingHeight)
-        -- match the strata other standalone game windows use, otherwise this defaults below them
         ShortWavePlayer:SetFrameStrata("HIGH")
         -- if it has not yet been created, put it in the center of the screen
         ShortWavePlayer:SetPoint("TOPLEFT", UIParent, ShortWaveVariables.point or "CENTER",
@@ -103,8 +102,6 @@ function PlayerWindow:CreateWindow()
             ShortWaveVariables.yOfs or 0)
         SetMovable(ShortWavePlayer)
 
-        -- on camelot, BottomLeftCorner/BottomRightCorner are created after (and so draw over) TopLeftCorner/TopRightCorner
-        -- wherever they overlap; force the portrait ring corners to draw in front regardless of window height
         if core.isCamelot and ShortWavePlayer.NineSlice then
             local NineSlice = ShortWavePlayer.NineSlice
             if NineSlice.TopLeftCorner then NineSlice.TopLeftCorner:SetDrawLayer("OVERLAY", 1) end
@@ -133,20 +130,20 @@ function PlayerWindow:CreateWindow()
         ShortWavePlayer.circularIcon:SetSize(60, 60)
         ShortWavePlayer.circularIcon:SetPoint("CENTER", 24, -22)
         ShortWavePlayer.circularIcon:SetTexture(
-        "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_VentureCo.PNG")
+            "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_VentureCo.PNG")
 
         -- this function sets the icon based on the current channel
         -- its also called in set channel
         function core.PlayerWindow:SetIcon()
             if core.Channel.channels[3] == core.Channel.currentChannel then
                 ShortWavePlayer.circularIcon:SetTexture(
-                "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_VentureCo.PNG")
+                    "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_VentureCo.PNG")
             elseif core.Channel.channels[2] == core.Channel.currentChannel then
                 ShortWavePlayer.circularIcon:SetTexture(
-                "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_Bilgewater.PNG")
+                    "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_Bilgewater.PNG")
             else
                 ShortWavePlayer.circularIcon:SetTexture(
-                "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_Blackwater.PNG")
+                    "Interface/AddOns/ShortWave/assets/INV_111_StatSoundWaveEmitter_Blackwater.PNG")
             end
         end
 
@@ -189,7 +186,6 @@ function PlayerWindow:CreateWindow()
         local topBarHeight = 48
         local topBarExpandedHeight = 74
 
-        -- crops a corner texture, keeping the point closest to `anchor` fixed and trimming the far side by cropPixels
         local function ClipCorner(piece, atlasName, cropPixels, minVisible, anchor)
             if not piece or not atlasName then return end
             local info = C_Texture.GetAtlasInfo(atlasName)
@@ -212,7 +208,6 @@ function PlayerWindow:CreateWindow()
             piece:SetSize(info.width, info.height - cropPixels)
         end
 
-        -- camelot's corner art is taller than this collapsed frame and overlaps the middle; crop both top and bottom corners proportionally
         local function UpdateCornerCropping(height)
             if not core.isCamelot then return end
             local NineSlice = ShortWavePlayer.NineSlice
@@ -228,7 +223,7 @@ function PlayerWindow:CreateWindow()
             local overlap = topInfo.height + bottomInfo.height - height - topYOffset - bottomYOffset
             local topShare = overlap * (topInfo.height / (topInfo.height + bottomInfo.height))
             local bottomShare = overlap - topShare
-            local topCropFactor = 0.35 -- the top corner is the portrait ring art, so only lightly trim it to avoid breaking the ring shape
+            local topCropFactor = 0.35
             local minVisible = 15
             ClipCorner(NineSlice.TopLeftCorner, layout.TopLeftCorner.atlas, topShare * topCropFactor, minVisible, "TOP")
             ClipCorner(NineSlice.TopRightCorner, layout.TopRightCorner.atlas, topShare * topCropFactor, minVisible, "TOP")

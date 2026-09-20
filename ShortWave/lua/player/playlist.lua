@@ -172,11 +172,12 @@ end
 local function CreateScrollView(body, width, height)
     body.ScrollBox = CreateFrame("Frame", nil, body, "WowScrollBoxList")
     body.ScrollBar = CreateFrame("EventFrame", nil, body, "MinimalScrollBar")
-    body.ScrollBox:SetSize(width - 20, height - 36)
-    body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -32)
     local scrollBarXOffset = core.isCamelot and -8 or 0
-    body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPRIGHT", scrollBarXOffset, 0)
-    body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMRIGHT", scrollBarXOffset, 0)
+    body.ScrollBox:SetSize(width - 20 + scrollBarXOffset, height - 36)
+    body.ScrollBox:SetPoint("TOPLEFT", body, "TOPLEFT", 4, -32)
+    local scrollBarAnchorX = (width - 20) + scrollBarXOffset
+    body.ScrollBar:SetPoint("TOPLEFT", body.ScrollBox, "TOPLEFT", scrollBarAnchorX, 0)
+    body.ScrollBar:SetPoint("BOTTOMLEFT", body.ScrollBox, "BOTTOMLEFT", scrollBarAnchorX, 0)
 
     ScrollView = CreateScrollBoxListLinearView()
     ScrollUtil.InitScrollBoxListWithScrollBar(body.ScrollBox, body.ScrollBar, ScrollView)
