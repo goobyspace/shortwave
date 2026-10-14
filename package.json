@@ -5,13 +5,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --import=tsx script.ts",
+    "start": "node --import=tsx versionscript.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^24.2.0"
+    "@types/node": "^24.19.2"
   },
   "dependencies": {
     "tsx": "^4.20.3"

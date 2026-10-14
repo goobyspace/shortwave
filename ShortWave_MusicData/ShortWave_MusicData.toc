@@ -1,4 +1,4 @@
-## Interface: 120100
+## Interface: 120105
 ## Title: Shortwave Music Data
 ## Author: gooby.space
 ## Version: @project-version@

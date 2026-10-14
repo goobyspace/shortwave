@@ -59,7 +59,7 @@ async function dumpProduct(product: ProductConfig): Promise<Set<string>> {
 
     const ids = (await readFile(output, "utf8"))
         .split(/\r?\n/)
-        .map((id) => id.trim())
+        .map((id: string) => id.trim())
         .filter(Boolean);
     return new Set(ids);
 }
@@ -195,10 +195,10 @@ async function writeLuaFiles(product: ProductConfig, listfile: Map<string, strin
 }
 
 const installationDirectory = "C:\\Program Files (x86)\\World of Warcraft";
-const retailDirectory = process.env.SHORTWAVE_RETAIL_DIR ?? installationDirectory;
-const foreverDirectory = process.env.SHORTWAVE_FOREVER_DIR ?? installationDirectory;
-const retailProduct = process.env.SHORTWAVE_RETAIL_PRODUCT ?? "wow";
-const foreverProduct = process.env.SHORTWAVE_FOREVER_PRODUCT ?? "wow_classic_beta";
+const retailDirectory = installationDirectory;
+const foreverDirectory = installationDirectory;
+const retailProduct = "wow";
+const foreverProduct = "wow_classic_beta";
 if (!retailDirectory || !foreverDirectory) {
     throw new Error(
         "Set SHORTWAVE_RETAIL_DIR and SHORTWAVE_FOREVER_DIR to the WoW installation root containing .build.info.",
