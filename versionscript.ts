@@ -198,7 +198,7 @@ const installationDirectory = "C:\\Program Files (x86)\\World of Warcraft";
 const retailDirectory = installationDirectory;
 const foreverDirectory = installationDirectory;
 const retailProduct = "wow";
-const foreverProduct = "wow_classic_beta";
+const foreverProduct = "wowf";
 if (!retailDirectory || !foreverDirectory) {
     throw new Error(
         "Set SHORTWAVE_RETAIL_DIR and SHORTWAVE_FOREVER_DIR to the WoW installation root containing .build.info.",

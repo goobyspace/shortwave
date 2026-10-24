@@ -1658,6 +1658,7 @@ ShortWaveGlobalData.ambience = {
  { id = "3500708", path = "sound/ambience/zoneambience/amb_dyingtreegrove_day_3500708", name = "amb_dyingtreegrove_day_3500708" },
  { id = "3500709", path = "sound/ambience/zoneambience/amb_dyingtreegrove_day_3500709", name = "amb_dyingtreegrove_day_3500709" },
  { id = "3500710", path = "sound/ambience/zoneambience/amb_dyingtreegrove_day_3500710", name = "amb_dyingtreegrove_day_3500710" },
+ { id = "3502593", path = "sound/ambience/zoneambience/amb_1127gm3contentrunardenweald_3502593", name = "amb_1127gm3contentrunardenweald_3502593" },
  { id = "3502681", path = "sound/ambience/zoneambience/amb_ardenweald_day_3502681", name = "amb_ardenweald_day_3502681" },
  { id = "3502682", path = "sound/ambience/zoneambience/amb_ardenweald_day_3502682", name = "amb_ardenweald_day_3502682" },
  { id = "3502683", path = "sound/ambience/zoneambience/amb_ardenweald_day_3502683", name = "amb_ardenweald_day_3502683" },
